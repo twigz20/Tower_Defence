@@ -444,3 +444,5 @@ __pycache__/
 # End of https://www.gitignore.io/api/cocos2dx,c++,visualstudio
 
 /.cocos-project.json
+/CMakeLists.txt
+/cocos2d/*
