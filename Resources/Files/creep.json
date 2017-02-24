@@ -1,0 +1,46 @@
+{
+  "creep-1-red": {
+    "source": "Graphics/creep/creep-1-red/1.png",
+    "health": 100,
+    "speed": 80,
+    "speed_aura": {
+      "area": 33,
+      "percentage": 0.65
+    },
+    "stunResistance": 1,
+    "gold": 10
+  },
+  "creep-1-blue": {
+    "source": "Graphics/creep/creep-1-blue/1.png",
+    "health": 100,
+    "speed": 80,
+    "speed_aura": {
+      "area": 33,
+      "percentage": 0.65
+    },
+    "stunResistance": 1,
+    "gold": 10
+  },
+  "creep-1-green": {
+    "source": "Graphics/creep/creep-1-green/1.png",
+    "health": 100,
+    "speed": 80,
+    "speed_aura": {
+      "area": 33,
+      "percentage": 0.65
+    },
+    "stunResistance": 1,
+    "gold": 10
+  },
+  "creep-1-yellow": {
+    "source": "Graphics/creep/creep-1-yellow/1.png",
+    "health": 100,
+    "speed": 80,
+    "speed_aura": {
+      "area": 33,
+      "percentage": 0.65
+    },
+    "stunResistance": 1,
+    "gold": 10
+  }
+}
