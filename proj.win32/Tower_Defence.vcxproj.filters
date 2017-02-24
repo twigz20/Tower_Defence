@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="win32">
+      <UniqueIdentifier>{84a8ebd7-7cf0-47f6-b75e-d441df67da40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{715254bc-d70b-4ec5-bf29-467dd3ace079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="win32\Utilities">
+      <UniqueIdentifier>{73195922-7878-442e-bfa5-ae245d9e3083}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\AppDelegate.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TowerDefenceScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseObject.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>win32\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveManager.cpp" />
+    <ClCompile Include="LevelManager.cpp" />
+    <ClCompile Include="Wave.cpp" />
+    <ClCompile Include="Creep.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="CreepManager.cpp" />
+    <ClCompile Include="timer.cpp" />
+    <ClCompile Include="Turret.cpp" />
+    <ClCompile Include="TurretManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AppDelegate.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TowerDefenceScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseObject.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>win32\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>win32\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveManager.h" />
+    <ClInclude Include="LevelManager.h" />
+    <ClInclude Include="Wave.h" />
+    <ClInclude Include="Creep.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="CreepManager.h" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="Turret.h" />
+    <ClInclude Include="TurretManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="game.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Resources\Files\creep.json" />
+    <None Include="..\Resources\Files\waves.json" />
+    <None Include="..\Resources\Files\turrets.json" />
+  </ItemGroup>
+</Project>
