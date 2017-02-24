@@ -14,6 +14,7 @@ public:
 	BaseObject(cocos2d::Sprite* object_);
 	~BaseObject();
 
+	void loadSprite(const std::string& filename);
 	virtual void update(float deltaTime) = 0;
 
 	void setPosition(float x, float y);

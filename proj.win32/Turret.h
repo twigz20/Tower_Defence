@@ -27,8 +27,12 @@ class Turret : public BaseObject
 
 	class TurretRangeIndicator {
 		cocos2d::DrawNode *turretRange;
+		Turret* turret;
 	public:
 		TurretRangeIndicator(Turret* turret);
+		void resetTurret(Turret* t);
+		void show();
+		void hide();
 	};
 
 	TurretRangeIndicator *rangeIndicator;
@@ -39,6 +43,7 @@ class Turret : public BaseObject
 public:
 	Turret(const std::string& turret);
 	Turret(const Turret& other);
+	Turret& operator=(Turret&& other);
 	~Turret();
 
 	Turret_Stats& getTurretStats();
@@ -51,5 +56,6 @@ public:
 	void setScene(TowerDefence* scene);
 
 	void setPosition(float x, float y);
+	void resetTurret();
 };
 

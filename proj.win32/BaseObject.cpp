@@ -14,6 +14,11 @@ BaseObject::~BaseObject()
 {
 }
 
+void BaseObject::loadSprite(const std::string & filename)
+{
+	object = cocos2d::Sprite::create(filename);
+}
+
 void BaseObject::setPosition(float x, float y)
 {
 	(object)->setPosition(x,y);

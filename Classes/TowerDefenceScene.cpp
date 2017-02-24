@@ -92,10 +92,7 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 	for (int i = 0; i < starterTurrets.size(); i++) {
 		if (starterTurrets[i]->getObject()->getBoundingBox().containsPoint(touchLoc))
 		{
-			x = i;
 			prevPos = starterTurrets[i]->getPosition();
-			//starterTurrets[i]->showTurretRange();
-			//selectedTurret = new Turret(*starterTurrets[i]);
 			Turret *turret = new Turret(starterTurrets[i]->getTurretInfo().image);
 			turret->getTurretInfo() = starterTurrets[i]->getTurretInfo();
 			turret->getTurretStats() = starterTurrets[i]->getTurretStats();
@@ -115,8 +112,6 @@ void TowerDefence::onTouchMoved(cocos2d::Touch * touch, cocos2d::Event * unused_
 {
 	cocos2d::Vec2 newPosition(selectedTurret->getPosition() + touch->getDelta());
 	selectedTurret->setPosition(newPosition.x, newPosition.y);
-	selectedTurret->showTurretRange();
-	//selectedTurret
 }
 
 void TowerDefence::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event)
@@ -132,12 +127,16 @@ void TowerDefence::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_ev
 			selectedTurret->setPosition(positionOfTileCoord.x, positionOfTileCoord.y);
 			turretManager->addTurret(std::move(selectedTurret));
 			removeChild(selectedTurret->getObject());
+			delete selectedTurret;
+			selectedTurret = nullptr;
 		}
 		else {
 			selectedTurret->getObject()->setPosition(prevPos);
 		}
 	}
-	selectedTurret->hideTurretRange();
+
+	if(selectedTurret)
+		selectedTurret->hideTurretRange();
 }
 
 void TowerDefence::onTouchCancelled(cocos2d::Touch * touch, cocos2d::Event * unused_event)

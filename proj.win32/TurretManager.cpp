@@ -25,6 +25,7 @@ void TurretManager::addTurret(Turret *turret2)
 	turret->getObject()->setPosition(turret2->getObject()->getPosition());
 	turrets.push_back(std::move(turret));
 	scene->addChild(turrets.back()->getObject(), 0);
+	turrets.back()->hideTurretRange();
 }
 
 void TurretManager::update(float deltaTime)
