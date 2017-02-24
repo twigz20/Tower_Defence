@@ -442,3 +442,5 @@ __pycache__/
 # !tools/packages.config
 
 # End of https://www.gitignore.io/api/cocos2dx,c++,visualstudio
+
+/.cocos-project.json
