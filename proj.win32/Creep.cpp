@@ -29,6 +29,20 @@ Creep * Creep::initWithTheGame(TowerDefence * game_, CreepInfo * creepInfo)
 		sprite = Sprite::create(info->image);
 		addChild(sprite);
 
+		Vector<SpriteFrame*> animFrames(6);
+		char str[100] = { 0 };
+		for (int i = 1; i <= 6; i++)
+		{
+			std::stringstream ss;
+			ss << "Graphics/creep/" << info->name << "/" << i << ".png";
+			auto frame = SpriteFrame::create(ss.str().c_str(), Rect(0, 00, 46, 46));
+			animFrames.pushBack(frame);
+			ss.clear();
+		}
+		Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.18f);
+		RepeatForever *animateMovement = RepeatForever::create(Animate::create(animation));
+		sprite->runAction(animateMovement);
+
 		scheduleUpdate();
 	}
 
@@ -458,12 +472,10 @@ void Creep::popStepAndAnimate()
 		if (diff.x > 0)
 		{
 			rotation = RotateTo::create(0.5, 0);
-			//this->runAnimation(_facingRightAnimation);
 		}
 		else
 		{
 			rotation = RotateTo::create(0.5, 180);
-			//this->runAnimation(_facingLeftAnimation);
 		}
 	}
 	else
@@ -471,12 +483,10 @@ void Creep::popStepAndAnimate()
 		if (diff.y > 0)
 		{
 			rotation = RotateTo::create(0.5, 90);
-			//this->runAnimation(_facingForwardAnimation);
 		}
 		else
 		{
 			rotation = RotateTo::create(0.5, 270);
-			//this->runAnimation(_facingBackAnimation);
 		}
 	}
 	sprite->runAction(rotation);

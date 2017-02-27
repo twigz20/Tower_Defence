@@ -10,4 +10,5 @@ CreepInfo::CreepInfo(std::string & creepName)
 	health = creepInfo["health"].GetInt();
 	speed = creepInfo["speed"].GetFloat();
 	gold = creepInfo["gold"].GetInt();
+	name = creepInfo["name"].GetString();
 }
