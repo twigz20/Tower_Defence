@@ -1,6 +1,7 @@
 #include "LevelManager.h"
 #include "TowerDefenceScene.h"
 
+
 using namespace cocos2d;
 
 void LevelManager::initCreepManager()
@@ -120,22 +121,36 @@ LevelManager::~LevelManager()
 void LevelManager::update(float deltaTime)
 {
 	if (levelStarted) {
-		if(creepManager->hasNextCreep()) 
+		if (creepManager->hasNextCreep())
 		{
 			float time = t.GetTicks();
-			float startDelay = creepManager->getNextCreep()->getStartDelay()*1000;
+			float startDelay = creepManager->getNextCreep()->getStartDelay() * 1000;
 			if (time >= startDelay) {
 				creepManager->getNextCreep()->moveToward(end);
 				creepManager->popCreep();
 				t.Reset();
 			}
 		}
-		if(creepAmountForCurrentWave == 0) 
+		if (creepAmountForCurrentWave == 0)
 		{
 			levelStarted = false;
 			levelFinished = true;
+			cleanUpCreeps();
 			populateCreepManager();
 		}
+
+		std::vector<Creep*> creeps = creepManager->getCreepsInPlay();
+		for (int i = 0; i < turretManager->getPlacedTurrets().size(); i++) {
+			for (int j = 0; j < creeps.size(); j++) {
+				cocos2d::Rect rect = creeps[j]->getObject()->getBoundingBox();
+				if (turretManager->checkCollision(i, rect)) {
+					CCLOG("%s is Shooting %s", turretManager->getPlacedTurrets().at(i)->getTurretInfo().name.c_str(), std::string("A Creep").c_str());
+					turretManager->getPlacedTurrets().at(i)->rotateToTarget(creeps[j]);
+				}
+			}
+		}
+
+		turretManager->update(deltaTime);
 	}
 }
 
@@ -161,6 +176,12 @@ void LevelManager::setWayPoints(cocos2d::Vec2 start, cocos2d::Vec2 end)
 {
 	this->start = start;
 	this->end = end;
+}
+
+void LevelManager::cleanUpCreeps()
+{
+	creepManager->cleanUpCreeps();
+	turretManager->cleanUpTargets();
 }
 
 bool LevelManager::isValidTileCoord(cocos2d::Point tileCoord)
@@ -272,4 +293,9 @@ cocos2d::Vec2 LevelManager::getEndPoint()
 cocos2d::TMXLayer * LevelManager::getBackgroundLayer()
 {
 	return _bgLayer;
+}
+
+void LevelManager::addTurretManager(TurretManager * manager)
+{
+	turretManager = manager;
 }

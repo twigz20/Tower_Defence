@@ -6,7 +6,8 @@ using namespace rapidjson;
 CreepManager::CreepManager(TowerDefence* _scene, LevelManager *levelManager_) :
 	scene(_scene),
 	levelManager(levelManager_),
-	creepAmountForWave(0)
+	creepAmountForWave(0),
+	creepTag(0)
 {
 }
 
@@ -21,12 +22,15 @@ void CreepManager::addCreep(WaveProperties waveProperties)
 {
 	for (int i = 0; i < waveProperties.creepQuantity; i++) {
 		creeps.push(std::move(creepFactory.getCreep(waveProperties.creepName, waveProperties.delay, levelManager, start)));
+		creeps.back()->getObject()->setTag(creepTag++);
 		creepAmountForWave++;
 	}
 }
 
 void CreepManager::popCreep()
 {
+
+	creepsInPlay.push_back(creeps.front());
 	creeps.pop();
 }
 
@@ -51,7 +55,7 @@ CreepManager::CreepFactory::~CreepFactory()
 
 Creep *CreepManager::CreepFactory::getCreep(std::string & creepName, float startDelay, LevelManager *levelManager_, cocos2d::Vec2 start)
 {
-	const Value& creepInfo = creepInfoDoc[creepName.c_str()];
+	const rapidjson::Value& creepInfo = creepInfoDoc[creepName.c_str()];
 
 	Creep *creep = new Creep(creepInfo["source"].GetString());
 	creep->setHealth(creepInfo["health"].GetInt());
@@ -82,4 +86,18 @@ void CreepManager::clearManager()
 	std::queue<Creep*> empty;
 	std::swap(creeps, empty);
 	creepAmountForWave = 0;
+}
+
+std::vector<Creep*> CreepManager::getCreepsInPlay()
+{
+	return creepsInPlay;
+}
+
+void CreepManager::cleanUpCreeps()
+{
+	for (int i = 0; i < creepsInPlay.size(); i++) {
+		delete creepsInPlay[i];
+	}
+
+	creepsInPlay.clear();
 }

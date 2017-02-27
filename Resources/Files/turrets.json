@@ -2,20 +2,20 @@
   "turret-1": {
     "name": "Shooter",
     "image": "Graphics/tower-defense-turrets/turret-1-1.png",
-    "bullet_image": "resource/bullets/missile_1.png",
+    "bullet_image": "Graphics/bullets/missile_1.png",
     "damage":  12,
     "damage2": {
       "from": 11,
       "to": 12
     },
     "cooldown": 1.25,
-    "range": 55,
+    "range": 75,
     "cost": 30
   },
   "turret-2": {
   	"name": "Smasher",
     "image": "Graphics/tower-defense-turrets/turret-2-1.png",
-    "bullet_image": "resource/bullets/fireball_1.png",
+    "bullet_image": "Graphics/bullets/fireball_1.png",
     "damage":  20,
     "damage2": {
       "from": 15,
@@ -28,7 +28,7 @@
   "turret-3": {
     "name": "Defender",
     "image": "Graphics/tower-defense-turrets/turret-3-1.png",
-    "bullet_image": "resource/bullets/shot_1.png",
+    "bullet_image": "Graphics/bullets/shot_1.png",
     "damage":  16,
     "damage2": {
       "from": 12,
@@ -45,7 +45,7 @@
   "turret-4": {
     "name": "Blaster",
     "image": "Graphics/tower-defense-turrets/turret-4-1.png",
-    "bullet_image": "resource/bullets/ball_red_1.png",
+    "bullet_image": "Graphics/bullets/ball_red_1.png",
     "damage":  16,
     "damage2": {
       "from": 12,
@@ -59,7 +59,7 @@
   "turret-5": {
     "name": "Wounder",
     "image": "Graphics/tower-defense-turrets/turret-5-1.png",
-    "bullet_image": "resource/bullets/star_1.png",
+    "bullet_image": "Graphics/bullets/star_1.png",
     "damage":  14,
     "damage2": {
       "from": 11,
@@ -76,7 +76,7 @@
   "turret-6": {
     "name": "Basher",
     "image": "Graphics/tower-defense-turrets/turret-6-1.png",
-    "bullet_image": "resource/bullets/mine_redstar_1.png",
+    "bullet_image": "Graphics/bullets/mine_redstar_1.png",
     "damage":  20,
     "damage2": {
       "from": 15,
@@ -93,7 +93,7 @@
   "turret-7": {
     "name": "Destroyer",
     "image": "Graphics/tower-defense-turrets/turret-7-1.png",
-    "bullet_image": "resource/bullets/wave_small_1.png",
+    "bullet_image": "Graphics/bullets/wave_small_1.png",
     "damage":  25,
     "damage2": {
       "from": 20,

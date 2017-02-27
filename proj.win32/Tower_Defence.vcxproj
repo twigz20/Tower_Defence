@@ -147,6 +147,8 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\TowerDefenceScene.cpp" />
     <ClCompile Include="BaseObject.cpp" />
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="CGCircle.cpp" />
     <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Creep.cpp" />
@@ -162,6 +164,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\TowerDefenceScene.h" />
     <ClInclude Include="BaseObject.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="BulletInfo.h" />
+    <ClInclude Include="CGCircle.h" />
     <ClInclude Include="LevelManager.h" />
     <ClInclude Include="CreepManager.h" />
     <ClInclude Include="timer.h" />

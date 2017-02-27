@@ -19,12 +19,14 @@ class CreepManager
 
 	CreepFactory creepFactory;
 	std::queue<Creep*> creeps;
+	std::vector<Creep*> creepsInPlay;
 
 	TowerDefence* scene;
 	LevelManager *levelManager;
 
 	cocos2d::Vec2 start, end;
 	int creepAmountForWave;
+	int creepTag;
 public:
 	CreepManager(TowerDefence* scene, LevelManager *levelManager);
 	~CreepManager();
@@ -37,5 +39,7 @@ public:
 	void setWayPoints(cocos2d::Vec2 start, cocos2d::Vec2 end);
 	int getCreepAmountForWave();
 	void clearManager();
+	std::vector<Creep*> getCreepsInPlay();
+	void cleanUpCreeps();
 };
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "WaveManager.h"
 #include "CreepManager.h"
+#include "TurretManager.h"
 #include "proj.win32\timer.h"
 
 class TowerDefence;
@@ -9,6 +10,7 @@ class LevelManager : public cocos2d::Object
 	TowerDefence* scene;
 	WaveManager *waveManager;
 	CreepManager *creepManager;
+	TurretManager *turretManager;
 
 	bool levelStarted;
 	bool levelFinished;
@@ -42,6 +44,7 @@ public:
 	void endLevel();
 	void decreaseCreepAmount();
 	void setWayPoints(cocos2d::Vec2 start, cocos2d::Vec2 end);
+	void cleanUpCreeps();
 
 	bool isValidTileCoord(cocos2d::Point tileCoord);
 	bool isWallAtTileCoord(cocos2d::Point tileCoord);
@@ -60,5 +63,6 @@ public:
 	cocos2d::Vec2 getEndPoint();
 
 	cocos2d::TMXLayer *getBackgroundLayer();
+	void addTurretManager(TurretManager* manager);
 };
 

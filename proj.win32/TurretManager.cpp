@@ -21,11 +21,16 @@ TurretManager::~TurretManager()
 void TurretManager::addTurret(Turret *turret_)
 {
 	turrets.push_back(new Turret(std::move(*turret_)));
+	turrets.back()->addCircle();
+	turrets.back()->setScene(scene);
 	scene->addChild(turrets.back()->getObject(), 0);
 }
 
 void TurretManager::update(float deltaTime)
 {
+	for (int i = 0; i < turrets.size(); i++) {
+		turrets[i]->update(deltaTime);
+	}
 }
 
 TurretFactory::TurretFactory()
@@ -44,7 +49,7 @@ bool TurretFactory::turretExist(std::string & turretName)
 
 Turret * TurretFactory::getTurret(std::string & turretName)
 {
-	const Value& turretInfo = turretInfoDoc[turretName.c_str()];
+	const rapidjson::Value& turretInfo = turretInfoDoc[turretName.c_str()];
 
 	Turret *turret = new Turret(turretInfo["image"].GetString());
 	turret->getTurretInfo().name = turretInfo["name"].GetString();
@@ -56,6 +61,9 @@ Turret * TurretFactory::getTurret(std::string & turretName)
 	turret->getTurretStats().cost = turretInfo["cost"].GetInt();
 	turret->getObject()->setName(turret->getTurretInfo().name);
 	turret->getObject()->setAnchorPoint(cocos2d::Vec2(0.5f, 0.5f));
+	turret->getBulletInfo().image = turretInfo["bullet_image"].GetString();
+	turret->getBulletInfo().damage_to = turret->getTurretStats().damage;
+	turret->getBulletInfo().damage_from = turret->getTurretStats().damage;
 
 	return turret;
 }
@@ -126,4 +134,16 @@ void TurretManager::selectTurret(int index)
 void TurretManager::unselectTurret()
 {
 	currentSelectedTurret = -1;
+}
+
+bool TurretManager::checkCollision(int index, cocos2d::Rect rect)
+{
+	return turrets[index]->checkCollision(rect);
+}
+
+void TurretManager::cleanUpTargets()
+{
+	for (int i = 0; i < turrets.size(); i++) {
+		turrets[i]->removeTarget();
+	}
 }

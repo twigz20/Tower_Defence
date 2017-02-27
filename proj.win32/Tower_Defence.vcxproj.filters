@@ -40,6 +40,8 @@
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="Turret.cpp" />
     <ClCompile Include="TurretManager.cpp" />
+    <ClCompile Include="CGCircle.cpp" />
+    <ClCompile Include="Bullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -70,6 +72,9 @@
     <ClInclude Include="timer.h" />
     <ClInclude Include="Turret.h" />
     <ClInclude Include="TurretManager.h" />
+    <ClInclude Include="CGCircle.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="BulletInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

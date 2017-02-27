@@ -45,6 +45,7 @@ bool TowerDefence::init()
     
 	levelManager = new LevelManager(this);
 	turretManager = new TurretManager(this, levelManager);
+	levelManager->addTurretManager(turretManager);
 
 	setStartedTurrets();
 

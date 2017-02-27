@@ -1,10 +1,14 @@
 #pragma once
 #include "BaseObject.h"
+#include "CGCircle.h"
+#include "BulletInfo.h"
+#include "Bullet.h"
+
 #define TURRET_RANGE_INDICATOR 1000
 
 class LevelManager;
 class TowerDefence;
-
+class Creep;
 class Turret;
 
 struct Turret_Info {
@@ -32,6 +36,7 @@ class Turret : public BaseObject
 		TurretRangeIndicator(Turret* turret_);
 		void show();
 		void hide();
+		cocos2d::DrawNode *getTurretRange();
 	};
 
 	TurretRangeIndicator *rangeIndicator;
@@ -39,6 +44,10 @@ class Turret : public BaseObject
 
 	TowerDefence *_layer;
 	LevelManager *levelManager;
+	CGCircle *circle;
+	Creep* target;
+	BulletInfo bulletInfo;
+	std::list<Bullet*> m_Bullets;
 public:
 	Turret(const std::string& turret_);
 	Turret(const Turret& other);
@@ -49,12 +58,21 @@ public:
 	Turret_Stats& getTurretStats();
 	Turret_Info& getTurretInfo();
 	void update(float deltaTime);
-	void rotateToTarget(cocos2d::Point target);
+	void rotateToTarget(Creep* target);
+	void shootTarget(Creep* target);
 
 	void showTurretRange();
 	void hideTurretRange();
 	void setScene(TowerDefence* scene);
 
 	void addRangeIndicator();
+	cocos2d::DrawNode *getTurretRange();
+	void addCircle();
+	bool checkCollision(cocos2d::Rect rect);
+
+	void setTarget(Creep *creep);
+	bool hasTarget();
+	void removeTarget();
+	BulletInfo& getBulletInfo();
 };
 

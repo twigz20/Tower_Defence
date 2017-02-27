@@ -49,6 +49,9 @@ public:
 	bool isATurretSelected();
 	void selectTurret(int index);
 	void unselectTurret();
+
+	bool checkCollision(int index, cocos2d::Rect rect);
+	void cleanUpTargets();
 };
 
 

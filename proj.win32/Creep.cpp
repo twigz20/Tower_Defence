@@ -358,8 +358,7 @@ void Creep::popStepAndAnimate()
 
 	if (levelManager->isExitAtTilecoord(currentPosition))
 	{
-		//levelManager->winGame();
-		object->removeFromParentAndCleanup(true);
+		object->setVisible(false);
 		levelManager->decreaseCreepAmount();
 		return;
 	}
@@ -399,7 +398,6 @@ void Creep::popStepAndAnimate()
 	}
 
 	// Setup and callback
-	CCLOG("%.f", getSpeed() / 100);
 	MoveTo *moveAction = MoveTo::create(getSpeed() /100, levelManager->positionForTileCoord(s->getPosition()));
 	CallFunc *moveCallback = CallFunc::create(CC_CALLBACK_0(Creep::popStepAndAnimate, this));
 

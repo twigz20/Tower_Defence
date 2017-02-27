@@ -22,7 +22,6 @@ WaveManager::WaveManager()
 			waveMinionProperties.creepQuantity = wavesInfo[j]["quantity"].GetInt();
 			waveMinionProperties.delay = wavesInfo[j]["delay"].GetFloat();
 			w.addWaveProperties(waveMinionProperties);
-			CCLOG("Wav Property Added!");
 		}
 		waves.push(w);
 	}
