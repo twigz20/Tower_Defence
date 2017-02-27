@@ -25,6 +25,8 @@ class Turret : public cocos2d::Node
 
 	CGCircle *rangeIndicator;
 	void addRangeIndicator();
+
+	cocos2d::DrawNode *range;
 public:
 	Turret(bool isStarterTurret = false);
 	Turret(const Turret& other);
@@ -43,7 +45,7 @@ public:
 	cocos2d::Rect getBoundingBox() const;
 
 	void activateTurret();
-	TurretInfo& getTurretInfo();
+	TurretInfo* getTurretInfo();
 	void showRange();
 	void hideRange();
 

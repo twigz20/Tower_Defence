@@ -7,15 +7,15 @@
 #define CREEP_FILE "Files/creep.json"
 #define TURRET_FILE "Files/turrets.json"
 #define TILE_TAKEN 200
+#define TURRET_STATS_TAG 201
+#define TURRET_STATS_BACKGROUND "Graphics/tower-defense/stats-background.png"
+#define TURRET_STAT_CURRENT "Graphics/tower-defense/stat-current.png"
+#define TURRET_STAT_UPGRADE "Graphics/tower-defense/stat-upgrade.png"
 
 
 #include <string>
 #include <fstream>
-
-enum WindowType
-{
-	FULL, MODAL
-};
+#include <sstream>
 
 enum States { NONE, CHOOSECREEP, BUYSTATE, TURRETCLICK, TURRETTRACKSTATE, SPLASHSTATE, MAINMENU, PLAY, MULTIPLAYER, SETTINGS, HIGHSCORELIST };
 

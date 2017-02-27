@@ -15,5 +15,6 @@ TurretInfo::TurretInfo(std::string & turretName)
 	cooldown = turretInfo["cooldown"].GetFloat();
 	range = turretInfo["range"].GetInt();
 	cost = turretInfo["cost"].GetInt();
+	level = 1;
 }
 

@@ -40,6 +40,7 @@
     <ClCompile Include="CGCircle.cpp" />
     <ClCompile Include="CreepInfo.cpp" />
     <ClCompile Include="TurretInfo.cpp" />
+    <ClCompile Include="TurretStatsDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -70,6 +71,7 @@
     <ClInclude Include="CGCircle.h" />
     <ClInclude Include="CreepInfo.h" />
     <ClInclude Include="TurretInfo.h" />
+    <ClInclude Include="TurretStatsDisplay.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

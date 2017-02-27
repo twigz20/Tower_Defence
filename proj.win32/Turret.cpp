@@ -3,10 +3,12 @@
 #include "Creep.h"
 #include "levelManager.h"
 #include "CGCircle.h"
+#define TURRET_RANGE_INDICATOR 1000
 
 using namespace cocos2d;
 Turret::Turret(bool isStarterTurret) :
 	info(nullptr),
+	range(nullptr),
 	displayRange(false),
 	chosenCreep(nullptr),
 	starterTurret(isStarterTurret),
@@ -16,6 +18,7 @@ Turret::Turret(bool isStarterTurret) :
 
 Turret::Turret(const Turret & other) :
 	info(nullptr),
+	range(nullptr),
 	displayRange(false),
 	chosenCreep(nullptr)
 {
@@ -23,6 +26,7 @@ Turret::Turret(const Turret & other) :
 	game = other.game;
 	starterTurret = false;
 	turretActive = other.turretActive;
+	range = other.range;
 	displayRange = other.displayRange;
 	nodeWithTheGame(game, info);
 	setPosition(other.getPosition());
@@ -30,6 +34,7 @@ Turret::Turret(const Turret & other) :
 
 Turret::Turret(Turret && other) :
 	info(nullptr),
+	range(nullptr),
 	displayRange(false),
 	chosenCreep(nullptr)
 {
@@ -40,6 +45,7 @@ Turret& Turret::operator=(Turret&& other) {
 	if (this != &other) {
 		info = other.info;
 		game = other.game;
+		range = other.range;
 		displayRange = other.displayRange;
 		starterTurret = false;
 		turretActive = other.turretActive;
@@ -48,6 +54,7 @@ Turret& Turret::operator=(Turret&& other) {
 
 		other.info = nullptr;
 		other.game = nullptr;
+		other.range = nullptr;
 	}
 	return std::move(*this);
 }
@@ -58,6 +65,22 @@ Turret::~Turret()
 
 void Turret::addRangeIndicator()
 {
+	range = cocos2d::DrawNode::create();
+	range->drawCircle(
+		cocos2d::Vec2(
+			getPosition().x + sprite->getContentSize().width/2,
+			getPosition().y + sprite->getContentSize().height/2
+		),
+		info->range, 
+		360, 
+		60, 
+		false, 
+		cocos2d::Color4F::GREEN
+	);
+	range->setTag(TURRET_RANGE_INDICATOR);
+	sprite->addChild(range, -1);
+	hideRange();
+
 	rangeIndicator = new CGCircle(
 		info->range,
 		getPosition()
@@ -137,10 +160,10 @@ void Turret::draw(cocos2d::Renderer * renderer, const cocos2d::Mat4 & transform,
 
 void Turret::onDraw(const cocos2d::kmMat4 & transform, uint32_t flags)
 {
-	if (displayRange) {
+	/*if (displayRange) {
 		ccDrawColor4B(0, 255, 0, 255);
 		ccDrawCircle(sprite->getPosition(), info->range, 360, 60, false);
-	}
+	}*/
 }
 
 void Turret::activateTurret()
@@ -148,19 +171,19 @@ void Turret::activateTurret()
 	turretActive = true;
 }
 
-TurretInfo& Turret::getTurretInfo()
+TurretInfo* Turret::getTurretInfo()
 {
-	return *info;
+	return info;
 }
 
 void Turret::showRange()
 {
-	displayRange = true;
+	sprite->getChildByTag(TURRET_RANGE_INDICATOR)->setVisible(true);
 }
 
 void Turret::hideRange()
 {
-	displayRange = false;
+	sprite->getChildByTag(TURRET_RANGE_INDICATOR)->setVisible(false);
 }
 
 void Turret::setPosition(const cocos2d::Vec2 & position)
@@ -179,7 +202,6 @@ cocos2d::Rect Turret::getBoundingBox() const
 	return sprite->getBoundingBox();
 }
 
-// Add the following methods
 void Turret::attackEnemy()
 {
 	if (!chosenCreep->isDead())
@@ -237,7 +259,8 @@ void Turret::lostSightOfEnemy()
 
 void Turret::rotateToTarget()
 {
-	cocos2d::Vec2 normalized = ccpNormalize(ccp(chosenCreep->getPosition().x - getPosition().x,
-		chosenCreep->getPosition().y - getPosition().y));
+	cocos2d::Vec2 normalized(chosenCreep->getPosition().x - getPosition().x,
+		chosenCreep->getPosition().y - getPosition().y);
+	normalized.normalize();
 	sprite->setRotation(CC_RADIANS_TO_DEGREES(atan2(normalized.y, -normalized.x)) + 270);
 }

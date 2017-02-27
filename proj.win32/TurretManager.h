@@ -47,6 +47,7 @@ public:
 	bool isEmpty();
 	bool isATurretSelected();
 	void selectTurret(int index);
+	Turret* getSelectedTurret();
 	void unselectTurret();
 };
 

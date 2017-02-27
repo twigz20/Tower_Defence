@@ -114,6 +114,11 @@ void TurretManager::selectTurret(int index)
 	currentSelectedTurret = index;
 }
 
+Turret * TurretManager::getSelectedTurret()
+{
+	return turrets[currentSelectedTurret];
+}
+
 void TurretManager::unselectTurret()
 {
 	currentSelectedTurret = -1;

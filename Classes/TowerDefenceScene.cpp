@@ -2,6 +2,7 @@
 #include "SimpleAudioEngine.h"
 #include "proj.win32\LevelManager.h"
 #include "proj.win32\TurretManager.h"
+#include "proj.win32\TurretStatsDisplay.h"
 #include <sstream>
 
 USING_NS_CC;
@@ -113,6 +114,18 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 			selectedTurret->showRange();
 			selectedTurret->setTag(SELECTED_TURRET);
 			addChild(selectedTurret, 1);
+
+			TurretStatsDisplay *tsd = new TurretStatsDisplay();
+			tsd->nodeWithTheGame(
+				this,
+				starterTurrets[i]->getTurretInfo(),
+				cocos2d::Vec2(
+					Director::getInstance()->getVisibleSize().width * 0.77,
+					Director::getInstance()->getVisibleSize().height * 0.10)
+			);
+			tsd->setTag(TURRET_STATS_TAG);
+			addChild(tsd);
+
 			return true;
 		}
 	}
@@ -120,9 +133,22 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 	for (int i = 0; i < turretManager->getPlacedTurrets().size(); i++) {
 		if (turretManager->getPlacedTurrets().at(i)->getBoundingBox().containsPoint(touchLoc))
 		{
-			prevPos = turretManager->getPlacedTurrets().at(i)->getPosition();
 			turretManager->selectTurret(i);
 			turretManager->showSelectedTurretRange();
+			prevPos = turretManager->getSelectedTurret()->getPosition();
+
+			TurretStatsDisplay *tsd = new TurretStatsDisplay();
+			tsd->nodeWithTheGame(
+				this,
+				turretManager->getSelectedTurret()->getTurretInfo(),
+				cocos2d::Vec2(
+					turretManager->getSelectedTurret()->getPosition().x + levelManager->getMap()->getTileSize().width / 2,
+					turretManager->getSelectedTurret()->getPosition().y - levelManager->getMap()->getTileSize().height / 2
+				)
+			);
+			tsd->setTag(TURRET_STATS_TAG);
+			turretManager->getSelectedTurret()->addChild(tsd,1);
+
 			return true;
 		}
 	}
@@ -151,15 +177,18 @@ void TowerDefence::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_ev
 				selectedTurret->setPosition(positionOfTileCoord);
 				turretManager->addTurret(selectedTurret);
 				removeChildByTag(SELECTED_TURRET);
-				return;
 			}
 		}
 
 		selectedTurret->removeFromParentAndCleanup(true);
 	}
 
-	if (!turretManager->isATurretSelected())
+	if (!turretManager->isATurretSelected()) {
 		turretManager->hideSelectedTurretRange();
+		turretManager->getSelectedTurret()->removeChildByTag(TURRET_STATS_TAG);
+	}
+
+	removeChildByTag(TURRET_STATS_TAG);
 }
 
 void TowerDefence::onTouchCancelled(cocos2d::Touch * touch, cocos2d::Event * unused_event)

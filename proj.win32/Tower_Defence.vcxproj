@@ -157,6 +157,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="Turret.cpp" />
     <ClCompile Include="TurretInfo.cpp" />
     <ClCompile Include="TurretManager.cpp" />
+    <ClCompile Include="TurretStatsDisplay.cpp" />
     <ClCompile Include="Wave.cpp" />
     <ClCompile Include="WaveManager.cpp" />
   </ItemGroup>
@@ -171,6 +172,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="Turret.h" />
     <ClInclude Include="TurretInfo.h" />
     <ClInclude Include="TurretManager.h" />
+    <ClInclude Include="TurretStatsDisplay.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Creep.h" />

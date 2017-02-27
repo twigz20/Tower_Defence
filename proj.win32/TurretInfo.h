@@ -10,6 +10,7 @@ struct TurretInfo
 	std::string name;
 	std::string bullet;
 	std::string image;
+	int level;
 
 	int damage;
 	float cooldown;
