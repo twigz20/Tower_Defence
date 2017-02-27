@@ -17,6 +17,8 @@ class TurretStatsDisplay : public cocos2d::Node
 	void setupRangeDisplay();
 	int calculateDisplayBarAmount(std::string type);
 
+	cocos2d::Label * costLabel;
+
 public:
 	TurretStatsDisplay();
 	~TurretStatsDisplay();
@@ -31,5 +33,7 @@ public:
 	void changeTurret(TurretInfo *turretInfo);
 	void show();
 	void hide();
+	void showCost();
+	void hideCost();
 };
 

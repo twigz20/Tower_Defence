@@ -1,6 +1,9 @@
 #include "LevelManager.h"
 #include "TowerDefenceScene.h"
+#include "Utils.h"
 
+#define GOLD_LABEL 20
+#define HEALTH_LABEL 21
 
 using namespace cocos2d;
 
@@ -87,13 +90,45 @@ bool LevelManager::hasProperty(std::string name, cocos2d::Vec2 tileCoord, cocos2
 	return false;
 }
 
+void LevelManager::setupUi()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+
+	std::stringstream g;
+	g << "Gold: " << gold;
+	goldLabel = Label::createWithSystemFont(g.str(), "Arial", 18);
+	goldLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
+	goldLabel->setPosition(
+		visibleSize.width * 0.78,
+		visibleSize.height * 0.95
+	);
+	goldLabel->setColor(cocos2d::Color3B::GREEN);
+	goldLabel->setTag(GOLD_LABEL);
+	game->addChild(goldLabel);
+
+	std::stringstream hp;
+	hp << "HP: " << health;
+	healthLabel = Label::createWithSystemFont(hp.str(), "Arial", 18);
+	healthLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
+	healthLabel->setPosition(
+		visibleSize.width * 0.90,
+		visibleSize.height * 0.95
+	);
+	healthLabel->setColor(cocos2d::Color3B::GREEN);
+	healthLabel->setTag(HEALTH_LABEL);
+	game->addChild(healthLabel);
+}
+
 LevelManager::LevelManager(TowerDefence* game_) :
 	game(game_),
 	levelStarted(false),
 	levelFinished(false),
-	creepAmountForCurrentWave(0)
+	creepAmountForCurrentWave(0),
+	gold(100),
+	health(20)
 {
 	setBackground();
+	setupUi();
 	loadMap(INITIAL_MAP_FILE);
 	loadStartPoint();
 	loadEndPoint();
@@ -266,4 +301,37 @@ cocos2d::TMXLayer * LevelManager::getBackgroundLayer()
 CreepManager *LevelManager::getCreepManager()
 {
 	return creepManager;
+}
+
+int LevelManager::getGold()
+{
+	return gold;
+}
+
+int LevelManager::getHealth()
+{
+	return health;
+}
+
+void LevelManager::increaseGold(int gold)
+{
+	this->gold += gold;
+	std::stringstream g;
+	g << "Gold: " << this->gold;
+	goldLabel->setString(g.str());
+}
+
+void LevelManager::decreaseGold(int gold)
+{
+	this->gold -= gold;
+	std::stringstream g;
+	g << "Gold: " << this->gold;
+	goldLabel->setString(g.str());
+}
+
+void LevelManager::decreaseHealth()
+{
+	std::stringstream hp;
+	hp << "HP: " << --this->health;
+	healthLabel->setString(hp.str());
 }

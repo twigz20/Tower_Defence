@@ -236,7 +236,7 @@ void Turret::removeBullet(Sprite *bullet)
 
 void Turret::damageEnemy()
 {
-	if(!chosenCreep->isDead())
+	if(chosenCreep && !chosenCreep->isDead())
 		chosenCreep->getDamaged(info->damage);
 }
 

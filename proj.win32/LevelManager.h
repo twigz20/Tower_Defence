@@ -33,6 +33,13 @@ class LevelManager : public cocos2d::Object
 	void loadEndPoint();
 
 	bool hasProperty(std::string name, cocos2d::Vec2 tileCoord, cocos2d::TMXLayer *layer);
+	
+	cocos2d::Label * goldLabel;
+	int gold;
+	cocos2d::Label * healthLabel;
+	int health;
+
+	void setupUi();
 
 public:
 	explicit LevelManager(TowerDefence* game_);
@@ -61,5 +68,11 @@ public:
 	cocos2d::TMXLayer *getBackgroundLayer();
 
 	CreepManager *getCreepManager();
+
+	int getGold();
+	int getHealth();
+	void increaseGold(int gold);
+	void decreaseGold(int gold);
+	void decreaseHealth();
 };
 

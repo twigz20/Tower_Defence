@@ -256,6 +256,7 @@ void Creep::getRemoved()
 {
 	currentHP = 0;
 	dead = true;
+	game->getLevelManager()->increaseGold(info->gold);
 }
 
 void Creep::getAttacked(Turret * attacker)
@@ -452,6 +453,7 @@ void Creep::popStepAndAnimate()
 	if (game->getLevelManager()->isExitAtTilecoord(currentPosition))
 	{
 		missionComplete = true;
+		game->getLevelManager()->decreaseHealth();
 		return;
 	}
 

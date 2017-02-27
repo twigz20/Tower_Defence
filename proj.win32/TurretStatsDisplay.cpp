@@ -46,6 +46,17 @@ void TurretStatsDisplay::setupDisplay()
 	setupDamageDisplay();
 	setupFireRateDisplay();
 	setupRangeDisplay();
+
+	std::stringstream cost;
+	cost << "Cost: " << info->cost;
+	costLabel = Label::createWithSystemFont(cost.str(), "Arial", 18);
+	costLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
+	costLabel->setPosition(
+		sprite->getPosition().x + ((sprite->getContentSize().width * 1.5) * 0.07),
+		sprite->getPosition().y - ((sprite->getContentSize().width * 1.5) * 0.20)
+	);
+	costLabel->setColor(cocos2d::Color3B::GRAY);
+	addChild(costLabel);
 }
 
 void TurretStatsDisplay::setupDamageDisplay()
@@ -176,6 +187,16 @@ int TurretStatsDisplay::calculateDisplayBarAmount(std::string type)
 	}
 
 	return bars;
+}
+
+void TurretStatsDisplay::showCost()
+{
+	costLabel->setVisible(true);
+}
+
+void TurretStatsDisplay::hideCost()
+{
+	costLabel->setVisible(false);
 }
 
 TurretStatsDisplay::TurretStatsDisplay() :

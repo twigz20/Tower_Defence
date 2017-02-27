@@ -106,7 +106,7 @@ bool TurretManager::isEmpty()
 
 bool TurretManager::isATurretSelected()
 {
-	return currentSelectedTurret == -1;
+	return currentSelectedTurret != -1;
 }
 
 void TurretManager::selectTurret(int index)

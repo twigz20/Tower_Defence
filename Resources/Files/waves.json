@@ -5,22 +5,37 @@
       "Wave": [
         {
           "minion": "creep-1-yellow",
-          "quantity": 1,
+          "quantity": 3,
           "delay": 1.5
         },
         {
           "minion": "creep-1-red",
+          "quantity": 1,
+          "delay": 5.0
+        },
+        {
+          "minion": "creep-1-red",
           "quantity": 2,
-          "delay": 1.75
+          "delay": 1.5
         },
         {
 					"minion": "creep-1-green",
-					"quantity": 3,
+					"quantity": 1,
+					"delay": 4.5
+				},
+        {
+					"minion": "creep-1-green",
+					"quantity": 2,
 					"delay": 2.0
 				},
         {
 					"minion": "creep-1-blue",
-					"quantity": 2,
+					"quantity": 1,
+					"delay": 5.0
+				},
+        {
+					"minion": "creep-1-blue",
+					"quantity": 1,
 					"delay": 1.5
 				}
       ]

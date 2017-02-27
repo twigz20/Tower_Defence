@@ -133,6 +133,11 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 	for (int i = 0; i < turretManager->getPlacedTurrets().size(); i++) {
 		if (turretManager->getPlacedTurrets().at(i)->getBoundingBox().containsPoint(touchLoc))
 		{
+			if (turretManager->isATurretSelected()) {
+				turretManager->hideSelectedTurretRange();
+				turretManager->getSelectedTurret()->removeChildByTag(TURRET_STATS_TAG);
+			}
+
 			turretManager->selectTurret(i);
 			turretManager->showSelectedTurretRange();
 			prevPos = turretManager->getSelectedTurret()->getPosition();
@@ -146,11 +151,17 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 					turretManager->getSelectedTurret()->getPosition().y - levelManager->getMap()->getTileSize().height / 2
 				)
 			);
+			tsd->hideCost();
 			tsd->setTag(TURRET_STATS_TAG);
 			turretManager->getSelectedTurret()->addChild(tsd,1);
 
 			return true;
 		}
+	}
+
+	if (turretManager->isATurretSelected()) {
+		turretManager->hideSelectedTurretRange();
+		turretManager->getSelectedTurret()->removeChildByTag(TURRET_STATS_TAG);
 	}
 
 	return false;
@@ -166,26 +177,27 @@ void TowerDefence::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_ev
 {
 	if (selectedTurret) 
 	{
-		selectedTurret->hideRange();
-		cocos2d::Vec2 tileCoordForTowerPosition = levelManager->tileCoordForPosition(selectedTurret->getPosition());
-
-		if (levelManager->isWallAtTileCoord(tileCoordForTowerPosition)) 
+		if (levelManager->getGold() >= selectedTurret->getTurretInfo()->cost) 
 		{
-			cocos2d::Vec2 positionOfTileCoord = levelManager->positionForTileCoord(tileCoordForTowerPosition);
-			if (!turretManager->hasTurretAtCoord(positionOfTileCoord)) 
+			selectedTurret->hideRange();
+			cocos2d::Vec2 tileCoordForTowerPosition = levelManager->tileCoordForPosition(selectedTurret->getPosition());
+
+			if (levelManager->isWallAtTileCoord(tileCoordForTowerPosition))
 			{
-				selectedTurret->setPosition(positionOfTileCoord);
-				turretManager->addTurret(selectedTurret);
-				removeChildByTag(SELECTED_TURRET);
+				cocos2d::Vec2 positionOfTileCoord = levelManager->positionForTileCoord(tileCoordForTowerPosition);
+				if (!turretManager->hasTurretAtCoord(positionOfTileCoord))
+				{
+					levelManager->decreaseGold(selectedTurret->getTurretInfo()->cost);
+					selectedTurret->setPosition(positionOfTileCoord);
+					turretManager->addTurret(selectedTurret);
+					removeChildByTag(SELECTED_TURRET);
+				}
 			}
 		}
 
 		selectedTurret->removeFromParentAndCleanup(true);
-	}
-
-	if (!turretManager->isATurretSelected()) {
-		turretManager->hideSelectedTurretRange();
-		turretManager->getSelectedTurret()->removeChildByTag(TURRET_STATS_TAG);
+		delete selectedTurret;
+		selectedTurret = nullptr;
 	}
 
 	removeChildByTag(TURRET_STATS_TAG);
