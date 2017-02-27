@@ -450,16 +450,19 @@ void Creep::popStepAndAnimate()
 	// The resulting motion next steps
 	ShortestPathStep *s = _shortestPath.at(0);
 
+	RotateTo *rotation;
 	Point futurePosition = s->getPosition();
 	Point diff = futurePosition - currentPosition;
 	if (abs(diff.x) > abs(diff.y))
 	{
 		if (diff.x > 0)
 		{
+			rotation = RotateTo::create(0.5, 0);
 			//this->runAnimation(_facingRightAnimation);
 		}
 		else
 		{
+			rotation = RotateTo::create(0.5, 180);
 			//this->runAnimation(_facingLeftAnimation);
 		}
 	}
@@ -467,13 +470,16 @@ void Creep::popStepAndAnimate()
 	{
 		if (diff.y > 0)
 		{
+			rotation = RotateTo::create(0.5, 90);
 			//this->runAnimation(_facingForwardAnimation);
 		}
 		else
 		{
+			rotation = RotateTo::create(0.5, 270);
 			//this->runAnimation(_facingBackAnimation);
 		}
 	}
+	sprite->runAction(rotation);
 
 	// Setup and callback
 	MoveTo *moveAction = MoveTo::create(info->speed, game->getLevelManager()->positionForTileCoord(s->getPosition()));

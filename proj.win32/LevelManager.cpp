@@ -176,7 +176,6 @@ bool LevelManager::isExitAtTilecoord(cocos2d::Point tileCoord)
 
 cocos2d::Vec2 LevelManager::tileCoordForPosition(cocos2d::Vec2 position)
 {
-	log("%d", tileMap->getTileSize().width);
 	int x = position.x / tileMap->getTileSize().width;
 	int y = ((tileMap->getMapSize().height * tileMap->getTileSize().height) - position.y) / tileMap->getTileSize().height;
 	return Vec2(x, y);

@@ -209,7 +209,6 @@ void TowerDefence::touchEvent(cocos2d::Ref * sender, cocos2d::ui::Widget::TouchE
 	case cocos2d::ui::Widget::TouchEventType::MOVED:
 		break;
 	case cocos2d::ui::Widget::TouchEventType::ENDED:
-		log("Touch Ended");
 		playGame();
 		break;
 	case cocos2d::ui::Widget::TouchEventType::CANCELED:
