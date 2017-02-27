@@ -6,8 +6,23 @@
         {
           "minion": "creep-1-yellow",
           "quantity": 1,
-          "delay": 1.0
-        }
+          "delay": 1.5
+        },
+        {
+          "minion": "creep-1-red",
+          "quantity": 2,
+          "delay": 1.75
+        },
+        {
+					"minion": "creep-1-green",
+					"quantity": 3,
+					"delay": 2.0
+				},
+        {
+					"minion": "creep-1-blue",
+					"quantity": 2,
+					"delay": 1.5
+				}
       ]
     },
     {

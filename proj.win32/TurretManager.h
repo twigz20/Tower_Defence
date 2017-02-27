@@ -13,12 +13,13 @@ class LevelManager;
 
 class TurretFactory {
 	rapidjson::Document turretInfoDoc;
+	TowerDefence *game;
 public:
-	TurretFactory();
+	TurretFactory(TowerDefence *game_);
 	~TurretFactory();
 
 	bool turretExist(std::string& turretName);
-	Turret *getTurret(std::string& turretName);
+	Turret *getTurret(std::string& turretName, bool isStarterTurret = false);
 };
 
 class TurretManager
@@ -26,17 +27,15 @@ class TurretManager
 	std::vector<Turret*> starterTurrets;
 	std::vector<Turret*> turrets;
 
-	TowerDefence *scene;
-	LevelManager *levelManager;
+	TowerDefence *game;
 
 	TurretFactory turretFactory;
 	int currentSelectedTurret;
 public:
-	TurretManager(TowerDefence* scene_, LevelManager *levelManager_);
+	TurretManager(TowerDefence* game_);
 	~TurretManager();
 
 	void addTurret(Turret *turret);
-	void update(float deltaTime);
 
 	void loadStarterTurrets();
 	std::vector<Turret*> getStarterTurrets();
@@ -49,9 +48,6 @@ public:
 	bool isATurretSelected();
 	void selectTurret(int index);
 	void unselectTurret();
-
-	bool checkCollision(int index, cocos2d::Rect rect);
-	void cleanUpTargets();
 };
 
 

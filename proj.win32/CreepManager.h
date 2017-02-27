@@ -5,30 +5,33 @@
 #include "Utils.h"
 #include "Wave.h"
 #include "TowerDefenceScene.h"
+#include "timer.h"
 
 class CreepManager
 {
 	class CreepFactory {
 		rapidjson::Document creepInfoDoc;
+		TowerDefence* game;
 	public:
-		CreepFactory();
+		CreepFactory(TowerDefence* game_);
 		~CreepFactory();
 
-		Creep *getCreep(std::string& creepName, float startDelay, LevelManager *levelManager_, cocos2d::Vec2 end);
+		Creep *getCreep(std::string& creepName);
 	};
 
-	CreepFactory creepFactory;
+	CreepFactory *creepFactory;
 	std::queue<Creep*> creeps;
 	std::vector<Creep*> creepsInPlay;
 
-	TowerDefence* scene;
-	LevelManager *levelManager;
+	TowerDefence* game;
 
 	cocos2d::Vec2 start, end;
 	int creepAmountForWave;
 	int creepTag;
+
+	SimpleTimer timer;
 public:
-	CreepManager(TowerDefence* scene, LevelManager *levelManager);
+	CreepManager(TowerDefence* game);
 	~CreepManager();
 
 	void addCreep(WaveProperties waveProperties);
@@ -40,6 +43,10 @@ public:
 	int getCreepAmountForWave();
 	void clearManager();
 	std::vector<Creep*> getCreepsInPlay();
-	void cleanUpCreeps();
-};
+	void cleanUpDeadCreeps();
+	void clearCreeps();
 
+	void update(float deltaTime);
+
+	void startCreepTimer();
+};

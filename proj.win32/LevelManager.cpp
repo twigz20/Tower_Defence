@@ -6,7 +6,7 @@ using namespace cocos2d;
 
 void LevelManager::initCreepManager()
 {
-	creepManager = new CreepManager(scene, this);
+	creepManager = new CreepManager(game);
 	creepManager->setWayPoints(start, end);
 }
 
@@ -44,7 +44,7 @@ void LevelManager::setBackground()
 		bgS->setScale(scaleY);
 	}
 	bgS->setPosition(Point(s_visibleRect.origin.x + s_visibleRect.size.width / 2, s_visibleRect.origin.y + s_visibleRect.size.height / 2));
-	scene->addChild(bgS, -2);
+	game->addChild(bgS, -2);
 }
 
 void LevelManager::loadMap(std::string fileName)
@@ -53,7 +53,7 @@ void LevelManager::loadMap(std::string fileName)
 	tileMap = cocos2d::TMXTiledMap::createWithXML(str->getCString(), "");
 	tileMap->retain();
 	_bgLayer = tileMap->layerNamed("Background");
-	scene->addChild(tileMap, -1);
+	game->addChild(tileMap, -1);
 }
 
 void LevelManager::loadStartPoint()
@@ -87,8 +87,8 @@ bool LevelManager::hasProperty(std::string name, cocos2d::Vec2 tileCoord, cocos2
 	return false;
 }
 
-LevelManager::LevelManager(TowerDefence* _scene) :
-	scene(_scene),
+LevelManager::LevelManager(TowerDefence* game_) :
+	game(game_),
 	levelStarted(false),
 	levelFinished(false),
 	creepAmountForCurrentWave(0)
@@ -121,36 +121,16 @@ LevelManager::~LevelManager()
 void LevelManager::update(float deltaTime)
 {
 	if (levelStarted) {
-		if (creepManager->hasNextCreep())
-		{
-			float time = t.GetTicks();
-			float startDelay = creepManager->getNextCreep()->getStartDelay() * 1000;
-			if (time >= startDelay) {
-				creepManager->getNextCreep()->moveToward(end);
-				creepManager->popCreep();
-				t.Reset();
-			}
-		}
+		
+		creepManager->update(deltaTime);
+
 		if (creepAmountForCurrentWave == 0)
 		{
 			levelStarted = false;
 			levelFinished = true;
-			cleanUpCreeps();
+			creepManager->clearCreeps();
 			populateCreepManager();
 		}
-
-		std::vector<Creep*> creeps = creepManager->getCreepsInPlay();
-		for (int i = 0; i < turretManager->getPlacedTurrets().size(); i++) {
-			for (int j = 0; j < creeps.size(); j++) {
-				cocos2d::Rect rect = creeps[j]->getObject()->getBoundingBox();
-				if (turretManager->checkCollision(i, rect)) {
-					CCLOG("%s is Shooting %s", turretManager->getPlacedTurrets().at(i)->getTurretInfo().name.c_str(), std::string("A Creep").c_str());
-					turretManager->getPlacedTurrets().at(i)->rotateToTarget(creeps[j]);
-				}
-			}
-		}
-
-		turretManager->update(deltaTime);
 	}
 }
 
@@ -158,7 +138,7 @@ void LevelManager::startLevel()
 {
 	if (!levelStarted) {
 		levelStarted = true;
-		t.Start();
+		creepManager->startCreepTimer();
 	}
 }
 
@@ -170,18 +150,6 @@ void LevelManager::endLevel()
 void LevelManager::decreaseCreepAmount()
 {
 	creepAmountForCurrentWave--;
-}
-
-void LevelManager::setWayPoints(cocos2d::Vec2 start, cocos2d::Vec2 end)
-{
-	this->start = start;
-	this->end = end;
-}
-
-void LevelManager::cleanUpCreeps()
-{
-	creepManager->cleanUpCreeps();
-	turretManager->cleanUpTargets();
 }
 
 bool LevelManager::isValidTileCoord(cocos2d::Point tileCoord)
@@ -208,6 +176,7 @@ bool LevelManager::isExitAtTilecoord(cocos2d::Point tileCoord)
 
 cocos2d::Vec2 LevelManager::tileCoordForPosition(cocos2d::Vec2 position)
 {
+	log("%d", tileMap->getTileSize().width);
 	int x = position.x / tileMap->getTileSize().width;
 	int y = ((tileMap->getMapSize().height * tileMap->getTileSize().height) - position.y) / tileMap->getTileSize().height;
 	return Vec2(x, y);
@@ -295,7 +264,7 @@ cocos2d::TMXLayer * LevelManager::getBackgroundLayer()
 	return _bgLayer;
 }
 
-void LevelManager::addTurretManager(TurretManager * manager)
+CreepManager *LevelManager::getCreepManager()
 {
-	turretManager = manager;
+	return creepManager;
 }

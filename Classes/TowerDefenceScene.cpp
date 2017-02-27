@@ -1,21 +1,13 @@
 #include "TowerDefenceScene.h"
 #include "SimpleAudioEngine.h"
-#include "proj.win32\ResourceManager.h"
 #include "proj.win32\LevelManager.h"
 #include "proj.win32\TurretManager.h"
-
-#include <iostream>
 #include <sstream>
 
 USING_NS_CC;
 
 using namespace cocos2d;
 using namespace ui;
-
-void TowerDefence::playGame()
-{
-	levelManager->startLevel();
-}
 
 Scene* TowerDefence::createScene()
 {
@@ -35,20 +27,42 @@ Scene* TowerDefence::createScene()
 // on "init" you need to initialize your instance
 bool TowerDefence::init()
 {
+    //////////////////////////////
+    // 1. super init first
     if ( !Layer::init() )
     {
         return false;
     }
-
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
     
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+    /////////////////////////////
+    // 2. add a menu item with "X" image, which is clicked to quit the program
+    //    you may modify it.
+
+    // add a "close" icon to exit the progress. it's an autorelease object
+    auto closeItem = MenuItemImage::create(
+                                           "CloseNormal.png",
+                                           "CloseSelected.png",
+                                           CC_CALLBACK_1(TowerDefence::menuCloseCallback, this));
+    
+    closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
+                                origin.y + closeItem->getContentSize().height/2));
+
+    // create menu, it's an autorelease object
+    auto menu = Menu::create(closeItem, NULL);
+    menu->setPosition(Vec2::ZERO);
+    this->addChild(menu, 1);
+
+    /////////////////////////////
+    // 3. add your codes below...
+
 	levelManager = new LevelManager(this);
-	turretManager = new TurretManager(this, levelManager);
-	levelManager->addTurretManager(turretManager);
+	turretManager = new TurretManager(this);
 
 	setStartedTurrets();
-
+	
 	auto eventListener = EventListenerTouchOneByOne::create();
 	eventListener->onTouchBegan = CC_CALLBACK_2(TowerDefence::onTouchBegan, this);
 	eventListener->onTouchMoved = CC_CALLBACK_2(TowerDefence::onTouchMoved, this);
@@ -66,24 +80,25 @@ bool TowerDefence::init()
 	addChild(button);
 
 	this->scheduleUpdate();
-    
+
     return true;
 }
 
-cocos2d::CCPoint TowerDefence::touchToPoint(cocos2d::CCTouch * touch)
-{
-	// convert the touch object to a position in our cocos2d space
-	return CCDirector::sharedDirector()->convertToGL(touch->getLocationInView());
-}
 
-bool TowerDefence::isTouchingSprite(cocos2d::CCTouch * touch)
+void TowerDefence::menuCloseCallback(Ref* pSender)
 {
-	/*if (tag == 1) {
-		float distance = this->tower->getPosition().getDistance(
-			this->touchToPoint(touch));
-		return (distance < 100.0f);
-	}*/
-	return false;
+    //Close the cocos2d-x game scene and quit the application
+    Director::getInstance()->end();
+
+    #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    exit(0);
+#endif
+    
+    /*To navigate back to native iOS screen(if present) without quitting the application  ,do not use Director::getInstance()->end() and exit(0) as given above,instead trigger a custom event created in RootViewController.mm as below*/
+    
+    //EventCustom customEndEvent("game_scene_close_event");
+    //_eventDispatcher->dispatchEvent(&customEndEvent);
+       
 }
 
 bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_event)
@@ -91,19 +106,19 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 	cocos2d::Point touchLoc = touch->getLocation();
 
 	for (int i = 0; i < starterTurrets.size(); i++) {
-		if (starterTurrets[i]->getObject()->getBoundingBox().containsPoint(touchLoc))
+		if (starterTurrets[i]->getBoundingBox().containsPoint(touchLoc))
 		{
 			prevPos = starterTurrets[i]->getPosition();
 			selectedTurret = new Turret(*starterTurrets[i]);
-			selectedTurret->showTurretRange();
-			selectedTurret->getObject()->setTag(SELECTED_TURRET);
-			addChild(selectedTurret->getObject(), 1);
+			selectedTurret->showRange();
+			selectedTurret->setTag(SELECTED_TURRET);
+			addChild(selectedTurret, 1);
 			return true;
 		}
 	}
 
 	for (int i = 0; i < turretManager->getPlacedTurrets().size(); i++) {
-		if (turretManager->getPlacedTurrets().at(i)->getObject()->getBoundingBox().containsPoint(touchLoc))
+		if (turretManager->getPlacedTurrets().at(i)->getBoundingBox().containsPoint(touchLoc))
 		{
 			prevPos = turretManager->getPlacedTurrets().at(i)->getPosition();
 			turretManager->selectTurret(i);
@@ -111,48 +126,68 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 			return true;
 		}
 	}
+
 	return false;
 }
 
 void TowerDefence::onTouchMoved(cocos2d::Touch * touch, cocos2d::Event * unused_event)
 {
-	if(selectedTurret)
+	if (selectedTurret)
 		selectedTurret->setPosition(selectedTurret->getPosition() + touch->getDelta());
 }
 
 void TowerDefence::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event)
 {
-	if (selectedTurret) {
-		selectedTurret->hideTurretRange();
+	if (selectedTurret) 
+	{
+		selectedTurret->hideRange();
 		cocos2d::Vec2 tileCoordForTowerPosition = levelManager->tileCoordForPosition(selectedTurret->getPosition());
 
-		if (!levelManager->isWallAtTileCoord(tileCoordForTowerPosition)) {
-			selectedTurret->getObject()->setPosition(prevPos);
-		}
-		else {
+		if (levelManager->isWallAtTileCoord(tileCoordForTowerPosition)) 
+		{
 			cocos2d::Vec2 positionOfTileCoord = levelManager->positionForTileCoord(tileCoordForTowerPosition);
-			if (!turretManager->hasTurretAtCoord(positionOfTileCoord)) {
+			if (!turretManager->hasTurretAtCoord(positionOfTileCoord)) 
+			{
 				selectedTurret->setPosition(positionOfTileCoord);
 				turretManager->addTurret(selectedTurret);
 				removeChildByTag(SELECTED_TURRET);
-			}
-			else {
-				selectedTurret->getObject()->setPosition(prevPos);
+				return;
 			}
 		}
 
-		if (selectedTurret) {
-			delete selectedTurret;
-			selectedTurret = nullptr;
-		}	
+		selectedTurret->removeFromParentAndCleanup(true);
 	}
 
-	if(!turretManager->isATurretSelected())
+	if (!turretManager->isATurretSelected())
 		turretManager->hideSelectedTurretRange();
 }
 
 void TowerDefence::onTouchCancelled(cocos2d::Touch * touch, cocos2d::Event * unused_event)
 {
+}
+
+void TowerDefence::playGame()
+{
+	levelManager->startLevel();
+}
+
+void TowerDefence::touchEvent(cocos2d::Ref * sender, cocos2d::ui::Widget::TouchEventType type)
+{
+	switch (type)
+	{
+	case cocos2d::ui::Widget::TouchEventType::BEGAN:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::MOVED:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::ENDED:
+		log("Touch Ended");
+		playGame();
+		break;
+	case cocos2d::ui::Widget::TouchEventType::CANCELED:
+		break;
+	default:
+		break;
+	}
 }
 
 void TowerDefence::setStartedTurrets()
@@ -169,7 +204,7 @@ void TowerDefence::setStartedTurrets()
 	int counter = 1;
 	for (int i = 0; i < starterTurrets.size(); i++) {
 		starterTurrets[i]->setPosition(cocos2d::Vec2(turretX + xOffset, turretY + yOffset));
-		addChild(starterTurrets[i]->getObject());
+		addChild(starterTurrets[i],0);
 
 		if (counter == 1) {
 			turretX += 75;
@@ -188,21 +223,67 @@ void TowerDefence::update(float delta)
 	levelManager->update(delta);
 }
 
-void TowerDefence::touchEvent(Ref *sender, Widget::TouchEventType type) 
+bool TowerDefence::circleCollision(cocos2d::Vec2 circlePoint, float radius, cocos2d::Vec2 circlePointTwo, float radiusTwo)
 {
-	switch (type)
-	{
-	case cocos2d::ui::Widget::TouchEventType::BEGAN:
-		break;
-	case cocos2d::ui::Widget::TouchEventType::MOVED:
-		break;
-	case cocos2d::ui::Widget::TouchEventType::ENDED:
-		log("Touch Ended");
-		playGame();
-		break;
-	case cocos2d::ui::Widget::TouchEventType::CANCELED:
-		break;
-	default:
-		break;
-	}
+	float xdif = circlePoint.x - circlePointTwo.x;
+	float ydif = circlePoint.y - circlePointTwo.y;
+
+	float distance = sqrt(xdif*xdif + ydif*ydif);
+
+	if (distance <= radius + radiusTwo)
+		return true;
+
+	return false;
+}
+
+bool TowerDefence::intersects(cocos2d::Vec2 c, float radius, cocos2d::Rect r)
+{
+	/*cocos2d::Vec2 circleDistance;
+	circleDistance.x = abs(circle.x - rect.getMinX());
+	circleDistance.y = abs(circle.y - rect.getMinY());
+
+	if (circleDistance.x > (rect.getMaxX() / 2 + radius)) { return false; }
+	if (circleDistance.y > (rect.getMaxY() / 2 + radius)) { return false; }
+
+	if (circleDistance.x <= (rect.getMaxX() / 2)) { return true; }
+	if (circleDistance.y <= (rect.getMaxY() / 2)) { return true; }
+
+	float cornerDistance_sq = ((circleDistance.x - rect.getMaxX() / 2) * (circleDistance.x - rect.getMaxX() / 2)) +
+		((circleDistance.y - rect.getMaxY() / 2) *  (circleDistance.y - rect.getMaxY() / 2));
+
+	return (cornerDistance_sq <= (radius * radius));*/
+
+	float cx = abs(c.x - r.getMinX() - r.getMidX());
+	float xDist = r.getMidX() + radius;
+	if (cx > xDist)
+		return false;
+	float cy = abs(c.y - r.getMinY() - r.getMidY());
+	float yDist = r.getMidY() + radius;
+	if (cy > yDist)
+		return false;
+	if (cx <= r.getMidX() || cy <= r.getMidY())
+		return true;
+	float xCornerDist = cx - r.getMidX();
+	float yCornerDist = cy - r.getMidY();
+	float xCornerDistSq = xCornerDist * xCornerDist;
+	float yCornerDistSq = yCornerDist * yCornerDist;
+	float maxCornerDistSq = radius * radius;
+	return xCornerDistSq + yCornerDistSq <= maxCornerDistSq;
+}
+
+void TowerDefence::ccFillPoly(cocos2d::Vec2 * poli, int points, bool closePolygon)
+{
+}
+
+void TowerDefence::enemyGotKilled()
+{
+}
+
+void TowerDefence::getHpDamage()
+{
+}
+
+LevelManager * TowerDefence::getLevelManager()
+{
+	return levelManager;
 }

@@ -24,9 +24,6 @@
     <ClCompile Include="..\Classes\TowerDefenceScene.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="BaseObject.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>win32\Utilities</Filter>
     </ClCompile>
@@ -41,7 +38,8 @@
     <ClCompile Include="Turret.cpp" />
     <ClCompile Include="TurretManager.cpp" />
     <ClCompile Include="CGCircle.cpp" />
-    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="CreepInfo.cpp" />
+    <ClCompile Include="TurretInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -52,9 +50,6 @@
     </ClInclude>
     <ClInclude Include="..\Classes\TowerDefenceScene.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseObject.h">
-      <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>win32\Utilities</Filter>
@@ -73,8 +68,8 @@
     <ClInclude Include="Turret.h" />
     <ClInclude Include="TurretManager.h" />
     <ClInclude Include="CGCircle.h" />
-    <ClInclude Include="Bullet.h" />
-    <ClInclude Include="BulletInfo.h" />
+    <ClInclude Include="CreepInfo.h" />
+    <ClInclude Include="TurretInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

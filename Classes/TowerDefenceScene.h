@@ -1,5 +1,5 @@
-#ifndef __TOWER_DEFENCE_SCENE_H__
-#define __TOWER_DEFENCE_SCENE_H__
+#ifndef __HELLOWORLD_SCENE_H__
+#define __HELLOWORLD_SCENE_H__
 
 #include "cocos2d.h"
 #include "ui\CocosGUI.h"
@@ -21,28 +21,35 @@ class TowerDefence : public cocos2d::Layer
 	void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event) override;
 	void onTouchCancelled(cocos2d::Touch *touch, cocos2d::Event *unused_event) override;
 
+	void playGame();
+	void touchEvent(cocos2d::Ref *sender, cocos2d::ui::Widget::TouchEventType type);
+
 	std::vector<Turret*> starterTurrets;
 	void setStartedTurrets();
+
 	Turret *selectedTurret;
 	int selectedTurretIndex;
 	cocos2d::Vec2 prevPos;
-
-	void playGame();
-	void touchEvent(cocos2d::Ref *sender, cocos2d::ui::Widget::TouchEventType type);
 public:
     static cocos2d::Scene* createScene();
 
-    virtual bool init()  override;
-
-	cocos2d::CCPoint touchToPoint(cocos2d::CCTouch* touch);
-
-	// Returns true if the touch is within the boundary of our sprite
-	bool isTouchingSprite(cocos2d::CCTouch* touch);
+    virtual bool init();
+    
+    // a selector callback
+    void menuCloseCallback(cocos2d::Ref* pSender);
     
     // implement the "static create()" method manually
     CREATE_FUNC(TowerDefence);
 
 	void update(float) override;
+
+	bool intersects(cocos2d::Vec2 circle, float radius, cocos2d::Rect rect);
+	bool circleCollision(cocos2d::Vec2 circlePoint, float radius, cocos2d::Vec2 circlePointTwo, float radiusTwo);
+	void ccFillPoly(cocos2d::Vec2 *poli, int points, bool closePolygon);
+	void enemyGotKilled();
+	void getHpDamage();
+
+	LevelManager *getLevelManager();
 };
 
-#endif // __TOWER_DEFENCE_SCENE_H__
+#endif // __HELLOWORLD_SCENE_H__

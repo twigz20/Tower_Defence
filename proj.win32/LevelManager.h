@@ -7,7 +7,7 @@
 class TowerDefence;
 class LevelManager : public cocos2d::Object
 {
-	TowerDefence* scene;
+	TowerDefence* game;
 	WaveManager *waveManager;
 	CreepManager *creepManager;
 	TurretManager *turretManager;
@@ -18,7 +18,6 @@ class LevelManager : public cocos2d::Object
 	int creepAmountForCurrentWave;
 
 	cocos2d::Vec2 start, end;
-	timer t;
 	clock_t t2;
 
 	cocos2d::TMXTiledMap *tileMap;
@@ -36,15 +35,13 @@ class LevelManager : public cocos2d::Object
 	bool hasProperty(std::string name, cocos2d::Vec2 tileCoord, cocos2d::TMXLayer *layer);
 
 public:
-	explicit LevelManager(TowerDefence* _scene);
+	explicit LevelManager(TowerDefence* game_);
 	~LevelManager();
 
 	void update(float deltaTime);
 	void startLevel();
 	void endLevel();
 	void decreaseCreepAmount();
-	void setWayPoints(cocos2d::Vec2 start, cocos2d::Vec2 end);
-	void cleanUpCreeps();
 
 	bool isValidTileCoord(cocos2d::Point tileCoord);
 	bool isWallAtTileCoord(cocos2d::Point tileCoord);
@@ -61,8 +58,8 @@ public:
 	cocos2d::TMXTiledMap *getMap();
 	cocos2d::Vec2 getStartPoint();
 	cocos2d::Vec2 getEndPoint();
-
 	cocos2d::TMXLayer *getBackgroundLayer();
-	void addTurretManager(TurretManager* manager);
+
+	CreepManager *getCreepManager();
 };
 

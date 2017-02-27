@@ -2,14 +2,14 @@
 #define TIMER_H
 #include <ctime>
 
-class timer
+class SimpleTimer
 {
 	clock_t startedAt;
 	clock_t pausedAt;
 	bool started;
 	bool paused;
 public:
-	timer();
+	SimpleTimer();
 	bool IsStarted();
 	bool IsStopped();
 	bool IsPaused();

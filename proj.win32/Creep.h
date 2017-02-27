@@ -1,16 +1,10 @@
 #pragma once
-#include "BaseObject.h"
-//#include "TowerDefenceScene.h"
+#include "cocos2d.h"
 
-class LevelManager;
+class CreepInfo;
 class TowerDefence;
-struct Creep_Stats {
-	int health;
-	int speed;
-	int gold;
-};
-
-class Creep : public BaseObject
+class Turret;
+class Creep : public cocos2d::Node
 {
 	/* Path Finding Algorithm - Start */
 	class ShortestPathStep : public cocos2d::Object
@@ -44,16 +38,27 @@ class Creep : public BaseObject
 	cocos2d::Vector<ShortestPathStep*> _shortestPath;
 	/* Path Finding Algorithm - End */
 
-	Creep_Stats stats;
-	TowerDefence *_layer;
-	LevelManager *levelManager;
+	CreepInfo *info;
+	TowerDefence* game;
+	cocos2d::Sprite *sprite;
 
 	float startDelay;
+
+	Creep* initWithTheGame(TowerDefence* game_, CreepInfo *creepInfo);
+	cocos2d::CustomCommand _customCommand;
+
+	int currentHP;
+	bool dead;
+	bool missionComplete;
+	std::vector<Turret*> attackedBy;
+
 public:
-	Creep(const std::string& creep);
+	Creep();
 	~Creep();
-	void setLayer(TowerDefence* layer);
-	void setLevelManager(LevelManager *levelManager_);
+
+	Creep* nodeWithTheGame(TowerDefence* game_, CreepInfo *creepInfo);
+	
+	void setScene(TowerDefence *scene);
 	void setHealth(const int& health);
 	void setSpeed(const int& speed);
 	void setGold(const int& gold);
@@ -66,6 +71,22 @@ public:
 
 	void update(float deltaTime);
 	void moveToward(cocos2d::Point target);
+
+	virtual void draw(cocos2d::Renderer* renderer, const cocos2d::Mat4& transform, uint32_t flags);
+	virtual void onDraw(const cocos2d::kmMat4 &transform, uint32_t flags);
+	void setPosition(const cocos2d::Vec2 &position);
+	const cocos2d::Vec2& getPosition() const;
+	cocos2d::Rect getBoundingBox() const;
+
+	CreepInfo& getCreepInfo();
+
+	// Add method definitions
+	void getRemoved();
+	void getAttacked(Turret *attacker);
+	void gotLostSight(Turret *attacker);
+	void getDamaged(int damage);
+	bool isDead();
+	bool isMissionCompleted();
 };
 
 

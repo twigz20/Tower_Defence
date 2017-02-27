@@ -1,63 +1,53 @@
 #include "Turret.h"
 #include "TowerDefenceScene.h"
 #include "Creep.h"
-#include <math.h>
+#include "levelManager.h"
+#include "CGCircle.h"
 
 using namespace cocos2d;
-
-Turret::Turret(const std::string & turret_) :
-	BaseObject(turret_),
-	rangeIndicator(nullptr),
-	target(nullptr)
+Turret::Turret(bool isStarterTurret) :
+	info(nullptr),
+	displayRange(false),
+	chosenCreep(nullptr),
+	starterTurret(isStarterTurret),
+	turretActive(false)
 {
-	addRangeIndicator();
 }
 
 Turret::Turret(const Turret & other) :
-	BaseObject(other.info.image),
-	rangeIndicator(nullptr),
-	target(nullptr)
+	info(nullptr),
+	displayRange(false),
+	chosenCreep(nullptr)
 {
-	stats = other.stats;
 	info = other.info;
-	_layer = other._layer;
-	bulletInfo = other.bulletInfo;
-	levelManager = other.levelManager;
-	addRangeIndicator();
+	game = other.game;
+	starterTurret = false;
+	turretActive = other.turretActive;
+	displayRange = other.displayRange;
+	nodeWithTheGame(game, info);
 	setPosition(other.getPosition());
 }
 
 Turret::Turret(Turret && other) :
-	BaseObject(other.info.image),
-	rangeIndicator(nullptr),
-	target(nullptr)
+	info(nullptr),
+	displayRange(false),
+	chosenCreep(nullptr)
 {
 	*this = std::move(other);
 }
 
 Turret& Turret::operator=(Turret&& other) {
 	if (this != &other) {
-		stats = other.stats;
 		info = other.info;
-		_layer = other._layer;
-		levelManager = other.levelManager;
-		loadSprite(info.image);
-		addRangeIndicator();
+		game = other.game;
+		displayRange = other.displayRange;
+		starterTurret = false;
+		turretActive = other.turretActive;
+		nodeWithTheGame(game, info);
 		setPosition(other.getPosition());
-		bulletInfo = other.bulletInfo;
 
-		other.stats.cooldown = 0;
-		other.stats.cost = 0;
-		other.stats.damage = 0;
-		other.stats.range = 0;
-		other.info.bullet = std::string();
-		other.info.image = std::string();
-		other.info.name = std::string();
-		other.turretRange = nullptr;
-		other.object = nullptr;
-		other.rangeIndicator = nullptr;
-		other._layer = nullptr;
-		other.levelManager = nullptr;
+		other.info = nullptr;
+		other.game = nullptr;
 	}
 	return std::move(*this);
 }
@@ -66,199 +56,188 @@ Turret::~Turret()
 {
 }
 
-Turret_Stats & Turret::getTurretStats()
-{
-	return stats;
-}
-
-Turret_Info & Turret::getTurretInfo()
-{
-	return info;
-}
-
-void Turret::update(float deltaTime)
-{
-	for (auto It = m_Bullets.begin(); It != m_Bullets.end(); ++It)
-	{
-		(*It)->update(deltaTime);
-		if ((*It)->isDead())
-		{
-			delete *It;
-			It = m_Bullets.erase(It);
-			if (It == m_Bullets.end())
-			{
-				break;
-			}
-		}
-	}
-}
-
-void Turret::rotateToTarget(Creep* target_)
-{
-	if(!hasTarget())
-		setTarget(target_);
-
-	if (!checkCollision(target->getObject()->getBoundingBox())) {
-		delete target;
-		target = nullptr;
-		return;
-	}
-
-	cocos2d::Point target(target->getPosition());
-	
-	// Calculation
-	Vec2 difference = getPosition()- target;
-	float rotationRadians = ccpToAngle(difference);
-	float rotationDegrees = -CC_RADIANS_TO_DEGREES(rotationRadians);
-	rotationDegrees += 270.0f; // Because Image is Facing Up
-
-	object->setRotation(rotationDegrees);
-
-	
-	//m_Bullets.pop_back();
-	/*Vec2 normalized = ccpNormalize(
-		ccp(
-			target.x - getPositionX(),
-			target.y - getPositionY()
-		));
-
-	/*float angle = atan2(getPositionY() - target.y, getPositionX() - target.x);
-	angle = angle * (180 / M_PI);
-
-	// The following if statement is optional and converts our angle from being
-	// -180 to +180 degrees to 0-360 degrees.  It is completely optional
-	if (angle < 0)
-	{
-		angle = 360 - (-angle);
-	}
-
-	//textOut.text = "X:" + stage.mouseX + " Y:" + stage.mouseY + " angle:" + Math.round(angle);
-
-	// Atan2 results have 0 degrees point down the positive X axis, while our image is pointed up.
-	// Therefore we simply add 90 degrees to the rotation to orient our image
-	// If 0 degrees is to the right on your image, you do not need to add 90*/
-	//object->setRotation(CC_RADIANS_TO_DEGREES(atan2(normalized.y,-normalized.x))+90);
-
-	/*Vec2 EnemyPosition(target);
-	Vec2 direction(target - getPosition());
-	ccpNormalize(direction);
-
-	int adjacent = getPosition().x - EnemyPosition.x;
-	int opposite = EnemyPosition.y - getPosition().y;
-
-	if (opposite == 0) {
-		opposite++;
-	}
-	if (adjacent == 0) {
-		adjacent++;
-	}
-
-	float angle = atan(adjacent / opposite) * 180 / M_PI;
-	if (opposite > 0)
-		angle += 180;
-
-	object->setRotation(angle);*/
-
-	// animation
-	//CCRotateBy * turnBy = [CCRotateBy actionWithDuration : 0.5f angle : rotateByDegrees];
-	//CCEaseIn * ease = [CCEaseIn actionWithAction : turnBy rate : 4];
-	//[sourceSprite runAction : ease];
-}
-
-void Turret::shootTarget(Creep * target)
-{
-
-}
-
-void Turret::showTurretRange()
-{
-	rangeIndicator->show();
-}
-
-void Turret::hideTurretRange()
-{
-	rangeIndicator->hide();
-}
-
-void Turret::setScene(TowerDefence * scene)
-{
-	_layer = scene;
-}
-
 void Turret::addRangeIndicator()
 {
-	rangeIndicator = new TurretRangeIndicator(this);
-}
-
-cocos2d::DrawNode * Turret::getTurretRange()
-{
-	return rangeIndicator->getTurretRange();
-}
-
-void Turret::addCircle()
-{
-	circle = new CGCircle(
-		stats.range,
+	rangeIndicator = new CGCircle(
+		info->range,
 		getPosition()
 	);
 }
 
 bool Turret::checkCollision(cocos2d::Rect rect)
 {
-	return circle->isContainRect(rect);
+	return rangeIndicator->isContainRect(rect);
 }
 
-void Turret::setTarget(Creep * creep)
+Turret* Turret::initWithTheGame(TowerDefence * game_, TurretInfo *turretInfo)
 {
-	target = new Creep(*creep);
+	if (init()) {
+		game = game_;
+
+		info = turretInfo;
+		setName(info->name);
+		setAnchorPoint(cocos2d::Vec2(0.5f, 0.5f));
+
+		sprite = Sprite::create(info->image);
+		addChild(sprite);
+
+		addRangeIndicator();
+
+		scheduleUpdate();
+	}
+
+	return this;
 }
 
-bool Turret::hasTarget()
+Turret * Turret::nodeWithTheGame(TowerDefence * game_, TurretInfo *turretInfo)
 {
-	return target != nullptr;
+	return initWithTheGame(game_, turretInfo);
 }
 
-void Turret::removeTarget()
+void Turret::update(float deltaTime)
 {
-	//target->getObject()->removeFromParent();
-	if (target) {
-		delete target;
-		target = nullptr;
+	if (turretActive) {
+		if (!starterTurret) {
+			if (chosenCreep) {
+
+				if (chosenCreep->isDead()) {
+					lostSightOfEnemy();
+					return;
+				}
+
+				rotateToTarget();
+				if (!checkCollision(chosenCreep->getBoundingBox()))
+				{
+					lostSightOfEnemy();
+				}
+			}
+			else {
+				std::vector<Creep*> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
+				for (Creep * creep : creepsInPlay)
+				{
+					if (!creep->isDead()) {
+						if (checkCollision(creep->getBoundingBox()))
+						{
+							chosenEnemyForAttack(creep);
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
-BulletInfo & Turret::getBulletInfo()
+void Turret::draw(cocos2d::Renderer * renderer, const cocos2d::Mat4 & transform, uint32_t flags)
 {
-	return bulletInfo;
+	_customCommand.init(_globalZOrder + 10);
+	_customCommand.func = CC_CALLBACK_0(Turret::onDraw, this, transform, flags);
+	renderer->addCommand(&_customCommand);
 }
 
-Turret::TurretRangeIndicator::TurretRangeIndicator(Turret *turret_) :
-	turret(turret_)
+void Turret::onDraw(const cocos2d::kmMat4 & transform, uint32_t flags)
 {
-	turretRange = cocos2d::DrawNode::create();
-	turretRange->drawDot(cocos2d::Vec2(
-		turret->getPosition().x + turret->getObject()->getContentSize().width / 2,
-		turret->getPosition().y + turret->getObject()->getContentSize().height / 2),
-		turret->getTurretStats().range,
-		cocos2d::Color4F(0, 1, 0, 0.5f)
-	);
-	turretRange->setTag(TURRET_RANGE_INDICATOR);
-	turret->getObject()->addChild(turretRange, -1);
-	hide();
+	if (displayRange) {
+		ccDrawColor4B(0, 255, 0, 255);
+		ccDrawCircle(sprite->getPosition(), info->range, 360, 60, false);
+	}
 }
 
-void Turret::TurretRangeIndicator::show()
+void Turret::activateTurret()
 {
-	turret->getObject()->getChildByTag(TURRET_RANGE_INDICATOR)->setVisible(true);
+	turretActive = true;
 }
 
-void Turret::TurretRangeIndicator::hide()
+TurretInfo& Turret::getTurretInfo()
 {
-	turret->getObject()->getChildByTag(TURRET_RANGE_INDICATOR)->setVisible(false);
+	return *info;
 }
 
-cocos2d::DrawNode * Turret::TurretRangeIndicator::getTurretRange()
+void Turret::showRange()
 {
-	return turretRange;
+	displayRange = true;
 }
 
+void Turret::hideRange()
+{
+	displayRange = false;
+}
+
+void Turret::setPosition(const cocos2d::Vec2 & position)
+{
+	sprite->setPosition(position);
+	rangeIndicator->setPosition(getPosition());
+}
+
+const cocos2d::Vec2& Turret::getPosition() const
+{
+	return sprite->getPosition();
+}
+
+cocos2d::Rect Turret::getBoundingBox() const
+{
+	return sprite->getBoundingBox();
+}
+
+// Add the following methods
+void Turret::attackEnemy()
+{
+	if (!chosenCreep->isDead())
+		this->schedule(schedule_selector(Turret::shootWeapon), info->cooldown);
+}
+
+void Turret::chosenEnemyForAttack(Creep *enemy)
+{
+	chosenCreep = nullptr;
+	chosenCreep = enemy;
+	attackEnemy();
+}
+
+void Turret::shootWeapon(float dt)
+{
+	Sprite * bullet = Sprite::create(info->bullet);
+	game->addChild(bullet);
+	bullet->setPosition(sprite->getPosition());
+
+	MoveTo *actionWithDuration = MoveTo::create(0.1, chosenCreep->getPosition());
+	CallFunc *actionWithTarget = CallFunc::create(CC_CALLBACK_0(Turret::damageEnemy, this));
+	CallFunc *actionWithTarget2 = CallFunc::create(CC_CALLBACK_0(Turret::removeBullet, this, bullet));
+
+	Sequence *actions = Sequence::create(actionWithDuration, actionWithTarget, actionWithTarget2, nullptr);
+	bullet->runAction(actions);
+}
+
+void Turret::removeBullet(Sprite *bullet)
+{
+	bullet->removeFromParentAndCleanup(true);
+}
+
+void Turret::damageEnemy()
+{
+	if(!chosenCreep->isDead())
+		chosenCreep->getDamaged(info->damage);
+}
+
+void Turret::targetKilled()
+{
+	if (chosenCreep)
+		chosenCreep = nullptr;
+
+	unschedule(schedule_selector(Turret::shootWeapon));
+}
+
+void Turret::lostSightOfEnemy()
+{
+	chosenCreep->gotLostSight(this);
+	if (chosenCreep)
+		chosenCreep = nullptr;
+
+	unschedule(schedule_selector(Turret::shootWeapon));
+}
+
+void Turret::rotateToTarget()
+{
+	cocos2d::Vec2 normalized = ccpNormalize(ccp(chosenCreep->getPosition().x - getPosition().x,
+		chosenCreep->getPosition().y - getPosition().y));
+	sprite->setRotation(CC_RADIANS_TO_DEGREES(atan2(normalized.y, -normalized.x)) + 270);
+}

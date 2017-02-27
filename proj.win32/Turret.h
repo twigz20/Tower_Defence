@@ -1,78 +1,60 @@
 #pragma once
-#include "BaseObject.h"
-#include "CGCircle.h"
-#include "BulletInfo.h"
-#include "Bullet.h"
+#include "cocos2d.h"
+#include "TurretInfo.h"
 
-#define TURRET_RANGE_INDICATOR 1000
-
-class LevelManager;
 class TowerDefence;
 class Creep;
-class Turret;
-
-struct Turret_Info {
-	std::string name;
-	std::string bullet;
-	std::string image;
-};
-
-struct Turret_Stats {
-	int damage;
-	float cooldown;
-	int range;
-	int cost;
-};
-
-class Turret : public BaseObject
+class CGCircle;
+class Turret : public cocos2d::Node
 {
-	Turret_Stats stats;
-	Turret_Info info;
+	TurretInfo *info;
 
-	class TurretRangeIndicator {
-		cocos2d::DrawNode *turretRange;
-		Turret* turret;
-	public:
-		TurretRangeIndicator(Turret* turret_);
-		void show();
-		void hide();
-		cocos2d::DrawNode *getTurretRange();
-	};
+	TowerDefence* game;
+	cocos2d::Sprite *sprite;
 
-	TurretRangeIndicator *rangeIndicator;
-	cocos2d::DrawNode *turretRange;
+	Turret* initWithTheGame(TowerDefence* game_, TurretInfo *turretInfo);
+	cocos2d::CustomCommand _customCommand;
+	
+	bool displayRange;
 
-	TowerDefence *_layer;
-	LevelManager *levelManager;
-	CGCircle *circle;
-	Creep* target;
-	BulletInfo bulletInfo;
-	std::list<Bullet*> m_Bullets;
+	bool attacking;
+	Creep *chosenCreep;
+
+	bool starterTurret;
+	bool turretActive;
+
+	CGCircle *rangeIndicator;
+	void addRangeIndicator();
 public:
-	Turret(const std::string& turret_);
+	Turret(bool isStarterTurret = false);
 	Turret(const Turret& other);
 	Turret(Turret&& other);
 	Turret& operator=(Turret&& other);
 	~Turret();
 
-	Turret_Stats& getTurretStats();
-	Turret_Info& getTurretInfo();
-	void update(float deltaTime);
-	void rotateToTarget(Creep* target);
-	void shootTarget(Creep* target);
-
-	void showTurretRange();
-	void hideTurretRange();
-	void setScene(TowerDefence* scene);
-
-	void addRangeIndicator();
-	cocos2d::DrawNode *getTurretRange();
-	void addCircle();
 	bool checkCollision(cocos2d::Rect rect);
 
-	void setTarget(Creep *creep);
-	bool hasTarget();
-	void removeTarget();
-	BulletInfo& getBulletInfo();
+	Turret* nodeWithTheGame(TowerDefence* game_, TurretInfo *turretInfo);
+	void update(float deltaTime);
+	virtual void draw(cocos2d::Renderer* renderer, const cocos2d::Mat4& transform, uint32_t flags);
+	virtual void onDraw(const cocos2d::kmMat4 &transform, uint32_t flags);
+	void setPosition(const cocos2d::Vec2 &position);
+	const cocos2d::Vec2& getPosition() const;
+	cocos2d::Rect getBoundingBox() const;
+
+	void activateTurret();
+	TurretInfo& getTurretInfo();
+	void showRange();
+	void hideRange();
+
+	// Add method definition
+	void targetKilled();
+	void attackEnemy();
+	void chosenEnemyForAttack(Creep *enemy);
+	void shootWeapon(float dt);
+	void removeBullet(cocos2d::Sprite *bullet);
+	void damageEnemy();
+	void lostSightOfEnemy();
+	void rotateToTarget();
 };
 

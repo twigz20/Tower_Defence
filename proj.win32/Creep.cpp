@@ -2,33 +2,61 @@
 #include "proj.win32\Utils.h"
 #include "TowerDefenceScene.h"
 #include "LevelManager.h"
+#include "CreepInfo.h"
+
+#define HEALTH_BAR_WIDTH 30
+#define HEALTH_BAR_ORIGIN -10
 
 using namespace cocos2d;
 
-Creep::Creep(const std::string & filename)
-	: BaseObject(filename),
-	startDelay(0.f)
+Creep::Creep() :
+	startDelay(0.f),
+	currentHP(0),
+	dead(false),
+	missionComplete(false)
 {
 	
+}
+
+Creep * Creep::initWithTheGame(TowerDefence * game_, CreepInfo * creepInfo)
+{
+	if (init()) {
+		game = game_;
+
+		info = creepInfo;
+		currentHP = info->health;
+
+		sprite = Sprite::create(info->image);
+		addChild(sprite);
+
+		scheduleUpdate();
+	}
+
+	return this;
 }
 
 Creep::~Creep()
 {
 }
 
+Creep * Creep::nodeWithTheGame(TowerDefence * game_, CreepInfo * creepInfo)
+{
+	return initWithTheGame(game_, creepInfo);
+}
+
 void Creep::setHealth(const int& health)
 {
-	stats.health = health;
+	info->health = health;
 }
 
 void Creep::setSpeed(const int& speed)
 {
-	stats.speed = speed;
+	info->speed = speed;
 }
 
 void Creep::setGold(const int& gold)
 {
-	stats.gold = gold;
+	info->gold = gold;
 }
 
 void Creep::setStartDelay(const float & startDelay)
@@ -38,17 +66,17 @@ void Creep::setStartDelay(const float & startDelay)
 
 const int Creep::getHealth() const
 {
-	return stats.health;
+	return info->health;
 }
 
 const float Creep::getSpeed() const
 {
-	return stats.speed;
+	return info->speed;
 }
 
 const int Creep::getGold() const
 {
-	return stats.gold;
+	return info->gold;
 }
 
 const float Creep::getStartDelay() const
@@ -56,14 +84,10 @@ const float Creep::getStartDelay() const
 	return startDelay;
 }
 
-void Creep::update(float deltaTime)
-{
-}
-
 void Creep::moveToward(cocos2d::Point target)
 {
-	Point fromTileCoord = levelManager->tileCoordForPosition(this->getPosition());
-	Point toTileCoord = levelManager->tileCoordForPosition(target);
+	Point fromTileCoord = game->getLevelManager()->tileCoordForPosition(sprite->getPosition());
+	Point toTileCoord = game->getLevelManager()->tileCoordForPosition(target);
 
 	if (fromTileCoord == toTileCoord)
 	{
@@ -71,7 +95,7 @@ void Creep::moveToward(cocos2d::Point target)
 		return;
 	}
 
-	if (!levelManager->isValidTileCoord(toTileCoord) || levelManager->isWallAtTileCoord(toTileCoord))
+	if (!game->getLevelManager()->isValidTileCoord(toTileCoord) || game->getLevelManager()->isWallAtTileCoord(toTileCoord))
 	{
 		//SimpleAudioEngine::getInstance()->playEffect("hitWall.wav");
 		return;
@@ -110,8 +134,8 @@ void Creep::moveToward(cocos2d::Point target)
 			/*CCLOG("PATH FOUND :");
 			do
 			{
-				CCLOG("%s", tmpStep->getDescription().c_str());
-				tmpStep = tmpStep->getParent(); // Retrogression
+			CCLOG("%s", tmpStep->getDescription().c_str());
+			tmpStep = tmpStep->getParent(); // Retrogression
 			} while (tmpStep); // Until no one step*/
 
 			_spOpenSteps.clear();
@@ -120,7 +144,7 @@ void Creep::moveToward(cocos2d::Point target)
 		}
 
 		// Get the coordinates of the current step of the adjacent squares
-		PointArray *adjSteps = levelManager->walkableAdjacentTilesCoordForTileCoord(currentStep->getPosition());
+		PointArray *adjSteps = game->getLevelManager()->walkableAdjacentTilesCoordForTileCoord(currentStep->getPosition());
 		for (ssize_t i = 0; i <adjSteps->count(); ++i)
 		{
 			ShortestPathStep *step = ShortestPathStep::createWithPosition(adjSteps->getControlPointAtIndex(i));
@@ -185,8 +209,68 @@ void Creep::moveToward(cocos2d::Point target)
 	//if (!pathFound)
 	if (_shortestPath.empty())
 	{
-	//	SimpleAudioEngine::getInstance()->playEffect("hitWall.wav");
+		//	SimpleAudioEngine::getInstance()->playEffect("hitWall.wav");
 	}
+}
+
+void Creep::setPosition(const cocos2d::Vec2 & position)
+{
+	sprite->setPosition(position);
+}
+
+const cocos2d::Vec2 & Creep::getPosition() const
+{
+	return sprite->getPosition();
+}
+
+cocos2d::Rect Creep::getBoundingBox() const
+{
+	return sprite->getBoundingBox();
+}
+
+CreepInfo & Creep::getCreepInfo()
+{
+	return *info;
+}
+
+void Creep::update(float deltaTime)
+{
+
+}
+
+void Creep::getRemoved()
+{
+	currentHP = 0;
+	dead = true;
+}
+
+void Creep::getAttacked(Turret * attacker)
+{
+	//attackedBy.push_back(attacker);
+}
+
+void Creep::gotLostSight(Turret * attacker)
+{
+	//attackedBy.push_back(attacker);
+}
+
+void Creep::getDamaged(int damage)
+{
+	currentHP -= damage;
+	if (currentHP <= 0)
+	{
+		getRemoved();
+	}
+}
+
+bool Creep::isDead()
+{
+	return dead;
+}
+
+bool Creep::isMissionCompleted()
+{
+	return missionComplete;
 }
 
 void Creep::constructPathAndStartAnimationFromStep(Creep::ShortestPathStep *step)
@@ -212,14 +296,9 @@ void Creep::constructPathAndStartAnimationFromStep(Creep::ShortestPathStep *step
 	this->popStepAndAnimate();
 }
 
-void Creep::setLayer(TowerDefence * layer)
+void Creep::setScene(TowerDefence * scene)
 {
-	this->_layer = layer;
-}
-
-void Creep::setLevelManager(LevelManager * levelManager_)
-{
-	levelManager = levelManager_;
+	game = scene;
 }
 
 Creep::ShortestPathStep::ShortestPathStep() :
@@ -269,14 +348,14 @@ int Creep::ShortestPathStep::getFScore() const
 
 bool Creep::ShortestPathStep::isEqual(const Creep::ShortestPathStep *other) const
 {
-	return this->getPosition() == other->getPosition();
+	return getPosition() == other->getPosition();
 }
 
 std::string Creep::ShortestPathStep::getDescription() const
 {
 	return cocos2d::StringUtils::format("pos=[%.0f;%.0f] g=%d h=%d f=%d",
-		this->getPosition().x, this->getPosition().y,
-		this->getGScore(), this->getHScore(), this->getFScore());
+		getPosition().x, getPosition().y,
+		getGScore(), this->getHScore(), this->getFScore());
 }
 
 void Creep::insertInOpenSteps(Creep::ShortestPathStep *step)
@@ -322,7 +401,7 @@ ssize_t Creep::getStepIndex(const cocos2d::Vector<Creep::ShortestPathStep *> &st
 
 void Creep::popStepAndAnimate()
 {
-	Point currentPosition = levelManager->tileCoordForPosition(this->getPosition());
+	Point currentPosition = game->getLevelManager()->tileCoordForPosition(sprite->getPosition());
 
 	/*if (levelManager->isBoneAtTilecoord(currentPosition))
 	{
@@ -356,10 +435,9 @@ void Creep::popStepAndAnimate()
 		//SimpleAudioEngine::getInstance()->playEffect("step.wav");
 	}*/
 
-	if (levelManager->isExitAtTilecoord(currentPosition))
+	if (game->getLevelManager()->isExitAtTilecoord(currentPosition))
 	{
-		object->setVisible(false);
-		levelManager->decreaseCreepAmount();
+		missionComplete = true;
 		return;
 	}
 
@@ -398,7 +476,7 @@ void Creep::popStepAndAnimate()
 	}
 
 	// Setup and callback
-	MoveTo *moveAction = MoveTo::create(getSpeed() /100, levelManager->positionForTileCoord(s->getPosition()));
+	MoveTo *moveAction = MoveTo::create(info->speed, game->getLevelManager()->positionForTileCoord(s->getPosition()));
 	CallFunc *moveCallback = CallFunc::create(CC_CALLBACK_0(Creep::popStepAndAnimate, this));
 
 	// Removing step
@@ -407,5 +485,27 @@ void Creep::popStepAndAnimate()
 	// Running action
 	Sequence *moveSequence = Sequence::create(moveAction, moveCallback, nullptr);
 	moveSequence->setTag(1);
-	(object)->runAction(moveSequence);
+	sprite->runAction(moveSequence);
+}
+
+void Creep::draw(cocos2d::Renderer * renderer, const cocos2d::Mat4 & transform, uint32_t flags)
+{
+	_customCommand.init(_globalZOrder + 20);
+	_customCommand.func = CC_CALLBACK_0(Creep::onDraw, this, transform, flags);
+	renderer->addCommand(&_customCommand);
+}
+
+void Creep::onDraw(const cocos2d::kmMat4 & transform, uint32_t flags)
+{
+	ccDrawSolidRect(ccp(sprite->getPosition().x + HEALTH_BAR_ORIGIN,
+	sprite->getPosition().y + 18),
+	ccp(sprite->getPosition().x + HEALTH_BAR_ORIGIN + HEALTH_BAR_WIDTH,
+	sprite->getPosition().y + 16),
+	ccc4f(1.0, 0, 0, 1.0));
+
+	ccDrawSolidRect(ccp(sprite->getPosition().x + HEALTH_BAR_ORIGIN,
+	sprite->getPosition().y + 18),
+	ccp(sprite->getPosition().x + HEALTH_BAR_ORIGIN + (float)(currentHP * HEALTH_BAR_WIDTH) / info->health,
+	sprite->getPosition().y + 16),
+	ccc4f(0, 1.0, 0, 1.0));
 }

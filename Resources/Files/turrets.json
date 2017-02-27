@@ -59,7 +59,7 @@
   "turret-5": {
     "name": "Wounder",
     "image": "Graphics/tower-defense-turrets/turret-5-1.png",
-    "bullet_image": "Graphics/bullets/star_1.png",
+    "bullet_image": "Graphics/bullets/wave_small_1.png",
     "damage":  14,
     "damage2": {
       "from": 11,
@@ -93,7 +93,7 @@
   "turret-7": {
     "name": "Destroyer",
     "image": "Graphics/tower-defense-turrets/turret-7-1.png",
-    "bullet_image": "Graphics/bullets/wave_small_1.png",
+    "bullet_image": "Graphics/bullets/star_1.png",
     "damage":  25,
     "damage2": {
       "from": 20,
