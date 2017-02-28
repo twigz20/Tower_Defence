@@ -124,7 +124,7 @@ LevelManager::LevelManager(TowerDefence* game_) :
 	levelStarted(false),
 	levelFinished(false),
 	creepAmountForCurrentWave(0),
-	gold(100),
+	gold(85),
 	health(20)
 {
 	setBackground();

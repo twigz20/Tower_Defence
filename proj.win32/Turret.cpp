@@ -256,7 +256,7 @@ void Turret::damageEnemy()
 				if (checkCollision(rangeIndicator, creep->getBoundingBox()))
 				{
 					chosenEnemyForAttack(creep);
-					break;
+					return;
 				}
 			}
 		}

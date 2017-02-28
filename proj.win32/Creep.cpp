@@ -361,8 +361,9 @@ void Creep::update(float deltaTime)
 	}
 
 
-	if (currentHP <= 0) {
-		getRemoved();
+	if (isBleeding) {
+		if(currentHP <= 0)
+			getRemoved();
 	}
 }
 
@@ -370,6 +371,7 @@ void Creep::getRemoved()
 {
 	currentHP = 0;
 	dead = true;
+	log("Gold Gained: %d", info->gold);
 	game->getLevelManager()->increaseGold(info->gold);
 }
 
@@ -385,53 +387,55 @@ void Creep::gotLostSight(Turret * attacker)
 
 void Creep::getDamaged(BulletInfo bulletInfo)
 {
-	currentHP -= bulletInfo.damageFrom;
+	if (!isDead()) {
+		currentHP -= bulletInfo.damageFrom;
 
-	if (bulletInfo.hasSlow) {
-		slowDuration = bulletInfo.slowDuration;
-		slowPercentage = bulletInfo.slowPercentage;
-		isSlowed = true;
-		slowTimer.Start();
-	}
-	if (bulletInfo.hasStun) {
-		int chance = cocos2d::RandomHelper::random_int(1, 100);
-		if (chance <= (bulletInfo.stunChance * 100)) {
-			sprite->pause();
-			isStunned = true;
-			stunDuration = bulletInfo.stunDuration;
-			stunTimer.Start();
+		if (bulletInfo.hasSlow) {
+			slowDuration = bulletInfo.slowDuration;
+			slowPercentage = bulletInfo.slowPercentage;
+			isSlowed = true;
+			slowTimer.Start();
 		}
-	}
-	if (bulletInfo.hasBleed) {
-		bleedDamage = bulletInfo.bleedDps;
-		bleedDuration = bulletInfo.bleedDuration;
-		isBleeding = true;
-		bleedTimer.Start();
-		bleedDpsTimer.Start();
-	}
-	if (bulletInfo.hasSplashDamage && !inSplashRange) {
-		CGCircle *damageRadius = new CGCircle(
-			bulletInfo.splashRange,
-			getPosition()
-		);
-		std::vector<Creep*> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
-		for (Creep * creep : creepsInPlay)
-		{
-			if (creep != this && !creep->isDead()) {
-				if (game->checkCollision(damageRadius, creep->getBoundingBox()))
-				{
-					creep->setInSplashRange();
-					creep->getDamaged(bulletInfo);
-				}
+		if (bulletInfo.hasStun) {
+			int chance = cocos2d::RandomHelper::random_int(1, 100);
+			if (chance <= (bulletInfo.stunChance * 100)) {
+				sprite->pause();
+				isStunned = true;
+				stunDuration = bulletInfo.stunDuration;
+				stunTimer.Start();
 			}
 		}
-		delete damageRadius;
-		inSplashRange = false;
-	}
+		if (bulletInfo.hasBleed) {
+			bleedDamage = bulletInfo.bleedDps;
+			bleedDuration = bulletInfo.bleedDuration;
+			isBleeding = true;
+			bleedTimer.Start();
+			bleedDpsTimer.Start();
+		}
+		if (bulletInfo.hasSplashDamage && !inSplashRange) {
+			CGCircle *damageRadius = new CGCircle(
+				bulletInfo.splashRange,
+				getPosition()
+			);
+			std::vector<Creep*> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
+			for (Creep * creep : creepsInPlay)
+			{
+				if (creep != this && !creep->isDead()) {
+					if (game->checkCollision(damageRadius, creep->getBoundingBox()))
+					{
+						creep->setInSplashRange();
+						creep->getDamaged(bulletInfo);
+					}
+				}
+			}
+			delete damageRadius;
+			inSplashRange = false;
+		}
 
-	if (currentHP <= 0)
-	{
-		getRemoved();
+		if (currentHP <= 0)
+		{
+			getRemoved();
+		}
 	}
 }
 

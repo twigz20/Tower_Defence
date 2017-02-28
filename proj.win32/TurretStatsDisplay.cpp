@@ -238,13 +238,13 @@ int TurretStatsDisplay::calculateDisplayBarAmount(std::string type)
 {
 	int bars = 0;
 	if (type == "DAM") {
-		if (info->damage >= 35)
+		if (info->bulletInfo.damageFrom >= 35)
 			bars = 5;
-		else if (info->damage >= 25)
+		else if (info->bulletInfo.damageFrom >= 25)
 			bars = 4;
-		else if (info->damage >= 20)
+		else if (info->bulletInfo.damageFrom >= 20)
 			bars = 3;
-		else if (info->damage >= 15)
+		else if (info->bulletInfo.damageFrom >= 15)
 			bars = 2;
 		else
 			bars = 1;
@@ -252,11 +252,11 @@ int TurretStatsDisplay::calculateDisplayBarAmount(std::string type)
 	else if(type == "RTE") {
 		if (info->cooldown >= 3.0)
 			bars = 1;
-		else if (info->cooldown >= 2.0)
-			bars = 2;
 		else if (info->cooldown >= 1.75)
+			bars = 2;
+		else if (info->cooldown >= 1.39)
 			bars = 3;
-		else if (info->cooldown >= 1.5)
+		else if (info->cooldown >= 1.35)
 			bars = 4;
 		else
 			bars = 5;
