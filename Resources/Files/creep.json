@@ -2,7 +2,7 @@
   "creep-1-red": {
     "name": "creep-1-red",
     "source": "Graphics/creep/creep-1-red/1.png",
-    "health": 100,
+    "health": 80,
     "speed": 1.5,
     "speed_aura": {
       "area": 33,
@@ -14,7 +14,7 @@
   "creep-1-blue": {
     "name": "creep-1-blue",
     "source": "Graphics/creep/creep-1-blue/1.png",
-    "health": 100,
+    "health": 50,
     "speed": 1.5,
     "speed_aura": {
       "area": 33,
@@ -26,7 +26,7 @@
   "creep-1-green": {
     "name": "creep-1-green",
     "source": "Graphics/creep/creep-1-green/1.png",
-    "health": 100,
+    "health": 60,
     "speed": 1.5,
     "speed_aura": {
       "area": 33,

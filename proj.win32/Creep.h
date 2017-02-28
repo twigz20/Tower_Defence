@@ -1,9 +1,11 @@
 #pragma once
 #include "cocos2d.h"
+#include "timer.h"
 
 class CreepInfo;
 class TowerDefence;
 class Turret;
+class BulletInfo;
 class Creep : public cocos2d::Node
 {
 	/* Path Finding Algorithm - Start */
@@ -52,6 +54,24 @@ class Creep : public cocos2d::Node
 	bool missionComplete;
 	std::vector<Turret*> attackedBy;
 
+	bool isSlowed;
+	bool isStunned;
+	bool isBleeding;
+	bool inSplashRange;
+
+	float slowDuration;
+	float stunDuration;
+	float bleedDuration;
+
+	float bleedDamage;
+
+	float slowPercentage;
+
+	SimpleTimer slowTimer;
+	SimpleTimer stunTimer;
+	SimpleTimer bleedTimer;
+	SimpleTimer bleedDpsTimer;
+
 public:
 	Creep();
 	~Creep();
@@ -84,9 +104,11 @@ public:
 	void getRemoved();
 	void getAttacked(Turret *attacker);
 	void gotLostSight(Turret *attacker);
-	void getDamaged(int damage);
+	void getDamaged(BulletInfo bulletInfo);
 	bool isDead();
 	bool isMissionCompleted();
+
+	void setInSplashRange();
 };
 
 

@@ -12,7 +12,8 @@ Turret::Turret(bool isStarterTurret) :
 	displayRange(false),
 	chosenCreep(nullptr),
 	starterTurret(isStarterTurret),
-	turretActive(false)
+	turretActive(false),
+	splashDamageRange(nullptr)
 {
 }
 
@@ -20,7 +21,8 @@ Turret::Turret(const Turret & other) :
 	info(nullptr),
 	range(nullptr),
 	displayRange(false),
-	chosenCreep(nullptr)
+	chosenCreep(nullptr),
+	splashDamageRange(nullptr)
 {
 	info = other.info;
 	game = other.game;
@@ -28,6 +30,7 @@ Turret::Turret(const Turret & other) :
 	turretActive = other.turretActive;
 	range = other.range;
 	displayRange = other.displayRange;
+	splashDamageRange = other.splashDamageRange;
 	nodeWithTheGame(game, info);
 	setPosition(other.getPosition());
 }
@@ -36,7 +39,8 @@ Turret::Turret(Turret && other) :
 	info(nullptr),
 	range(nullptr),
 	displayRange(false),
-	chosenCreep(nullptr)
+	chosenCreep(nullptr),
+	splashDamageRange(nullptr)
 {
 	*this = std::move(other);
 }
@@ -46,6 +50,7 @@ Turret& Turret::operator=(Turret&& other) {
 		info = other.info;
 		game = other.game;
 		range = other.range;
+		splashDamageRange = other.splashDamageRange;
 		displayRange = other.displayRange;
 		starterTurret = false;
 		turretActive = other.turretActive;
@@ -55,6 +60,7 @@ Turret& Turret::operator=(Turret&& other) {
 		other.info = nullptr;
 		other.game = nullptr;
 		other.range = nullptr;
+		other.splashDamageRange = nullptr;
 	}
 	return std::move(*this);
 }
@@ -87,7 +93,7 @@ void Turret::addRangeIndicator()
 	);
 }
 
-bool Turret::checkCollision(cocos2d::Rect rect)
+bool Turret::checkCollision(CGCircle *rangeIndicator, cocos2d::Rect rect)
 {
 	return rangeIndicator->isContainRect(rect);
 }
@@ -98,6 +104,10 @@ Turret* Turret::initWithTheGame(TowerDefence * game_, TurretInfo *turretInfo)
 		game = game_;
 
 		info = turretInfo;
+
+		if (info->bulletInfo.hasSplashDamage) {
+			
+		}
 		setName(info->name);
 		setAnchorPoint(cocos2d::Vec2(0.5f, 0.5f));
 
@@ -129,7 +139,7 @@ void Turret::update(float deltaTime)
 				}
 
 				rotateToTarget();
-				if (!checkCollision(chosenCreep->getBoundingBox()))
+				if (!checkCollision(rangeIndicator, chosenCreep->getBoundingBox()))
 				{
 					lostSightOfEnemy();
 				}
@@ -139,7 +149,7 @@ void Turret::update(float deltaTime)
 				for (Creep * creep : creepsInPlay)
 				{
 					if (!creep->isDead()) {
-						if (checkCollision(creep->getBoundingBox()))
+						if (checkCollision(rangeIndicator, creep->getBoundingBox()))
 						{
 							chosenEnemyForAttack(creep);
 							break;
@@ -205,7 +215,7 @@ cocos2d::Rect Turret::getBoundingBox() const
 void Turret::attackEnemy()
 {
 	if (!chosenCreep->isDead())
-		this->schedule(schedule_selector(Turret::shootWeapon), info->cooldown);
+		this->schedule(schedule_selector(Turret::shootWeapon), info->cooldown, 0, 0);
 }
 
 void Turret::chosenEnemyForAttack(Creep *enemy)
@@ -217,7 +227,7 @@ void Turret::chosenEnemyForAttack(Creep *enemy)
 
 void Turret::shootWeapon(float dt)
 {
-	Sprite * bullet = Sprite::create(info->bullet);
+	Sprite * bullet = Sprite::create(info->bulletInfo.image);
 	game->addChild(bullet);
 	bullet->setPosition(sprite->getPosition());
 
@@ -236,8 +246,21 @@ void Turret::removeBullet(Sprite *bullet)
 
 void Turret::damageEnemy()
 {
-	if(chosenCreep && !chosenCreep->isDead())
-		chosenCreep->getDamaged(info->damage);
+	if (chosenCreep && !chosenCreep->isDead()) {
+		chosenCreep->getDamaged(info->bulletInfo);
+
+		std::vector<Creep*> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
+		for (Creep * creep : creepsInPlay)
+		{
+			if (!creep->isDead()) {
+				if (checkCollision(rangeIndicator, creep->getBoundingBox()))
+				{
+					chosenEnemyForAttack(creep);
+					break;
+				}
+			}
+		}
+	}
 }
 
 void Turret::targetKilled()

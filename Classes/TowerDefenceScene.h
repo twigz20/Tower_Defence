@@ -5,6 +5,7 @@
 #include "ui\CocosGUI.h"
 #include <memory>
 #include <vector>
+#include "proj.win32\CGCircle.h"
 #define SELECTED_TURRET 10001
 
 class Creep;
@@ -45,6 +46,10 @@ public:
 
 	bool intersects(cocos2d::Vec2 circle, float radius, cocos2d::Rect rect);
 	bool circleCollision(cocos2d::Vec2 circlePoint, float radius, cocos2d::Vec2 circlePointTwo, float radiusTwo);
+	bool checkCollision(CGCircle *rangeIndicator, cocos2d::Rect rect)
+	{
+		return rangeIndicator->isContainRect(rect);
+	}
 	void ccFillPoly(cocos2d::Vec2 *poli, int points, bool closePolygon);
 	void enemyGotKilled();
 	void getHpDamage();

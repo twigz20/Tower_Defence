@@ -3,6 +3,7 @@
 #include "TowerDefenceScene.h"
 #include "LevelManager.h"
 #include "CreepInfo.h"
+#include "CGCircle.h"
 
 #define HEALTH_BAR_WIDTH 30
 #define HEALTH_BAR_ORIGIN -10
@@ -13,7 +14,16 @@ Creep::Creep() :
 	startDelay(0.f),
 	currentHP(0),
 	dead(false),
-	missionComplete(false)
+	missionComplete(false),
+	isSlowed(false),
+	isStunned(false),
+	isBleeding(false),
+	stunDuration(0),
+	slowDuration(0),
+	bleedDuration(0),
+	bleedDamage(0),
+	slowPercentage(0),
+	inSplashRange(false)
 {
 	
 }
@@ -249,7 +259,34 @@ CreepInfo & Creep::getCreepInfo()
 
 void Creep::update(float deltaTime)
 {
+	if (isSlowed) {
+		if (slowTimer.GetTicks() >= slowDuration * 1000) {
+			isSlowed = false;
+			slowTimer.Stop();
+		}
+	}
+	if (isStunned) {
+		if (stunTimer.GetTicks() >= stunDuration * 1000) {
+			isStunned = false;
+			sprite->resume();
+			stunTimer.Stop();
+		}
+	}
+	if (isBleeding) {
+		if (bleedDpsTimer.GetTicks() >= 1000) {
+			currentHP -= bleedDamage;
+			bleedDpsTimer.Reset();
+		}
+		if (bleedTimer.GetTicks() >= bleedDuration * 1000) {
+			isBleeding = false;
+			bleedTimer.Stop();
+			bleedDpsTimer.Stop();
+		}
+	}
 
+	if (currentHP <= 0) {
+		getRemoved();
+	}
 }
 
 void Creep::getRemoved()
@@ -269,9 +306,52 @@ void Creep::gotLostSight(Turret * attacker)
 	//attackedBy.push_back(attacker);
 }
 
-void Creep::getDamaged(int damage)
+void Creep::getDamaged(BulletInfo bulletInfo)
 {
-	currentHP -= damage;
+	currentHP -= bulletInfo.damageFrom;
+
+	if (bulletInfo.hasSlow) {
+		slowDuration = bulletInfo.slowDuration;
+		slowPercentage = bulletInfo.slowPercentage;
+		isSlowed = true;
+		slowTimer.Start();
+	}
+	if (bulletInfo.hasStun) {
+		int chance = cocos2d::RandomHelper::random_int(1, 100);
+		if (chance <= (bulletInfo.stunChance * 100)) {
+			sprite->pause();
+			isStunned = true;
+			stunDuration = bulletInfo.stunDuration;
+			stunTimer.Start();
+		}
+	}
+	if (bulletInfo.hasBleed) {
+		bleedDamage = bulletInfo.bleedDps;
+		bleedDuration = bulletInfo.bleedDuration;
+		isBleeding = true;
+		bleedTimer.Start();
+		bleedDpsTimer.Start();
+	}
+	if (bulletInfo.hasSplashDamage && !inSplashRange) {
+		CGCircle *damageRadius = new CGCircle(
+			bulletInfo.splashRange,
+			getPosition()
+		);
+		std::vector<Creep*> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
+		for (Creep * creep : creepsInPlay)
+		{
+			if (creep != this && !creep->isDead()) {
+				if (game->checkCollision(damageRadius, creep->getBoundingBox()))
+				{
+					creep->setInSplashRange();
+					creep->getDamaged(bulletInfo);
+				}
+			}
+		}
+		delete damageRadius;
+		inSplashRange = false;
+	}
+
 	if (currentHP <= 0)
 	{
 		getRemoved();
@@ -286,6 +366,11 @@ bool Creep::isDead()
 bool Creep::isMissionCompleted()
 {
 	return missionComplete;
+}
+
+void Creep::setInSplashRange()
+{
+	inSplashRange = true;
 }
 
 void Creep::constructPathAndStartAnimationFromStep(Creep::ShortestPathStep *step)
@@ -457,6 +542,10 @@ void Creep::popStepAndAnimate()
 		return;
 	}
 
+	if (isStunned) {
+		return;
+	}
+
 	// Check whether there are steps on the path to advance
 	if (_shortestPath.size() == 0)
 	{
@@ -493,8 +582,9 @@ void Creep::popStepAndAnimate()
 	}
 	sprite->runAction(rotation);
 
+	float movementSpeed = isSlowed ? info->speed + (info->speed * slowPercentage) : info->speed;
 	// Setup and callback
-	MoveTo *moveAction = MoveTo::create(info->speed, game->getLevelManager()->positionForTileCoord(s->getPosition()));
+	MoveTo *moveAction = MoveTo::create(movementSpeed, game->getLevelManager()->positionForTileCoord(s->getPosition()));
 	CallFunc *moveCallback = CallFunc::create(CC_CALLBACK_0(Creep::popStepAndAnimate, this));
 
 	// Removing step

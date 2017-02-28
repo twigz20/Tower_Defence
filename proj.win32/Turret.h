@@ -24,6 +24,7 @@ class Turret : public cocos2d::Node
 	bool turretActive;
 
 	CGCircle *rangeIndicator;
+	CGCircle *splashDamageRange;
 	void addRangeIndicator();
 
 	cocos2d::DrawNode *range;
@@ -34,7 +35,7 @@ public:
 	Turret& operator=(Turret&& other);
 	~Turret();
 
-	bool checkCollision(cocos2d::Rect rect);
+	bool checkCollision(CGCircle *rangeIndicator, cocos2d::Rect rect);
 
 	Turret* nodeWithTheGame(TowerDefence* game_, TurretInfo *turretInfo);
 	void update(float deltaTime);

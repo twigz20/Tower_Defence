@@ -125,7 +125,6 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 			);
 			tsd->setTag(TURRET_STATS_TAG);
 			addChild(tsd);
-
 			return true;
 		}
 	}
@@ -143,6 +142,7 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 			prevPos = turretManager->getSelectedTurret()->getPosition();
 
 			TurretStatsDisplay *tsd = new TurretStatsDisplay();
+			tsd->setScale(1);
 			tsd->nodeWithTheGame(
 				this,
 				turretManager->getSelectedTurret()->getTurretInfo(),
@@ -252,7 +252,7 @@ void TowerDefence::setStartedTurrets()
 		}
 		else {
 			turretX = originalTurretX;
-			turretY -= 75;
+			turretY -= 50;
 			counter = 1;
 		}
 	}

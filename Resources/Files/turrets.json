@@ -2,11 +2,11 @@
   "turret-1": {
     "name": "Shooter",
     "image": "Graphics/tower-defense-turrets/turret-1-1.png",
-    "bullet_image": "Graphics/bullets/missile_1.png",
-    "damage":  12,
-    "damage2": {
-      "from": 11,
-      "to": 12
+	"bullet_properties": {
+      "bullet_image": "Graphics/bullets/missile_1.png",
+	  "damage_from": 12,
+	  "damage_to": 16,
+      "speed": 300.0
     },
     "cooldown": 1.25,
     "range": 75,
@@ -15,11 +15,11 @@
   "turret-2": {
   	"name": "Smasher",
     "image": "Graphics/tower-defense-turrets/turret-2-1.png",
-    "bullet_image": "Graphics/bullets/fireball_1.png",
-    "damage":  20,
-    "damage2": {
-      "from": 15,
-      "to": 20
+	"bullet_properties": {
+      "bullet_image": "Graphics/bullets/fireball_1.png",
+	  "damage_from": 15,
+	  "damage_to": 20,
+      "speed": 300.0
     },
     "cooldown": 1.5,
     "range": 50,
@@ -28,11 +28,11 @@
   "turret-3": {
     "name": "Defender",
     "image": "Graphics/tower-defense-turrets/turret-3-1.png",
-    "bullet_image": "Graphics/bullets/shot_1.png",
-    "damage":  16,
-    "damage2": {
-      "from": 12,
-      "to": 16
+	"bullet_properties": {
+      "bullet_image": "Graphics/bullets/fireball_1.png",
+	  "damage_from": 12,
+	  "damage_to": 16,
+      "speed": 300.0
     },
     "slow": {
       "duration": 3.0,
@@ -45,25 +45,25 @@
   "turret-4": {
     "name": "Blaster",
     "image": "Graphics/tower-defense-turrets/turret-4-1.png",
-    "bullet_image": "Graphics/bullets/ball_red_1.png",
-    "damage":  16,
-    "damage2": {
-      "from": 12,
-      "to": 16
+    "bullet_properties": {
+      "bullet_image": "Graphics/bullets/ball_red_1.png",
+	  "damage_from": 12,
+	  "damage_to": 16,
+      "speed": 300.0
     },
     "cooldown": 1.75,
     "range": 50,
-    "splash_range": 15,
+    "splash_range": 35,
     "cost": 45
   },
   "turret-5": {
     "name": "Wounder",
     "image": "Graphics/tower-defense-turrets/turret-5-1.png",
-    "bullet_image": "Graphics/bullets/wave_small_1.png",
-    "damage":  14,
-    "damage2": {
-      "from": 11,
-      "to": 14
+    "bullet_properties": {
+      "bullet_image": "Graphics/bullets/star_1.png",
+	  "damage_from": 11,
+	  "damage_to": 14,
+      "speed": 300.0
     },
     "cooldown": 1.5,
     "range": 60,
@@ -76,11 +76,11 @@
   "turret-6": {
     "name": "Basher",
     "image": "Graphics/tower-defense-turrets/turret-6-1.png",
-    "bullet_image": "Graphics/bullets/mine_redstar_1.png",
-    "damage":  20,
-    "damage2": {
-      "from": 15,
-      "to": 20
+    "bullet_properties": {
+      "bullet_image": "Graphics/bullets/mine_redstar_1.png",
+	  "damage_from": 15,
+	  "damage_to": 20,
+      "speed": 300.0
     },
     "cooldown": 1.75,
     "range": 60,
@@ -93,11 +93,11 @@
   "turret-7": {
     "name": "Destroyer",
     "image": "Graphics/tower-defense-turrets/turret-7-1.png",
-    "bullet_image": "Graphics/bullets/star_1.png",
-    "damage":  25,
-    "damage2": {
-      "from": 20,
-      "to": 25
+    "bullet_properties": {
+      "bullet_image": "Graphics/bullets/wave_small_1.png",
+	  "damage_from": 20,
+	  "damage_to": 25,
+      "speed": 300.0
     },
     "cooldown": 2.0,
     "range": 60,
