@@ -23,7 +23,10 @@ Creep::Creep() :
 	bleedDuration(0),
 	bleedDamage(0),
 	slowPercentage(0),
-	inSplashRange(false)
+	inSplashRange(false),
+	inSpeedAuraRange(false),
+	inHealAuraRange(false),
+	speedIncreasePercentage(0)
 {
 	
 }
@@ -38,6 +41,32 @@ Creep * Creep::initWithTheGame(TowerDefence * game_, CreepInfo * creepInfo)
 
 		sprite = Sprite::create(info->image);
 		addChild(sprite);
+
+		if (info->hasSpeedAura()) {
+			cocos2d::DrawNode *speedAuraRange = DrawNode::create();
+			speedAuraRange->drawDot(
+				cocos2d::Vec2(
+					sprite->getPosition().x + sprite->getContentSize().width / 2,
+					sprite->getPosition().y + sprite->getContentSize().height / 2
+				),
+				info->speedAura.area_, 
+				cocos2d::Color4F(0, 1, 0, 0.5f));
+			sprite->addChild(speedAuraRange, -1);
+		}
+
+		if (info->hasHealAura()) {
+			cocos2d::DrawNode *healAuraRange = DrawNode::create();
+			healAuraRange->drawDot(
+				cocos2d::Vec2(
+					sprite->getPosition().x + sprite->getContentSize().width / 2,
+					sprite->getPosition().y + sprite->getContentSize().height / 2
+				),
+				info->healAura.area_,
+				cocos2d::Color4F(0, 0, 1, 0.5f));
+			sprite->addChild(healAuraRange, -1);
+			healAuraTimer.Start();
+			selfHealAuraTimer.Start();
+		}
 
 		Vector<SpriteFrame*> animFrames(6);
 		char str[100] = { 0 };
@@ -284,6 +313,54 @@ void Creep::update(float deltaTime)
 		}
 	}
 
+	if (info->hasSpeedAura()) {
+		CGCircle *speedRadius = new CGCircle(
+			info->speedAura.area_,
+			getPosition()
+		);
+		std::vector<Creep*> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
+		for (Creep * creep : creepsInPlay)
+		{
+			if (creep != this && !creep->isDead()) {
+				if (game->checkCollision(speedRadius, creep->getBoundingBox()))
+				{
+					creep->increaseSpeed(info->speedAura.percentage_);
+				}
+				else {
+					inSpeedAuraRange = false;
+				}
+			}
+		}
+		delete speedRadius;
+	}
+
+	if (info->hasHealAura()) {
+		if (selfHealAuraTimer.GetTicks() >= 1000) {
+			getHealed(info->healAura.healPerSecond_);
+			selfHealAuraTimer.Reset();
+		}
+		CGCircle *healRadius = new CGCircle(
+			info->healAura.area_,
+			getPosition()
+		);
+		std::vector<Creep*> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
+		for (Creep * creep : creepsInPlay)
+		{
+			if (creep != this && !creep->isDead()) {
+				if (game->checkCollision(healRadius, creep->getBoundingBox()))
+				{
+					creep->setInHealAuraRange();
+					if (healAuraTimer.GetTicks() >= 1000) {
+						creep->getHealed(info->healAura.healPerSecond_);
+						healAuraTimer.Reset();
+					}
+				}
+			}
+		}
+		delete healRadius;
+	}
+
+
 	if (currentHP <= 0) {
 		getRemoved();
 	}
@@ -371,6 +448,30 @@ bool Creep::isMissionCompleted()
 void Creep::setInSplashRange()
 {
 	inSplashRange = true;
+}
+
+void Creep::setInSpeedAuraRange()
+{
+	inSpeedAuraRange = true;
+}
+
+void Creep::setInHealAuraRange()
+{
+	inHealAuraRange = true;
+}
+
+void Creep::getHealed(int hps)
+{
+	currentHP += hps;
+	if (currentHP > info->health)
+		currentHP = info->health;
+	//inHealAuraRange = false;
+}
+
+void Creep::increaseSpeed(float spd)
+{
+	speedIncreasePercentage = spd;
+	inSpeedAuraRange = true;
 }
 
 void Creep::constructPathAndStartAnimationFromStep(Creep::ShortestPathStep *step)
@@ -582,7 +683,12 @@ void Creep::popStepAndAnimate()
 	}
 	sprite->runAction(rotation);
 
-	float movementSpeed = isSlowed ? info->speed + (info->speed * slowPercentage) : info->speed;
+	float movementSpeed = info->hasSpeedAura() ? info->speed - (info->speed * info->speedAura.percentage_) : info->speed;
+	movementSpeed = isSlowed ? movementSpeed + (movementSpeed * slowPercentage) : movementSpeed;
+	
+	//if(inSpeedAuraRange)
+		//movementSpeed = movementSpeed - .5;//movementSpeed = movementSpeed - (movementSpeed * speedIncreasePercentage);
+
 	// Setup and callback
 	MoveTo *moveAction = MoveTo::create(movementSpeed, game->getLevelManager()->positionForTileCoord(s->getPosition()));
 	CallFunc *moveCallback = CallFunc::create(CC_CALLBACK_0(Creep::popStepAndAnimate, this));

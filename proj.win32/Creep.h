@@ -58,6 +58,8 @@ class Creep : public cocos2d::Node
 	bool isStunned;
 	bool isBleeding;
 	bool inSplashRange;
+	bool inSpeedAuraRange;
+	bool inHealAuraRange;
 
 	float slowDuration;
 	float stunDuration;
@@ -66,11 +68,14 @@ class Creep : public cocos2d::Node
 	float bleedDamage;
 
 	float slowPercentage;
+	float speedIncreasePercentage;
 
 	SimpleTimer slowTimer;
 	SimpleTimer stunTimer;
 	SimpleTimer bleedTimer;
 	SimpleTimer bleedDpsTimer;
+	SimpleTimer selfHealAuraTimer;
+	SimpleTimer healAuraTimer;
 
 public:
 	Creep();
@@ -109,6 +114,10 @@ public:
 	bool isMissionCompleted();
 
 	void setInSplashRange();
+	void setInSpeedAuraRange();
+	void setInHealAuraRange();
+	void getHealed(int hps);
+	void increaseSpeed(float spd);
 };
 
 
