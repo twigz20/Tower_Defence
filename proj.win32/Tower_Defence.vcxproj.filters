@@ -141,5 +141,8 @@
     <None Include="..\Resources\Files\waves.json">
       <Filter>win32\Files</Filter>
     </None>
+    <None Include="..\Resources\Files\config.json">
+      <Filter>win32\Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

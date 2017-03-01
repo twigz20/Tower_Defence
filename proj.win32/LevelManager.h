@@ -16,6 +16,7 @@ class LevelManager : public cocos2d::Object
 	cocos2d::TMXLayer *_bgLayer, *_objectLayer;
 	cocos2d::Vec2 start, end;
 	void setBackground();
+	void config();
 	void loadMap(std::string fileName);
 	bool hasProperty(std::string name, cocos2d::Vec2 tileCoord, cocos2d::TMXLayer *layer);
 	void loadStartPoint();

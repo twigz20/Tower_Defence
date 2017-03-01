@@ -1,6 +1,7 @@
 #include "LevelManager.h"
 #include "TowerDefenceScene.h"
 #include "Utils.h"
+#include "SimpleAudioEngine.h"
 
 #define GOLD_LABEL 20
 #define HEALTH_LABEL 21
@@ -48,6 +49,32 @@ void LevelManager::setBackground()
 	}
 	bgS->setPosition(Point(s_visibleRect.origin.x + s_visibleRect.size.width / 2, s_visibleRect.origin.y + s_visibleRect.size.height / 2));
 	game->addChild(bgS, -2);
+}
+
+void LevelManager::config()
+{
+	rapidjson::Document configInfoDoc;
+	configInfoDoc.Parse(getFileContent(CONFIG_FILE).c_str());
+
+	if (configInfoDoc.HasMember("config"))
+	{
+		const rapidjson::Value& configInfo = configInfoDoc["config"];
+		health = configInfo["health"].GetInt();
+		gold = configInfo["gold"].GetInt();
+
+		if (configInfo.HasMember("Music"))
+		{
+			if(configInfo["Music"]["play"].GetBool())
+				CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic(
+					configInfo["Music"]["source"].GetString(),
+					true
+				);
+		}
+	}
+	else {
+		health = 20;
+		gold = 75;
+	}
 }
 
 void LevelManager::loadMap(std::string fileName)
@@ -124,9 +151,10 @@ LevelManager::LevelManager(TowerDefence* game_) :
 	levelStarted(false),
 	levelFinished(false),
 	creepAmountForCurrentWave(0),
-	gold(85),
-	health(20)
+	gold(0),
+	health(0)
 {
+	config();
 	setBackground();
 	setupUi();
 	loadMap(INITIAL_MAP_FILE);

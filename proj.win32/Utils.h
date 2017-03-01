@@ -6,6 +6,7 @@
 #define WAVES_FILE "Files/waves.json"
 #define CREEP_FILE "Files/creep.json"
 #define TURRET_FILE "Files/turrets.json"
+#define CONFIG_FILE "Files/config.json"
 #define TILE_TAKEN 200
 #define TURRET_STATS_TAG 201
 #define TURRET_STATS_BACKGROUND "Graphics/tower-defense/stats-background.png"

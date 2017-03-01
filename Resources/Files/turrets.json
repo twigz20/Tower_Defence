@@ -4,26 +4,26 @@
     "image": "Graphics/tower-defense-turrets/turret-1-1.png",
 	"bullet_properties": {
       "bullet_image": "Graphics/bullets/missile_1.png",
-	  "damage_from": 8,
+	  "damage_from": 9,
 	  "damage_to": 16,
       "speed": 300.0
     },
     "cooldown": 1.40,
-    "range": 76,
-    "cost": 30
+    "range": 80,
+    "cost": 25
   },
   "turret-2": {
   	"name": "Smasher",
     "image": "Graphics/tower-defense-turrets/turret-2-1.png",
 	"bullet_properties": {
       "bullet_image": "Graphics/bullets/fireball_1.png",
-	  "damage_from": 15,
+	  "damage_from": 11,
 	  "damage_to": 20,
       "speed": 300.0
     },
-    "cooldown": 1.25,
+    "cooldown": 1.30,
     "range": 50,
-    "cost": 35
+    "cost": 40
   },
   "turret-3": {
     "name": "Defender",

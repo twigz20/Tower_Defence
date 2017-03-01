@@ -59,10 +59,6 @@ bool TowerDefence::init()
     /////////////////////////////
     // 3. add your codes below...
 
-	CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic(
-		"Sounds/Undaunted.wav", true);
-
-
 	levelManager = new LevelManager(this);
 	turretManager = new TurretManager(this);
 	

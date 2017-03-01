@@ -1,0 +1,10 @@
+{
+	"config": {
+		"health": 20,
+		"gold": 75,
+		"Music": {
+			"source": "Sounds/Undaunted.wav",
+			"play": false
+		}
+	}
+}
