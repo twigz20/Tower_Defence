@@ -44,8 +44,8 @@ bool TowerDefence::init()
 
     // add a "close" icon to exit the progress. it's an autorelease object
     auto closeItem = MenuItemImage::create(
-                                           "CloseNormal.png",
-                                           "CloseSelected.png",
+                                           "Graphics/UI/CloseNormal.png",
+                                           "Graphics/UI/CloseSelected.png",
                                            CC_CALLBACK_1(TowerDefence::menuCloseCallback, this));
     
     closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
@@ -69,7 +69,7 @@ bool TowerDefence::init()
 	eventListener->onTouchCancelled = CC_CALLBACK_2(TowerDefence::onTouchCancelled, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(eventListener, this);
 
-	auto button = Button::create("Graphics/Button.png");
+	auto button = Button::create("Graphics/UI/Button.png");
 	button->setTitleText("Start Wave");
 	button->setTitleFontName("fonts/Marker Felt.ttf");
 	button->setTitleFontSize(12.0f);

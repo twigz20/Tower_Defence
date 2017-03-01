@@ -2,7 +2,7 @@
 #define WINDOW_HEIGHT 10 * 48
 #define WINDOW_WIDTH 15 * 48
 #define BACKGROUND_FILE "Graphics/tower-defense/tower-defense-background-stars.png"
-#define INITIAL_MAP_FILE "Map1.tmx"
+#define INITIAL_MAP_FILE "Files/Tile-Maps/Level-1/Map.tmx"
 #define WAVES_FILE "Files/waves.json"
 #define CREEP_FILE "Files/creep.json"
 #define TURRET_FILE "Files/turrets.json"
@@ -48,7 +48,7 @@ static cocos2d::Node* cloneNode(const cocos2d::Node *source)
 		subnode->setRotation(srcSubnode->getRotation());
 		subnode->setPosition(srcSubnode->getPosition());
 		subnode->setAnchorPoint(srcSubnode->getAnchorPoint());
-		subnode->setZOrder(srcSubnode->getZOrder());
+		subnode->setLocalZOrder(srcSubnode->getLocalZOrder());
 		clone->addChild(subnode);
 	}
 
