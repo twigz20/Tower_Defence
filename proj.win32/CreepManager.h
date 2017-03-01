@@ -27,26 +27,22 @@ class CreepManager
 
 	cocos2d::Vec2 start, end;
 	int creepAmountForWave;
-	int creepTag;
-
 	SimpleTimer timer;
 public:
 	CreepManager(TowerDefence* game);
 	~CreepManager();
 
-	void addCreep(WaveProperties waveProperties);
-	void popCreep();
-	Creep* getNextCreep();
-	bool hasNextCreep();
-
-	void setWayPoints(cocos2d::Vec2 start, cocos2d::Vec2 end);
-	int getCreepAmountForWave();
+	void update(float deltaTime);
 	void clearManager();
-	std::vector<Creep*> getCreepsInPlay();
 	void cleanUpDeadCreeps();
 	void clearCreeps();
+	void setWayPoints(cocos2d::Vec2 start, cocos2d::Vec2 end);
 
-	void update(float deltaTime);
-
+	std::vector<Creep*> getCreepsInPlay();
+	void addCreep(WaveProperties waveProperties);
+	void popCreep();
+	bool hasNextCreep();
+	Creep* getNextCreep();
+	int getCreepAmountForWave();
 	void startCreepTimer();
 };

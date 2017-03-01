@@ -5,18 +5,18 @@
       "Wave": [
         {
           "minion": "creep-1-blue",
-          "quantity": 6,
+          "quantity": 3,
+          "delay": 2.0
+        },
+        {
+          "minion": "creep-1-yellow",
+          "quantity": 1,
           "delay": 2.0
         },
         {
           "minion": "creep-1-red",
-          "quantity": 1,
-          "delay": 4.0
-        },
-        {
-          "minion": "creep-1-red",
           "quantity": 2,
-          "delay": 4.0
+          "delay": 1.5
         },
         {
           "minion": "creep-1-blue",

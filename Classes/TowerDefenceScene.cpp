@@ -59,10 +59,12 @@ bool TowerDefence::init()
     /////////////////////////////
     // 3. add your codes below...
 
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic(
+		"Sounds/Undaunted.wav", true);
+
+
 	levelManager = new LevelManager(this);
 	turretManager = new TurretManager(this);
-
-	setStartedTurrets();
 	
 	auto eventListener = EventListenerTouchOneByOne::create();
 	eventListener->onTouchBegan = CC_CALLBACK_2(TowerDefence::onTouchBegan, this);
@@ -105,12 +107,13 @@ void TowerDefence::menuCloseCallback(Ref* pSender)
 bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_event)
 {
 	cocos2d::Point touchLoc = touch->getLocation();
-
+	std::vector<Turret*> starterTurrets = turretManager->getStarterTurrets();
 	for (int i = 0; i < starterTurrets.size(); i++) {
 		if (starterTurrets[i]->getBoundingBox().containsPoint(touchLoc))
 		{
 			prevPos = starterTurrets[i]->getPosition();
 			selectedTurret = new Turret(*starterTurrets[i]);
+			selectedTurret->setAsNormalTurret();
 			selectedTurret->showRange();
 			selectedTurret->setTag(SELECTED_TURRET);
 			addChild(selectedTurret, 1);
@@ -230,100 +233,17 @@ void TowerDefence::touchEvent(cocos2d::Ref * sender, cocos2d::ui::Widget::TouchE
 	}
 }
 
-void TowerDefence::setStartedTurrets()
-{
-	starterTurrets = turretManager->getStarterTurrets();
-
-	int xOffset = levelManager->getMap()->getTileSize().width / 2;
-	int yOffset = levelManager->getMap()->getTileSize().height / 2;
-	int originalTurretX = 550;
-	int originalTurretY = 400;
-	int turretX = originalTurretX;
-	int turretY = originalTurretY;
-
-	int counter = 1;
-	for (int i = 0; i < starterTurrets.size(); i++) {
-		starterTurrets[i]->setPosition(cocos2d::Vec2(turretX + xOffset, turretY + yOffset));
-		addChild(starterTurrets[i],0);
-
-		if (counter == 1) {
-			turretX += 75;
-			counter++;
-		}
-		else {
-			turretX = originalTurretX;
-			turretY -= 50;
-			counter = 1;
-		}
-	}
-}
-
 void TowerDefence::update(float delta)
 {
 	levelManager->update(delta);
 }
 
-bool TowerDefence::circleCollision(cocos2d::Vec2 circlePoint, float radius, cocos2d::Vec2 circlePointTwo, float radiusTwo)
-{
-	float xdif = circlePoint.x - circlePointTwo.x;
-	float ydif = circlePoint.y - circlePointTwo.y;
-
-	float distance = sqrt(xdif*xdif + ydif*ydif);
-
-	if (distance <= radius + radiusTwo)
-		return true;
-
-	return false;
-}
-
-bool TowerDefence::intersects(cocos2d::Vec2 c, float radius, cocos2d::Rect r)
-{
-	/*cocos2d::Vec2 circleDistance;
-	circleDistance.x = abs(circle.x - rect.getMinX());
-	circleDistance.y = abs(circle.y - rect.getMinY());
-
-	if (circleDistance.x > (rect.getMaxX() / 2 + radius)) { return false; }
-	if (circleDistance.y > (rect.getMaxY() / 2 + radius)) { return false; }
-
-	if (circleDistance.x <= (rect.getMaxX() / 2)) { return true; }
-	if (circleDistance.y <= (rect.getMaxY() / 2)) { return true; }
-
-	float cornerDistance_sq = ((circleDistance.x - rect.getMaxX() / 2) * (circleDistance.x - rect.getMaxX() / 2)) +
-		((circleDistance.y - rect.getMaxY() / 2) *  (circleDistance.y - rect.getMaxY() / 2));
-
-	return (cornerDistance_sq <= (radius * radius));*/
-
-	float cx = abs(c.x - r.getMinX() - r.getMidX());
-	float xDist = r.getMidX() + radius;
-	if (cx > xDist)
-		return false;
-	float cy = abs(c.y - r.getMinY() - r.getMidY());
-	float yDist = r.getMidY() + radius;
-	if (cy > yDist)
-		return false;
-	if (cx <= r.getMidX() || cy <= r.getMidY())
-		return true;
-	float xCornerDist = cx - r.getMidX();
-	float yCornerDist = cy - r.getMidY();
-	float xCornerDistSq = xCornerDist * xCornerDist;
-	float yCornerDistSq = yCornerDist * yCornerDist;
-	float maxCornerDistSq = radius * radius;
-	return xCornerDistSq + yCornerDistSq <= maxCornerDistSq;
-}
-
-void TowerDefence::ccFillPoly(cocos2d::Vec2 * poli, int points, bool closePolygon)
-{
-}
-
-void TowerDefence::enemyGotKilled()
-{
-}
-
-void TowerDefence::getHpDamage()
-{
-}
-
 LevelManager * TowerDefence::getLevelManager()
 {
 	return levelManager;
+}
+
+bool TowerDefence::checkCollision(CGCircle *rangeIndicator, cocos2d::Rect rect)
+{
+	return rangeIndicator->isContainRect(rect);
 }

@@ -25,9 +25,6 @@ class TowerDefence : public cocos2d::Layer
 	void playGame();
 	void touchEvent(cocos2d::Ref *sender, cocos2d::ui::Widget::TouchEventType type);
 
-	std::vector<Turret*> starterTurrets;
-	void setStartedTurrets();
-
 	Turret *selectedTurret;
 	int selectedTurretIndex;
 	cocos2d::Vec2 prevPos;
@@ -43,17 +40,7 @@ public:
     CREATE_FUNC(TowerDefence);
 
 	void update(float) override;
-
-	bool intersects(cocos2d::Vec2 circle, float radius, cocos2d::Rect rect);
-	bool circleCollision(cocos2d::Vec2 circlePoint, float radius, cocos2d::Vec2 circlePointTwo, float radiusTwo);
-	bool checkCollision(CGCircle *rangeIndicator, cocos2d::Rect rect)
-	{
-		return rangeIndicator->isContainRect(rect);
-	}
-	void ccFillPoly(cocos2d::Vec2 *poli, int points, bool closePolygon);
-	void enemyGotKilled();
-	void getHpDamage();
-
+	bool checkCollision(CGCircle *rangeIndicator, cocos2d::Rect rect);
 	LevelManager *getLevelManager();
 };
 

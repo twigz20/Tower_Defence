@@ -10,9 +10,11 @@ using namespace rapidjson;
 TurretManager::TurretManager(TowerDefence * game_) :
 	game(game_),
 	currentSelectedTurret(-1),
-	turretFactory(game)
+	turretFactory(game),
+	turretTag(0)
 {
 	loadStarterTurrets();
+	showStarterTurrets();
 }
 
 TurretManager::~TurretManager()
@@ -22,7 +24,7 @@ TurretManager::~TurretManager()
 void TurretManager::addTurret(Turret *turret_)
 {
 	turrets.push_back(new Turret(std::move(*turret_)));
-	turrets.back()->activateTurret();
+	turrets.back()->setTag(turretTag++);
 	game->addChild(turrets.back(), 0);
 }
 
@@ -43,12 +45,7 @@ bool TurretFactory::turretExist(std::string & turretName)
 
 Turret * TurretFactory::getTurret(std::string & turretName, bool isStarterTurret)
 {
-	TurretInfo *info = new TurretInfo(turretName);
-
-	Turret *turret = new Turret(isStarterTurret);
-	turret->nodeWithTheGame(game, info);
-
-	return std::move(turret);
+	return new Turret(game, new TurretInfo(turretName), isStarterTurret);
 }
 
 void TurretManager::loadStarterTurrets()
@@ -65,6 +62,34 @@ void TurretManager::loadStarterTurrets()
 		}
 		else {
 			moreTurrets = false;
+		}
+	}
+}
+
+void TurretManager::showStarterTurrets()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+
+	int xOffset = game->getLevelManager()->getMap()->getTileSize().width / 2;
+	int yOffset = game->getLevelManager()->getMap()->getTileSize().height / 2;
+	int originalTurretX = visibleSize.width * 0.77;
+	int originalTurretY = visibleSize.height * 0.83;
+	int turretX = originalTurretX;
+	int turretY = originalTurretY;
+
+	int counter = 1;
+	for (Turret *turret : starterTurrets) {
+		turret->setPosition(cocos2d::Vec2(turretX + xOffset, turretY + yOffset));
+		game->addChild(turret, 0);
+
+		if (counter == 1) {
+			turretX += visibleSize.width * 0.10;
+			counter++;
+		}
+		else {
+			turretX = originalTurretX;
+			turretY -= visibleSize.height * 0.115;
+			counter = 1;
 		}
 	}
 }

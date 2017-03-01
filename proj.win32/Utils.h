@@ -11,13 +11,14 @@
 #define TURRET_STATS_BACKGROUND "Graphics/tower-defense/stats-background.png"
 #define TURRET_STAT_CURRENT "Graphics/tower-defense/stat-current.png"
 #define TURRET_STAT_UPGRADE "Graphics/tower-defense/stat-upgrade.png"
+#define TURRET_SPRITE_TAG 300
+#define TURRET_SPRITE_RANGE_TAG 301
 
 
 #include <string>
 #include <fstream>
 #include <sstream>
-
-enum States { NONE, CHOOSECREEP, BUYSTATE, TURRETCLICK, TURRETTRACKSTATE, SPLASHSTATE, MAINMENU, PLAY, MULTIPLAYER, SETTINGS, HIGHSCORELIST };
+#include "cocos2d.h"
 
 static std::string getFileContent(const std::string& path)
 {
@@ -25,4 +26,30 @@ static std::string getFileContent(const std::string& path)
 	std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
 	return content;
+}
+
+static cocos2d::Node* cloneNode(const cocos2d::Node *source)
+{
+	cocos2d::Node* clone = cocos2d::Node::create();
+	for (cocos2d::Node* srcSubnode : source->getChildren()) {
+
+		cocos2d::Node* subnode;
+
+		if (srcSubnode->getTag() == TURRET_SPRITE_TAG) { 
+			cocos2d::Sprite* srcSprite = (cocos2d::Sprite*)srcSubnode;
+			subnode = cocos2d::Sprite::createWithTexture(srcSprite->getTexture());
+			((cocos2d::Sprite*)subnode)->setSpriteFrame(srcSprite->getSpriteFrame());
+		}
+		else {
+			subnode = cloneNode(srcSubnode);
+		}
+
+		subnode->setRotation(srcSubnode->getRotation());
+		subnode->setPosition(srcSubnode->getPosition());
+		subnode->setAnchorPoint(srcSubnode->getAnchorPoint());
+		subnode->setZOrder(srcSubnode->getZOrder());
+		clone->addChild(subnode);
+	}
+
+	return clone;
 }

@@ -6,6 +6,39 @@ class CreepInfo;
 class TowerDefence;
 class Turret;
 class BulletInfo;
+
+struct Status {
+	Status() :
+		isSlowed(false), isStunned(false), isBleeding(false),
+		stunDuration(0), slowDuration(0), bleedDuration(0),
+		bleedDamage(0), slowPercentage(0), speedIncreasePercentage(0),
+		inSplashRange(false), inSpeedAuraRange(false), inHealAuraRange(false)
+	{}
+
+	bool isSlowed;
+	bool isStunned;
+	bool isBleeding;
+	bool inSplashRange;
+	bool inSpeedAuraRange;
+	bool inHealAuraRange;
+
+	float slowDuration;
+	float stunDuration;
+	float bleedDuration;
+
+	float bleedDamage;
+
+	float slowPercentage;
+	float speedIncreasePercentage;
+
+	SimpleTimer slowTimer;
+	SimpleTimer stunTimer;
+	SimpleTimer bleedTimer;
+	SimpleTimer bleedDpsTimer;
+	SimpleTimer selfHealAuraTimer;
+	SimpleTimer healAuraTimer;
+};
+
 class Creep : public cocos2d::Node
 {
 	/* Path Finding Algorithm - Start */
@@ -43,55 +76,22 @@ class Creep : public cocos2d::Node
 	CreepInfo *info;
 	TowerDefence* game;
 	cocos2d::Sprite *sprite;
-
-	float startDelay;
-
-	Creep* initWithTheGame(TowerDefence* game_, CreepInfo *creepInfo);
 	cocos2d::CustomCommand _customCommand;
 
+	float startDelay;
 	int currentHP;
+	Status creepStatus;
+
 	bool dead;
 	bool missionComplete;
-	std::vector<Turret*> attackedBy;
 
-	bool isSlowed;
-	bool isStunned;
-	bool isBleeding;
-	bool inSplashRange;
-	bool inSpeedAuraRange;
-	bool inHealAuraRange;
-
-	float slowDuration;
-	float stunDuration;
-	float bleedDuration;
-
-	float bleedDamage;
-
-	float slowPercentage;
-	float speedIncreasePercentage;
-
-	SimpleTimer slowTimer;
-	SimpleTimer stunTimer;
-	SimpleTimer bleedTimer;
-	SimpleTimer bleedDpsTimer;
-	SimpleTimer selfHealAuraTimer;
-	SimpleTimer healAuraTimer;
+	std::map<int, Turret*> attackedBy;
 
 public:
-	Creep();
+	Creep(TowerDefence* game_, CreepInfo *creepInfo);
 	~Creep();
-
-	Creep* nodeWithTheGame(TowerDefence* game_, CreepInfo *creepInfo);
 	
-	void setScene(TowerDefence *scene);
-	void setHealth(const int& health);
-	void setSpeed(const int& speed);
-	void setGold(const int& gold);
 	void setStartDelay(const float& startDelay);
-
-	const int getHealth() const;
-	const float getSpeed() const;
-	const int getGold() const;
 	const float getStartDelay() const;
 
 	void update(float deltaTime);
@@ -105,10 +105,9 @@ public:
 
 	CreepInfo& getCreepInfo();
 
-	// Add method definitions
-	void getRemoved();
 	void getAttacked(Turret *attacker);
 	void gotLostSight(Turret *attacker);
+	void getRemoved();
 	void getDamaged(BulletInfo bulletInfo);
 	bool isDead();
 	bool isMissionCompleted();
@@ -119,6 +118,4 @@ public:
 	void getHealed(int hps);
 	void increaseSpeed(float spd);
 };
-
-
 

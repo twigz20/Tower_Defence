@@ -6,8 +6,7 @@ using namespace rapidjson;
 
 CreepManager::CreepManager(TowerDefence* game_) :
 	game(game_),
-	creepAmountForWave(0),
-	creepTag(0)
+	creepAmountForWave(0)
 {
 	creepFactory = new CreepFactory(game);
 }
@@ -24,7 +23,6 @@ void CreepManager::addCreep(WaveProperties waveProperties)
 	for (int i = 0; i < waveProperties.creepQuantity; i++) {
 		creeps.push(std::move(creepFactory->getCreep(waveProperties.creepName)));
 		creeps.back()->setPosition(start);
-		creeps.back()->setTag(creepTag++);
 		creeps.back()->setStartDelay(waveProperties.delay);
 		game->addChild(creeps.back());
 		creepAmountForWave++;
@@ -59,12 +57,7 @@ CreepManager::CreepFactory::~CreepFactory()
 
 Creep *CreepManager::CreepFactory::getCreep(std::string & creepName)
 {
-	CreepInfo *info = new CreepInfo(creepName);
-
-	Creep *creep = new Creep();
-	creep->nodeWithTheGame(game, info);
-
-	return creep;
+	return new Creep(game, new CreepInfo(creepName));
 }
 
 void CreepManager::setWayPoints(cocos2d::Vec2 start, cocos2d::Vec2 end)

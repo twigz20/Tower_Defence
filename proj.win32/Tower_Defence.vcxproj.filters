@@ -13,6 +13,21 @@
     <Filter Include="win32\Utilities">
       <UniqueIdentifier>{73195922-7878-442e-bfa5-ae245d9e3083}</UniqueIdentifier>
     </Filter>
+    <Filter Include="win32\Managers">
+      <UniqueIdentifier>{6ad76926-0824-4263-999e-e83b7b43b40c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="win32\Sprites">
+      <UniqueIdentifier>{35b8ff38-9432-46e7-acd9-fb03bda99d20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="win32\Sprite Information">
+      <UniqueIdentifier>{3cdba3e8-1c36-4a7f-8188-d951b8abd07a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="win32\Files">
+      <UniqueIdentifier>{4a6470f3-5e73-4af6-ad30-fa03f63603df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="win32\Helpers">
+      <UniqueIdentifier>{df1587ff-c4a9-4c5e-91ae-dd9b15ec022b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,23 +39,42 @@
     <ClCompile Include="..\Classes\TowerDefenceScene.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
+    <ClCompile Include="timer.cpp">
       <Filter>win32\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="WaveManager.cpp" />
-    <ClCompile Include="LevelManager.cpp" />
-    <ClCompile Include="Wave.cpp" />
-    <ClCompile Include="Creep.cpp">
-      <Filter>win32</Filter>
+    <ClCompile Include="LevelManager.cpp">
+      <Filter>win32\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="CreepManager.cpp" />
-    <ClCompile Include="timer.cpp" />
-    <ClCompile Include="Turret.cpp" />
-    <ClCompile Include="TurretManager.cpp" />
-    <ClCompile Include="CGCircle.cpp" />
-    <ClCompile Include="CreepInfo.cpp" />
-    <ClCompile Include="TurretInfo.cpp" />
-    <ClCompile Include="TurretStatsDisplay.cpp" />
+    <ClCompile Include="TurretManager.cpp">
+      <Filter>win32\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="CreepManager.cpp">
+      <Filter>win32\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Creep.cpp">
+      <Filter>win32\Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="Turret.cpp">
+      <Filter>win32\Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="CreepInfo.cpp">
+      <Filter>win32\Sprite Information</Filter>
+    </ClCompile>
+    <ClCompile Include="TurretInfo.cpp">
+      <Filter>win32\Sprite Information</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveManager.cpp">
+      <Filter>win32\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="CGCircle.cpp">
+      <Filter>win32\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="TurretStatsDisplay.cpp">
+      <Filter>win32\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Wave.cpp">
+      <Filter>win32\Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -52,26 +86,45 @@
     <ClInclude Include="..\Classes\TowerDefenceScene.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>win32\Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="Utils.h">
       <Filter>win32\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="WaveManager.h" />
-    <ClInclude Include="LevelManager.h" />
-    <ClInclude Include="Wave.h" />
-    <ClInclude Include="Creep.h">
-      <Filter>win32</Filter>
+    <ClInclude Include="timer.h">
+      <Filter>win32\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="CreepManager.h" />
-    <ClInclude Include="timer.h" />
-    <ClInclude Include="Turret.h" />
-    <ClInclude Include="TurretManager.h" />
-    <ClInclude Include="CGCircle.h" />
-    <ClInclude Include="CreepInfo.h" />
-    <ClInclude Include="TurretInfo.h" />
-    <ClInclude Include="TurretStatsDisplay.h" />
+    <ClInclude Include="LevelManager.h">
+      <Filter>win32\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="TurretManager.h">
+      <Filter>win32\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="CreepManager.h">
+      <Filter>win32\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Creep.h">
+      <Filter>win32\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="Turret.h">
+      <Filter>win32\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="CreepInfo.h">
+      <Filter>win32\Sprite Information</Filter>
+    </ClInclude>
+    <ClInclude Include="TurretInfo.h">
+      <Filter>win32\Sprite Information</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveManager.h">
+      <Filter>win32\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="CGCircle.h">
+      <Filter>win32\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TurretStatsDisplay.h">
+      <Filter>win32\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Wave.h">
+      <Filter>win32\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">
@@ -79,8 +132,14 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Resources\Files\creep.json" />
-    <None Include="..\Resources\Files\waves.json" />
-    <None Include="..\Resources\Files\turrets.json" />
+    <None Include="..\Resources\Files\creep.json">
+      <Filter>win32\Files</Filter>
+    </None>
+    <None Include="..\Resources\Files\turrets.json">
+      <Filter>win32\Files</Filter>
+    </None>
+    <None Include="..\Resources\Files\waves.json">
+      <Filter>win32\Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

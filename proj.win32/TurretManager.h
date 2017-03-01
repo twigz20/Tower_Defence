@@ -31,13 +31,16 @@ class TurretManager
 
 	TurretFactory turretFactory;
 	int currentSelectedTurret;
+
+	void loadStarterTurrets();
+	void showStarterTurrets();
+
+	int turretTag;
 public:
 	TurretManager(TowerDefence* game_);
 	~TurretManager();
 
 	void addTurret(Turret *turret);
-
-	void loadStarterTurrets();
 	std::vector<Turret*> getStarterTurrets();
 	std::vector<Turret*> getPlacedTurrets();
 

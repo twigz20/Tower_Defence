@@ -155,10 +155,8 @@ LevelManager::~LevelManager()
 
 void LevelManager::update(float deltaTime)
 {
-	if (levelStarted) {
-		
+	if (levelStarted) {	
 		creepManager->update(deltaTime);
-
 		if (creepAmountForCurrentWave == 0)
 		{
 			levelStarted = false;
@@ -281,21 +279,6 @@ cocos2d::PointArray * LevelManager::walkableAdjacentTilesCoordForTileCoord(cocos
 cocos2d::TMXTiledMap *LevelManager::getMap()
 {
 	return tileMap;
-}
-
-cocos2d::Vec2 LevelManager::getStartPoint()
-{
-	return start;
-}
-
-cocos2d::Vec2 LevelManager::getEndPoint()
-{
-	return end;
-}
-
-cocos2d::TMXLayer * LevelManager::getBackgroundLayer()
-{
-	return _bgLayer;
 }
 
 CreepManager *LevelManager::getCreepManager()

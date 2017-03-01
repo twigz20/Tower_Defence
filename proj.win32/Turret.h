@@ -7,50 +7,41 @@ class Creep;
 class CGCircle;
 class Turret : public cocos2d::Node
 {
-	TurretInfo *info;
-
 	TowerDefence* game;
+	TurretInfo *info;
 	cocos2d::Sprite *sprite;
-
-	Turret* initWithTheGame(TowerDefence* game_, TurretInfo *turretInfo);
-	cocos2d::CustomCommand _customCommand;
+	bool starterTurret;
 	
-	bool displayRange;
-
-	bool attacking;
+	bool isShooting;
 	Creep *chosenCreep;
 
-	bool starterTurret;
-	bool turretActive;
-
-	CGCircle *rangeIndicator;
-	CGCircle *splashDamageRange;
-	void addRangeIndicator();
-
+	bool displayRange;
 	cocos2d::DrawNode *range;
+	CGCircle *rangeIndicator;
+	void addRangeIndicator();
+	CGCircle *splashDamageRange;
+	void checkForSplashDamage();
+
 public:
-	Turret(bool isStarterTurret = false);
+	Turret(TowerDefence* game_, TurretInfo *turretInfo, bool isStarterTurret = false);
 	Turret(const Turret& other);
 	Turret(Turret&& other);
+	Turret& operator=(const Turret& other);
 	Turret& operator=(Turret&& other);
 	~Turret();
 
-	bool checkCollision(CGCircle *rangeIndicator, cocos2d::Rect rect);
-
-	Turret* nodeWithTheGame(TowerDefence* game_, TurretInfo *turretInfo);
 	void update(float deltaTime);
-	virtual void draw(cocos2d::Renderer* renderer, const cocos2d::Mat4& transform, uint32_t flags);
-	virtual void onDraw(const cocos2d::kmMat4 &transform, uint32_t flags);
 	void setPosition(const cocos2d::Vec2 &position);
 	const cocos2d::Vec2& getPosition() const;
 	cocos2d::Rect getBoundingBox() const;
+	const cocos2d::Size & getContentSize() const;
 
-	void activateTurret();
+	void setAsNormalTurret();
 	TurretInfo* getTurretInfo();
 	void showRange();
 	void hideRange();
 
-	// Add method definition
+	void getNextTarget();
 	void targetKilled();
 	void attackEnemy();
 	void chosenEnemyForAttack(Creep *enemy);

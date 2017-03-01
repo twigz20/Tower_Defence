@@ -12,33 +12,27 @@ class LevelManager : public cocos2d::Object
 	CreepManager *creepManager;
 	TurretManager *turretManager;
 
+	cocos2d::TMXTiledMap *tileMap;
+	cocos2d::TMXLayer *_bgLayer, *_objectLayer;
+	cocos2d::Vec2 start, end;
+	void setBackground();
+	void loadMap(std::string fileName);
+	bool hasProperty(std::string name, cocos2d::Vec2 tileCoord, cocos2d::TMXLayer *layer);
+	void loadStartPoint();
+	void loadEndPoint();
 	bool levelStarted;
 	bool levelFinished;
 	Wave currentWave;
 	int creepAmountForCurrentWave;
 
-	cocos2d::Vec2 start, end;
-	clock_t t2;
-
-	cocos2d::TMXTiledMap *tileMap;
-	cocos2d::TMXLayer *_bgLayer, *_objectLayer;
-
-	void initCreepManager();
 	void initWaveManager();
+	void initCreepManager();
 	void populateCreepManager();
 
-	void setBackground();
-	void loadMap(std::string fileName);
-	void loadStartPoint();
-	void loadEndPoint();
-
-	bool hasProperty(std::string name, cocos2d::Vec2 tileCoord, cocos2d::TMXLayer *layer);
-	
-	cocos2d::Label * goldLabel;
 	int gold;
-	cocos2d::Label * healthLabel;
+	cocos2d::Label * goldLabel;
 	int health;
-
+	cocos2d::Label * healthLabel;
 	void setupUi();
 
 public:
@@ -53,20 +47,13 @@ public:
 	bool isValidTileCoord(cocos2d::Point tileCoord);
 	bool isWallAtTileCoord(cocos2d::Point tileCoord);
 	bool isExitAtTilecoord(cocos2d::Point tileCoord);
-
+	void removeObjectAtTileCoord(cocos2d::Vec2 tileCoord);
 	cocos2d::Vec2 tileCoordForPosition(cocos2d::Vec2 position);
 	cocos2d::Vec2 positionForTileCoord(cocos2d::Vec2 tileCoord);
-
-	void removeObjectAtTileCoord(cocos2d::Vec2 tileCoord);
-
-	void setViewPointCenter(cocos2d::Vec2 position);
 	cocos2d::PointArray *walkableAdjacentTilesCoordForTileCoord(cocos2d::Point &tileCoord);
+	void setViewPointCenter(cocos2d::Vec2 position);
 
 	cocos2d::TMXTiledMap *getMap();
-	cocos2d::Vec2 getStartPoint();
-	cocos2d::Vec2 getEndPoint();
-	cocos2d::TMXLayer *getBackgroundLayer();
-
 	CreepManager *getCreepManager();
 
 	int getGold();
