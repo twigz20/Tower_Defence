@@ -16,6 +16,9 @@ CreepManager::~CreepManager()
 {
 	std::queue<Creep*> empty;
 	std::swap(creeps, empty);
+
+	if(creepFactory)
+		delete creepFactory;
 }
 
 void CreepManager::addCreep(WaveProperties waveProperties)
@@ -53,6 +56,8 @@ CreepManager::CreepFactory::CreepFactory(TowerDefence* game_) :
 
 CreepManager::CreepFactory::~CreepFactory()
 {
+	if (game)
+		delete game;
 }
 
 Creep *CreepManager::CreepFactory::getCreep(std::string & creepName)

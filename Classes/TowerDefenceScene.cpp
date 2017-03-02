@@ -2,8 +2,8 @@
 #include "SimpleAudioEngine.h"
 #include "proj.win32\LevelManager.h"
 #include "proj.win32\TurretManager.h"
-#include "proj.win32\TurretStatsDisplay.h"
 #include <sstream>
+//#include <vld.h> 
 
 USING_NS_CC;
 
@@ -23,6 +23,16 @@ Scene* TowerDefence::createScene()
 
     // return the scene
     return scene;
+}
+
+TowerDefence::~TowerDefence()
+{
+	if (levelManager)
+		delete levelManager;
+	if (turretManager)
+		delete turretManager;
+	if(selectedTurret)
+		delete selectedTurret;
 }
 
 // on "init" you need to initialize your instance
@@ -111,19 +121,13 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 			selectedTurret = new Turret(*starterTurrets[i]);
 			selectedTurret->setAsNormalTurret();
 			selectedTurret->showRange();
+
+			cocos2d::Vec2 turretStatsPosition = cocos2d::Vec2(
+				Director::getInstance()->getVisibleSize().width * 0.77,
+				Director::getInstance()->getVisibleSize().height * 0.10);
+			selectedTurret->showTurretStats(turretStatsPosition);
 			selectedTurret->setTag(SELECTED_TURRET);
 			addChild(selectedTurret, 1);
-
-			TurretStatsDisplay *tsd = new TurretStatsDisplay();
-			tsd->nodeWithTheGame(
-				this,
-				starterTurrets[i]->getTurretInfo(),
-				cocos2d::Vec2(
-					Director::getInstance()->getVisibleSize().width * 0.77,
-					Director::getInstance()->getVisibleSize().height * 0.10)
-			);
-			tsd->setTag(TURRET_STATS_TAG);
-			addChild(tsd);
 			return true;
 		}
 	}
@@ -140,28 +144,16 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 			turretManager->showSelectedTurretRange();
 			prevPos = turretManager->getSelectedTurret()->getPosition();
 
-			TurretStatsDisplay *tsd = new TurretStatsDisplay();
-			tsd->setScale(1);
-			tsd->nodeWithTheGame(
-				this,
-				turretManager->getSelectedTurret()->getTurretInfo(),
-				cocos2d::Vec2(
-					turretManager->getSelectedTurret()->getPosition().x + levelManager->getMap()->getTileSize().width / 2,
-					turretManager->getSelectedTurret()->getPosition().y - levelManager->getMap()->getTileSize().height / 2
-				)
+			cocos2d::Vec2 turretStatsPosition = cocos2d::Vec2(
+				turretManager->getSelectedTurret()->getPosition().x + levelManager->getMap()->getTileSize().width / 2,
+				turretManager->getSelectedTurret()->getPosition().y - levelManager->getMap()->getTileSize().height / 2
 			);
-			tsd->hideCost();
-			tsd->setTag(TURRET_STATS_TAG);
-			turretManager->getSelectedTurret()->addChild(tsd,1);
-
+			turretManager->getSelectedTurret()->showTurretStats(turretStatsPosition);
 			return true;
 		}
 	}
 
-	if (turretManager->isATurretSelected()) {
-		turretManager->hideSelectedTurretRange();
-		turretManager->getSelectedTurret()->removeChildByTag(TURRET_STATS_TAG);
-	}
+	turretManager->hideAllTurretStats();
 
 	return false;
 }
@@ -176,7 +168,7 @@ void TowerDefence::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_ev
 {
 	if (selectedTurret) 
 	{
-		if (levelManager->getGold() >= selectedTurret->getTurretInfo()->cost) 
+		if (levelManager->getGold() >= selectedTurret->getTurretInfo().cost) 
 		{
 			selectedTurret->hideRange();
 			cocos2d::Vec2 tileCoordForTowerPosition = levelManager->tileCoordForPosition(selectedTurret->getPosition());
@@ -186,20 +178,23 @@ void TowerDefence::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_ev
 				cocos2d::Vec2 positionOfTileCoord = levelManager->positionForTileCoord(tileCoordForTowerPosition);
 				if (!turretManager->hasTurretAtCoord(positionOfTileCoord))
 				{
-					levelManager->decreaseGold(selectedTurret->getTurretInfo()->cost);
+					levelManager->decreaseGold(selectedTurret->getTurretInfo().cost);
 					selectedTurret->setPosition(positionOfTileCoord);
+					selectedTurret->hideTurretStats();
 					turretManager->addTurret(selectedTurret);
 					removeChildByTag(SELECTED_TURRET);
 				}
 			}
 		}
 
+		selectedTurret->hideTurretStats();
 		selectedTurret->removeFromParentAndCleanup(true);
 		delete selectedTurret;
 		selectedTurret = nullptr;
 	}
 
-	removeChildByTag(TURRET_STATS_TAG);
+	turretManager->hideAllTurretStats();
+	turretManager->hideAllTurretRanges();
 }
 
 void TowerDefence::onTouchCancelled(cocos2d::Touch * touch, cocos2d::Event * unused_event)

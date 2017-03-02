@@ -1,19 +1,19 @@
 #pragma once
-#include "WaveManager.h"
-#include "CreepManager.h"
-#include "TurretManager.h"
+#include "Utils.h"
 #include "proj.win32\timer.h"
+#include "Wave.h"
 
 class TowerDefence;
+class WaveManager;
+class CreepManager;
 class LevelManager : public cocos2d::Object
 {
 	TowerDefence* game;
 	WaveManager *waveManager;
 	CreepManager *creepManager;
-	TurretManager *turretManager;
 
 	cocos2d::TMXTiledMap *tileMap;
-	cocos2d::TMXLayer *_bgLayer, *_objectLayer;
+	cocos2d::TMXLayer *bgLayer, *objectLayer;
 	cocos2d::Vec2 start, end;
 	void setBackground();
 	void config();

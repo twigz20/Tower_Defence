@@ -2,6 +2,8 @@
 #include "proj.win32\Utils.h"
 #include "TowerDefenceScene.h"
 #include "LevelManager.h"
+#include "CreepManager.h"
+#include "Turret.h"
 #include "CreepInfo.h"
 #include "CGCircle.h"
 
@@ -71,6 +73,18 @@ Creep::Creep(TowerDefence* game_, CreepInfo *creepInfo) :
 
 Creep::~Creep()
 {
+	if (info)
+		delete info;
+	//if (game)
+	//	game = nullptr;
+
+	auto itr = attackedBy.begin();
+	while (itr != attackedBy.end())
+	{
+		Turret* keyCopy = itr->second;
+		itr = attackedBy.erase(itr);
+		delete keyCopy;
+	}
 }
 
 void Creep::setStartDelay(const float & startDelay)
@@ -204,7 +218,8 @@ void Creep::gotLostSight(Turret * attacker)
 {
 	std::map<int, Turret*>::iterator it;
 	it = attackedBy.find(attacker->getTag());
-	attackedBy.erase(it);
+	if(it != attackedBy.end())
+		attackedBy.erase(it);
 }
 
 void Creep::getDamaged(BulletInfo bulletInfo)

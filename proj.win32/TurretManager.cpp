@@ -19,6 +19,18 @@ TurretManager::TurretManager(TowerDefence * game_) :
 
 TurretManager::~TurretManager()
 {
+	if (game)
+		delete game;
+
+	for (int i = 0; i < turrets.size(); i++) {
+		delete turrets[i];
+	}
+	turrets.clear();
+
+	for (int i = 0; i < starterTurrets.size(); i++) {
+		delete starterTurrets[i];
+	}
+	starterTurrets.clear();
 }
 
 void TurretManager::addTurret(Turret *turret_)
@@ -36,6 +48,8 @@ TurretFactory::TurretFactory(TowerDefence *game_) :
 
 TurretFactory::~TurretFactory()
 {
+	if (game)
+		delete game;
 }
 
 bool TurretFactory::turretExist(std::string & turretName)
@@ -45,7 +59,7 @@ bool TurretFactory::turretExist(std::string & turretName)
 
 Turret * TurretFactory::getTurret(std::string & turretName, bool isStarterTurret)
 {
-	return new Turret(game, new TurretInfo(turretName), isStarterTurret);
+	return new Turret(game, TurretInfo(turretName), isStarterTurret);
 }
 
 void TurretManager::loadStarterTurrets()
@@ -122,6 +136,16 @@ void TurretManager::showSelectedTurretRange()
 void TurretManager::hideSelectedTurretRange()
 {
 	turrets[currentSelectedTurret]->hideRange();
+}
+
+void TurretManager::hideAllTurretRanges()
+{
+	std::for_each(turrets.begin(), turrets.end(), [](Turret* t) { t->hideRange(); });
+}
+
+void TurretManager::hideAllTurretStats()
+{
+	std::for_each(turrets.begin(), turrets.end(), [](Turret* t) { t->hideTurretStats(); });
 }
 
 bool TurretManager::isEmpty()

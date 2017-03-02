@@ -5,16 +5,18 @@
 class TowerDefence;
 class Creep;
 class CGCircle;
+class TurretStatsDisplay;
 class Turret : public cocos2d::Node
 {
 	TowerDefence* game;
-	TurretInfo *info;
+	TurretInfo info;
 	cocos2d::Sprite *sprite;
 	bool starterTurret;
 	
 	bool isShooting;
 	Creep *chosenCreep;
 
+	TurretStatsDisplay *tsd;
 	bool displayRange;
 	cocos2d::DrawNode *range;
 	CGCircle *rangeIndicator;
@@ -23,7 +25,7 @@ class Turret : public cocos2d::Node
 	void checkForSplashDamage();
 
 public:
-	Turret(TowerDefence* game_, TurretInfo *turretInfo, bool isStarterTurret = false);
+	Turret(TowerDefence* game_, TurretInfo turretInfo, bool isStarterTurret = false);
 	Turret(const Turret& other);
 	Turret(Turret&& other);
 	Turret& operator=(const Turret& other);
@@ -36,8 +38,10 @@ public:
 	cocos2d::Rect getBoundingBox() const;
 	const cocos2d::Size & getContentSize() const;
 
+	void showTurretStats(cocos2d::Vec2 position);
+	void hideTurretStats();
 	void setAsNormalTurret();
-	TurretInfo* getTurretInfo();
+	TurretInfo& getTurretInfo();
 	void showRange();
 	void hideRange();
 

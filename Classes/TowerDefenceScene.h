@@ -30,6 +30,7 @@ class TowerDefence : public cocos2d::Layer
 	cocos2d::Vec2 prevPos;
 public:
     static cocos2d::Scene* createScene();
+	~TowerDefence();
 
     virtual bool init();
     
@@ -42,6 +43,8 @@ public:
 	void update(float) override;
 	bool checkCollision(CGCircle *rangeIndicator, cocos2d::Rect rect);
 	LevelManager *getLevelManager();
+
+	
 };
 
 #endif // __HELLOWORLD_SCENE_H__

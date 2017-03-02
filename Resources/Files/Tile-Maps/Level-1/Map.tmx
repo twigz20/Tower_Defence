@@ -37,19 +37,24 @@
     <property name="Wall" value="1"/>
    </properties>
   </tile>
+  <tile id="7">
+   <properties>
+    <property name="Exit" value="1"/>
+   </properties>
+  </tile>
  </tileset>
  <layer name="Background" width="10" height="10">
   <data encoding="csv">
 0,3,6,6,6,5,0,0,0,0,
 0,7,0,0,0,7,0,0,0,0,
-0,7,0,7,0,7,0,0,0,0,
+0,7,0,7,0,7,0,0,8,0,
 0,0,0,7,0,7,0,0,0,0,
 6,6,6,4,0,1,6,6,6,5,
 0,0,0,0,0,7,0,0,0,7,
 0,3,6,6,6,1,0,7,0,7,
 0,7,0,0,0,7,0,7,0,7,
 0,7,0,7,0,7,0,7,0,7,
-0,0,0,7,0,0,0,7,0,7
+0,0,0,7,0,0,0,7,8,7
 </data>
  </layer>
  <objectgroup name="Way Points">

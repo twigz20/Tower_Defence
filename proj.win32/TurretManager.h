@@ -2,6 +2,7 @@
 #include "rapidjson/document.h"
 #include "Utils.h"
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -47,6 +48,8 @@ public:
 	bool hasTurretAtCoord(cocos2d::Vec2 coord);
 	void showSelectedTurretRange();
 	void hideSelectedTurretRange();
+	void hideAllTurretRanges();
+	void hideAllTurretStats();
 	bool isEmpty();
 	bool isATurretSelected();
 	void selectTurret(int index);

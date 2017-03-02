@@ -1,14 +1,16 @@
 #include "Turret.h"
 #include "TowerDefenceScene.h"
 #include "Creep.h"
+#include "CreepManager.h"
 #include "levelManager.h"
 #include "CGCircle.h"
+#include "TurretStatsDisplay.h"
 #define TURRET_RANGE_INDICATOR 301
 
 
 using namespace cocos2d;
 
-Turret::Turret(TowerDefence* game_, TurretInfo *turretInfo, bool isStarterTurret) :
+Turret::Turret(TowerDefence* game_, TurretInfo turretInfo, bool isStarterTurret) :
 	game(game_),
 	info(turretInfo),
 	range(nullptr),
@@ -16,14 +18,26 @@ Turret::Turret(TowerDefence* game_, TurretInfo *turretInfo, bool isStarterTurret
 	chosenCreep(nullptr),
 	starterTurret(isStarterTurret),
 	splashDamageRange(nullptr),
-	isShooting(false)
+	isShooting(false),
+	tsd(nullptr)
 {
 	if (init()) {
-		setName(info->name);
+		setLocalZOrder(-1);
+		setName(info.name);
 		setAnchorPoint(cocos2d::Vec2(0.5f, 0.5f));
 
-		sprite = Sprite::create(info->image);
+		sprite = Sprite::create(info.image);
 		addChild(sprite);
+
+		tsd = new TurretStatsDisplay(game,
+			info,
+			cocos2d::Vec2(
+				Director::getInstance()->getVisibleSize().width * 0.77,
+				Director::getInstance()->getVisibleSize().height * 0.10)
+		);
+		tsd->setTag(TURRET_STATS_TAG);
+		game->addChild(tsd, 0);
+		hideTurretStats();
 
 		addRangeIndicator();
 
@@ -33,20 +47,23 @@ Turret::Turret(TowerDefence* game_, TurretInfo *turretInfo, bool isStarterTurret
 }
 
 Turret::Turret(const Turret & other) :
-	info(nullptr),
 	range(nullptr),
 	displayRange(false),
 	chosenCreep(nullptr),
 	splashDamageRange(nullptr),
 	rangeIndicator(nullptr),
-	isShooting(false)
+	isShooting(false),
+	tsd(nullptr),
+	info(info)
 {
 	*this = other;
 }
 
 Turret& Turret::operator=(const Turret& other) {
 	if (this != &other) {
+		setLocalZOrder(-1);
 		info = other.info;
+		tsd = other.tsd;
 		game = other.game;
 		range = other.range;
 		splashDamageRange = other.splashDamageRange;
@@ -59,7 +76,9 @@ Turret& Turret::operator=(const Turret& other) {
 		sprite->setContentSize(other.sprite->getContentSize());
 		addRangeIndicator();
 		setPosition(other.sprite->getPosition());
-		addChild(sprite);
+		addChild(sprite, 0);
+		if (tsd)
+			tsd->setupDisplay(getPosition());
 
 		if (!starterTurret)
 			scheduleUpdate();
@@ -68,19 +87,22 @@ Turret& Turret::operator=(const Turret& other) {
 }
 
 Turret::Turret(Turret && other) :
-	info(nullptr),
 	range(nullptr),
 	displayRange(false),
 	chosenCreep(nullptr),
 	splashDamageRange(nullptr),
-	isShooting(false)
+	isShooting(false),
+	tsd(nullptr),
+	info(info)
 {
 	*this = std::move(other);
 }
 
 Turret& Turret::operator=(Turret&& other) {
 	if (this != &other) {
+		setLocalZOrder(-1);
 		info = other.info;
+		tsd = other.tsd;
 		game = other.game;
 		range = other.range;
 		splashDamageRange = other.splashDamageRange;
@@ -93,14 +115,16 @@ Turret& Turret::operator=(Turret&& other) {
 		sprite->setContentSize(other.sprite->getContentSize());
 		addRangeIndicator();
 		setPosition(other.sprite->getPosition());
-		addChild(sprite);
+		addChild(sprite, 0);
+		if (tsd)
+			tsd->setupDisplay(getPosition());
 
 		if (!starterTurret)
 			scheduleUpdate();
 
-		other.info = nullptr;
 		other.game = nullptr;
 		other.range = nullptr;
+		other.tsd = nullptr;
 		other.splashDamageRange = nullptr;
 	}
 	return std::move(*this);
@@ -108,6 +132,12 @@ Turret& Turret::operator=(Turret&& other) {
 
 Turret::~Turret()
 {
+	if (rangeIndicator)
+		delete rangeIndicator;
+	if (chosenCreep)
+		delete chosenCreep;
+	if (splashDamageRange)
+		delete splashDamageRange;
 }
 
 void Turret::addRangeIndicator()
@@ -118,7 +148,7 @@ void Turret::addRangeIndicator()
 			getPosition().x + sprite->getContentSize().width/2,
 			getPosition().y + sprite->getContentSize().height/2
 		),
-		info->range, 
+		info.range, 
 		360, 
 		60, 
 		false, 
@@ -129,7 +159,7 @@ void Turret::addRangeIndicator()
 	hideRange();
 
 	rangeIndicator = new CGCircle(
-		info->range,
+		info.range,
 		getPosition()
 	);
 }
@@ -151,7 +181,7 @@ void Turret::setAsNormalTurret()
 	starterTurret = false;
 }
 
-TurretInfo* Turret::getTurretInfo()
+TurretInfo& Turret::getTurretInfo()
 {
 	return info;
 }
@@ -188,12 +218,26 @@ const cocos2d::Size & Turret::getContentSize() const
 	return sprite->getContentSize();
 }
 
+void Turret::showTurretStats(cocos2d::Vec2 position)
+{
+	if (tsd) {
+		tsd->setupDisplay(position);
+		tsd->setVisible(true);
+	}
+}
+
+void Turret::hideTurretStats()
+{
+	if(tsd)
+		tsd->setVisible(false);
+}
+
 void Turret::attackEnemy()
 {
 	if (!isShooting)
 		shootWeapon(0.0);
-
-	this->schedule(schedule_selector(Turret::shootWeapon), info->cooldown, 0, 0);
+	else
+		this->schedule(schedule_selector(Turret::shootWeapon), info.cooldown, 0, 0);
 }
 
 void Turret::chosenEnemyForAttack(Creep *enemy)
@@ -206,11 +250,11 @@ void Turret::chosenEnemyForAttack(Creep *enemy)
 
 void Turret::shootWeapon(float dt)
 {
-	Sprite * bullet = Sprite::create(info->bulletInfo.image);
+	Sprite * bullet = Sprite::create(info.bulletInfo.image);
 	game->addChild(bullet);
 	bullet->setPosition(sprite->getPosition());
 
-	MoveTo *actionWithDuration = MoveTo::create(0.1, chosenCreep->getPosition());
+	MoveTo *actionWithDuration = MoveTo::create(0.225, chosenCreep->getPosition());
 	CallFunc *actionWithTarget = CallFunc::create(CC_CALLBACK_0(Turret::damageEnemy, this));
 	CallFunc *actionWithTarget2 = CallFunc::create(CC_CALLBACK_0(Turret::removeBullet, this, bullet));
 
@@ -227,7 +271,7 @@ void Turret::removeBullet(Sprite *bullet)
 void Turret::damageEnemy()
 {
 	if(chosenCreep)
-		chosenCreep->getDamaged(info->bulletInfo);
+		chosenCreep->getDamaged(info.bulletInfo);
 
 	checkForSplashDamage();
 }

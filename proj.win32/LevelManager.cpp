@@ -1,7 +1,8 @@
 #include "LevelManager.h"
 #include "TowerDefenceScene.h"
-#include "Utils.h"
 #include "SimpleAudioEngine.h"
+#include "WaveManager.h"
+#include "CreepManager.h"
 
 #define GOLD_LABEL 20
 #define HEALTH_LABEL 21
@@ -82,7 +83,7 @@ void LevelManager::loadMap(std::string fileName)
 	auto str = cocos2d::String::createWithContentsOfFile(cocos2d::FileUtils::getInstance()->fullPathForFilename(fileName.c_str()).c_str());
 	tileMap = cocos2d::TMXTiledMap::createWithXML(str->getCString(), "");
 	tileMap->retain();
-	_bgLayer = tileMap->layerNamed("Background");
+	bgLayer = tileMap->layerNamed("Background");
 	game->addChild(tileMap, -1);
 }
 
@@ -169,16 +170,22 @@ LevelManager::LevelManager(TowerDefence* game_) :
 
 LevelManager::~LevelManager()
 {
+	if (game)
+		delete game;
 	if (waveManager)
 		delete waveManager;
 	if (creepManager)
 		delete creepManager;
 	if (tileMap)
 		delete tileMap;
-	if (_bgLayer)
-		delete _bgLayer;
-	if (_objectLayer)
-		delete _objectLayer;
+	if (bgLayer)
+		delete bgLayer;
+	if (objectLayer)
+		delete objectLayer;
+	if (goldLabel)
+		delete goldLabel;
+	if (healthLabel)
+		delete healthLabel;
 }
 
 void LevelManager::update(float deltaTime)
@@ -227,12 +234,12 @@ bool LevelManager::isValidTileCoord(cocos2d::Point tileCoord)
 
 bool LevelManager::isWallAtTileCoord(cocos2d::Point tileCoord)
 {
-	return hasProperty("Wall", tileCoord, _bgLayer);
+	return hasProperty("Wall", tileCoord, bgLayer);
 }
 
 bool LevelManager::isExitAtTilecoord(cocos2d::Point tileCoord)
 {
-	return hasProperty("Exit", tileCoord, _bgLayer);
+	return hasProperty("Exit", tileCoord, bgLayer);
 }
 
 cocos2d::Vec2 LevelManager::tileCoordForPosition(cocos2d::Vec2 position)
@@ -251,7 +258,7 @@ cocos2d::Vec2 LevelManager::positionForTileCoord(cocos2d::Vec2 tileCoord)
 
 void LevelManager::removeObjectAtTileCoord(cocos2d::Vec2 tileCoord)
 {
-	_objectLayer->removeTileAt(tileCoord);
+	objectLayer->removeTileAt(tileCoord);
 }
 
 void LevelManager::setViewPointCenter(cocos2d::Vec2 position)

@@ -2,29 +2,24 @@
 #include "TurretInfo.h"
 #include "TowerDefenceScene.h"
 #include "Utils.h"
+#define DISPLAY_TAG 150
 
 using namespace cocos2d;
 
-TurretStatsDisplay * TurretStatsDisplay::initWithTheGame(TowerDefence * game_, TurretInfo * turretInfo, cocos2d::Vec2 position)
+void TurretStatsDisplay::setupDisplay(cocos2d::Vec2 position)
 {
-	if (init()) {
-		game = game_;
-		info = turretInfo;
-		sprite = Sprite::create(TURRET_STATS_BACKGROUND);
-		sprite->setAnchorPoint(cocos2d::Vec2(0, 0));
-		sprite->setScaleX(2.0);
-		sprite->setScaleY(2.0);
-		addChild(sprite);
-		setPosition(position);
-		setupDisplay();
-	}
+	if (getChildrenCount() > 0)
+		removeAllChildrenWithCleanup(true);
 
-	return this;
-}
+	sprite = Sprite::create(TURRET_STATS_BACKGROUND);
+	sprite->setAnchorPoint(cocos2d::Vec2(0, 0));
+	sprite->setScaleX(2.0);
+	sprite->setScaleY(2.0);
+	sprite->setTag(DISPLAY_TAG);
+	addChild(sprite);
+	setPosition(position);
 
-void TurretStatsDisplay::setupDisplay()
-{
-	auto nameLabel = Label::createWithSystemFont(info->name, "Arial", 16);
+	auto nameLabel = Label::createWithSystemFont(info.name, "Arial", 16);
 	nameLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 	nameLabel->setPosition(
 		sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.07),
@@ -35,7 +30,7 @@ void TurretStatsDisplay::setupDisplay()
 	addChild(nameLabel);
 
 	std::stringstream ss;
-	ss << "Lvl " << info->level;
+	ss << "Lvl " << info.level;
 	auto levelLabel = Label::createWithSystemFont(ss.str().c_str(), "Arial", 16);
 	levelLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 	levelLabel->setPosition(
@@ -47,7 +42,7 @@ void TurretStatsDisplay::setupDisplay()
 	addChild(levelLabel);
 	ss.str(std::string());
 
-	if (info->bulletInfo.hasStun) {
+	if (info.bulletInfo.hasStun) {
 		Sprite *stunSprite = Sprite::create("Graphics/stun.png");
 		stunSprite->setAnchorPoint(cocos2d::Vec2(0, 0));
 		stunSprite->setPosition(
@@ -57,7 +52,7 @@ void TurretStatsDisplay::setupDisplay()
 		addChild(stunSprite);
 
 		char * buffer = new char[100];
-		sprintf(buffer, "STUN:   %.1fs   %.f%%", info->bulletInfo.stunDuration, info->bulletInfo.stunChance * 100);
+		sprintf(buffer, "STUN:   %.1fs   %.f%%", info.bulletInfo.stunDuration, info.bulletInfo.stunChance * 100);
 		auto stunLabel = Label::createWithSystemFont(buffer, "Arial", 12);
 		stunLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 		stunLabel->setPosition(
@@ -68,7 +63,7 @@ void TurretStatsDisplay::setupDisplay()
 		addChild(stunLabel);
 	}
 
-	if (info->bulletInfo.hasSlow) {
+	if (info.bulletInfo.hasSlow) {
 		Sprite *slowSprite = Sprite::create("Graphics/slow.png");
 		slowSprite->setAnchorPoint(cocos2d::Vec2(0, 0));
 		slowSprite->setPosition(
@@ -78,7 +73,7 @@ void TurretStatsDisplay::setupDisplay()
 		addChild(slowSprite);
 
 		char * buffer = new char[100];
-		sprintf(buffer, "SLOW:   %.1fs   %.f%%", info->bulletInfo.slowDuration, info->bulletInfo.slowPercentage * 100);
+		sprintf(buffer, "SLOW:   %.1fs   %.f%%", info.bulletInfo.slowDuration, info.bulletInfo.slowPercentage * 100);
 		auto slowLabel = Label::createWithSystemFont(buffer, "Arial", 12);
 		slowLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 		slowLabel->setPosition(
@@ -89,7 +84,7 @@ void TurretStatsDisplay::setupDisplay()
 		addChild(slowLabel);
 	}
 
-	if (info->bulletInfo.hasBleed) {
+	if (info.bulletInfo.hasBleed) {
 		Sprite *bleedSprite = Sprite::create("Graphics/bleed.png");
 		bleedSprite->setAnchorPoint(cocos2d::Vec2(0, 0));
 		bleedSprite->setPosition(
@@ -99,7 +94,7 @@ void TurretStatsDisplay::setupDisplay()
 		addChild(bleedSprite);
 
 		char * buffer = new char[100];
-		sprintf(buffer, "BLEED:  %.1fs   %.f DPS", info->bulletInfo.bleedDuration, info->bulletInfo.bleedDps);
+		sprintf(buffer, "BLEED:  %.1fs   %.f DPS", info.bulletInfo.bleedDuration, info.bulletInfo.bleedDps);
 		auto bleedLabel = Label::createWithSystemFont(buffer, "Arial", 12);
 		bleedLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 		bleedLabel->setPosition(
@@ -110,7 +105,7 @@ void TurretStatsDisplay::setupDisplay()
 		addChild(bleedLabel);
 	}
 
-	if (info->bulletInfo.hasSplashDamage) {
+	if (info.bulletInfo.hasSplashDamage) {
 		Sprite *splashSprite = Sprite::create("Graphics/area.png");
 		splashSprite->setAnchorPoint(cocos2d::Vec2(0, 0));
 		splashSprite->setPosition(
@@ -120,7 +115,7 @@ void TurretStatsDisplay::setupDisplay()
 		addChild(splashSprite);
 
 		char * buffer = new char[100];
-		sprintf(buffer, "SPLASH:  %.f  %.f DMG", info->bulletInfo.splashRange, info->bulletInfo.damageFrom);
+		sprintf(buffer, "SPLASH:  %.f  %.f DMG", info.bulletInfo.splashRange, info.bulletInfo.damageFrom);
 		auto splashLabel = Label::createWithSystemFont(buffer, "Arial", 12);
 		splashLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 		splashLabel->setPosition(
@@ -136,7 +131,7 @@ void TurretStatsDisplay::setupDisplay()
 	setupRangeDisplay();
 
 	std::stringstream cost;
-	cost << "Cost: " << info->cost;
+	cost << "Cost: " << info.cost;
 	costLabel = Label::createWithSystemFont(cost.str(), "Arial", 16);
 	costLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 	costLabel->setPosition(
@@ -145,6 +140,11 @@ void TurretStatsDisplay::setupDisplay()
 	);
 	costLabel->setColor(cocos2d::Color3B::GRAY);
 	addChild(costLabel);
+}
+
+void TurretStatsDisplay::clearStats()
+{
+	sprite->removeAllChildrenWithCleanup(true);
 }
 
 void TurretStatsDisplay::setupDamageDisplay()
@@ -238,37 +238,37 @@ int TurretStatsDisplay::calculateDisplayBarAmount(std::string type)
 {
 	int bars = 0;
 	if (type == "DAM") {
-		if (info->bulletInfo.damageFrom >= 35)
+		if (info.bulletInfo.damageFrom >= 35)
 			bars = 5;
-		else if (info->bulletInfo.damageFrom >= 25)
+		else if (info.bulletInfo.damageFrom >= 25)
 			bars = 4;
-		else if (info->bulletInfo.damageFrom >= 20)
+		else if (info.bulletInfo.damageFrom >= 20)
 			bars = 3;
-		else if (info->bulletInfo.damageFrom >= 15)
+		else if (info.bulletInfo.damageFrom >= 15)
 			bars = 2;
 		else
 			bars = 1;
 	}
 	else if(type == "RTE") {
-		if (info->cooldown >= 3.0)
+		if (info.cooldown >= 3.0)
 			bars = 1;
-		else if (info->cooldown >= 1.75)
+		else if (info.cooldown >= 1.75)
 			bars = 2;
-		else if (info->cooldown >= 1.39)
+		else if (info.cooldown >= 1.39)
 			bars = 3;
-		else if (info->cooldown >= 1.35)
+		else if (info.cooldown >= 1.35)
 			bars = 4;
 		else
 			bars = 5;
 	}
 	else {
-		if (info->range >= 90)
+		if (info.range >= 90)
 			bars = 5;
-		else if (info->range >= 76)
+		else if (info.range >= 76)
 			bars = 4;
-		else if (info->range >= 67)
+		else if (info.range >= 67)
 			bars = 3;
-		else if (info->range >= 60)
+		else if (info.range >= 60)
 			bars = 2;
 		else
 			bars = 1;
@@ -287,21 +287,21 @@ void TurretStatsDisplay::hideCost()
 	costLabel->setVisible(false);
 }
 
-TurretStatsDisplay::TurretStatsDisplay() :
-	info(nullptr),
+TurretStatsDisplay::TurretStatsDisplay(TowerDefence* game_, TurretInfo &turretInfo, cocos2d::Vec2 position) :
+	info(turretInfo),
 	game(nullptr),
 	sprite(nullptr)
 {
+	if (init()) {
+		game = game_;
+		info = turretInfo;
+		setupDisplay(position);
+	}
 }
 
 
 TurretStatsDisplay::~TurretStatsDisplay()
 {
-}
-
-TurretStatsDisplay * TurretStatsDisplay::nodeWithTheGame(TowerDefence * game_, TurretInfo * turretInfo, cocos2d::Vec2 position)
-{
-	return initWithTheGame(game_, turretInfo, position);
 }
 
 void TurretStatsDisplay::draw(cocos2d::Renderer * renderer, const cocos2d::Mat4 & transform, uint32_t flags)
@@ -331,13 +331,15 @@ cocos2d::Rect TurretStatsDisplay::getBoundingBox() const
 	return sprite->getBoundingBox();
 }
 
-void TurretStatsDisplay::changeTurret(TurretInfo * turretInfo)
+void TurretStatsDisplay::changeTurret(TurretInfo &turretInfo)
 {
-	if (info)
-		delete info;
-
 	info = turretInfo;
-	setupDisplay();
+	setupDisplay(getPosition());
+}
+
+void TurretStatsDisplay::changePosition(cocos2d::Vec2 position)
+{
+	sprite->setPosition(position);
 }
 
 void TurretStatsDisplay::show()
