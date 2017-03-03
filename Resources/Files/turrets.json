@@ -4,12 +4,12 @@
     "image": "Graphics/tower-defense-turrets/turret-1-1.png",
 	"bullet_properties": {
       "bullet_image": "Graphics/bullets/missile_1.png",
-	  "damage_from": 9,
+	  "damage_from": 10,
 	  "damage_to": 16,
-      "speed": 300.0
+      "speed": 0.225
     },
-    "cooldown": 1.40,
-    "range": 80,
+    "cooldown": 1.45,
+    "range": 90,
     "cost": 25
   },
   "turret-2": {
@@ -17,13 +17,13 @@
     "image": "Graphics/tower-defense-turrets/turret-2-1.png",
 	"bullet_properties": {
       "bullet_image": "Graphics/bullets/fireball_1.png",
-	  "damage_from": 11,
+	  "damage_from": 5.5,
 	  "damage_to": 20,
-      "speed": 300.0
+      "speed": 0.225
     },
-    "cooldown": 1.30,
+    "cooldown": 0.75,
     "range": 50,
-    "cost": 40
+    "cost": 25
   },
   "turret-3": {
     "name": "Defender",
@@ -32,7 +32,7 @@
       "bullet_image": "Graphics/bullets/fireball_1.png",
 	  "damage_from": 11,
 	  "damage_to": 16,
-      "speed": 300.0
+      "speed": 0.225
     },
     "slow": {
       "duration": 3.0,
@@ -40,7 +40,7 @@
     },
     "cooldown": 1.60,
     "range": 67,
-    "cost": 40
+    "cost": 60
   },
   "turret-4": {
     "name": "Blaster",
@@ -49,12 +49,13 @@
       "bullet_image": "Graphics/bullets/ball_red_1.png",
 	  "damage_from": 15,
 	  "damage_to": 19,
-      "speed": 300.0
+      "speed": 0.225
     },
     "cooldown": 1.55,
-    "range": 50,
-    "splash_range": 33,
-    "cost": 45
+    "range": 55,
+    "splash_range": 29,
+    "splash_damage": 7,
+    "cost": 70
   },
   "turret-5": {
     "name": "Wounder",
@@ -63,7 +64,7 @@
       "bullet_image": "Graphics/bullets/star_1.png",
 	  "damage_from": 11,
 	  "damage_to": 14,
-      "speed": 300.0
+      "speed": 0.225
     },
     "cooldown": 1.6,
     "range": 60,
@@ -71,7 +72,7 @@
       "duration": 5.0,
       "dps": 4
     },
-    "cost": 45
+    "cost": 80
   },
   "turret-6": {
     "name": "Basher",
@@ -80,15 +81,15 @@
       "bullet_image": "Graphics/bullets/mine_redstar_1.png",
 	  "damage_from": 15,
 	  "damage_to": 20,
-      "speed": 300.0
+      "speed": 0.225
     },
     "cooldown": 1.75,
-    "range": 60,
+    "range": 65,
     "stun": {
       "duration": 1.0,
       "chance": 0.5
     },
-    "cost": 50
+    "cost": 90
   },
   "turret-7": {
     "name": "Destroyer",
@@ -97,22 +98,22 @@
       "bullet_image": "Graphics/bullets/wave_small_1.png",
 	  "damage_from": 20,
 	  "damage_to": 25,
-      "speed": 300.0
+      "speed": 0.225
     },
     "cooldown": 2.0,
-    "range": 60,
+    "range": 55,
     "stun": {
       "duration": 1.5,
-      "chance": 0.4
+      "chance": 0.35
     },
     "bleed": {
       "duration": 5.0,
-      "dps": 4
+      "dps": 3
     },
     "slow": {
       "duration": 3.0,
-      "percentage": 0.3
+      "percentage": 0.25
     },
-    "cost": 90
+    "cost": 100
   }
 }

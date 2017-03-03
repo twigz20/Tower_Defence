@@ -250,7 +250,7 @@ void Turret::shootWeapon(float dt)
 	game->addChild(bullet);
 	bullet->setPosition(sprite->getPosition());
 
-	MoveTo *actionWithDuration = MoveTo::create(0.225, chosenCreep->getPosition());
+	MoveTo *actionWithDuration = MoveTo::create(info.bulletInfo.speed, chosenCreep->getPosition());
 	CallFunc *actionWithTarget = CallFunc::create(CC_CALLBACK_0(Turret::damageEnemy, this));
 	CallFunc *actionWithTarget2 = CallFunc::create(CC_CALLBACK_0(Turret::removeBullet, this, bullet));
 

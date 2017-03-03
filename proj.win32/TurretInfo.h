@@ -52,7 +52,6 @@ struct TurretInfo
 	BulletInfo bulletInfo;
 
 	std::string name;
-	std::string bullet;
 	std::string image;
 	int level;
 

@@ -5,23 +5,13 @@
       "Wave": [
         {
           "minion": "creep-1-blue",
-          "quantity": 3,
-          "delay": 2.0
-        },
-        {
-          "minion": "creep-1-yellow",
-          "quantity": 1,
-          "delay": 2.0
-        },
-        {
-          "minion": "creep-1-red",
-          "quantity": 2,
-          "delay": 1.5
+          "quantity": 5,
+          "delay": 2.5
         },
         {
           "minion": "creep-1-blue",
           "quantity": 4,
-          "delay": 1.5
+          "delay": 2.5
         }
       ]
     },
@@ -34,22 +24,17 @@
         },
         {
 					"minion": "creep-1-red",
-					"quantity": 4,
+					"quantity": 3,
 					"delay": 2.0
-				},
-        {
-					"minion": "creep-1-green",
-					"quantity": 1,
-					"delay": 1.5
 				},
         {
 					"minion": "creep-1-blue",
 					"quantity": 5,
-					"delay": 1.0
+					"delay": 1.75
 				},
         {
 					"minion": "creep-1-red",
-					"quantity": 2,
+					"quantity": 6,
 					"delay": 1.5
 				}
       ]
@@ -58,117 +43,157 @@
       "Wave": [
         {
           "minion": "creep-1-red",
-          "quantity": 4,
-          "delay": 0.5
-        },
-        {
-          "minion": "creep-1-yellow",
-          "quantity": 4,
-          "delay": 1.0
-        },
-        {
-          "minion": "creep-1-green",
-          "quantity": 1,
-          "delay": 0.5
+          "quantity": 12,
+          "delay": 1.75
         },
         {
           "minion": "creep-1-blue",
-          "quantity": 5,
-          "delay": 1.0
+          "quantity": 7,
+          "delay": 1.75
         },
         {
-          "minion": "creep-1-green",
-          "quantity": 1,
-          "delay": 0.5
-        },
-        {
-          "minion": "creep-1-blue",
-          "quantity": 5,
-          "delay": 1.0
+          "minion": "creep-1-red",
+          "quantity": 9,
+          "delay": 1.75
         },
         {
           "minion": "creep-1-yellow",
           "quantity": 2,
-          "delay": 1.0
+          "delay": 0.5
+        },
+        {
+          "minion": "creep-1-blue",
+          "quantity": 5,
+          "delay": 0.75
+        },
+        {
+          "minion": "creep-1-yellow",
+          "quantity": 2,
+          "delay": 0.5
+        },
+        {
+          "minion": "creep-1-blue",
+          "quantity": 5,
+          "delay": 0.75
         }
       ]
     },
     {
       "Wave": [
         {
-					"minion": "creep-1-yellow",
-					"quantity": 1,
-					"delay": 1.5
-				},
-        {
-					"minion": "creep-1-blue",
-					"quantity": 6,
-					"delay": 1.5
-				},
-        {
-					"minion": "creep-1-green",
-					"quantity": 1,
-					"delay": 1.5
-				},
-        {
-					"minion": "creep-1-yellow",
-					"quantity": 2,
-					"delay": 3.5
-				},
-        {
           "minion": "creep-1-red",
           "quantity": 8,
-          "delay": 4.0
+          "delay": 1.0
         },
         {
-					"minion": "creep-1-yellow",
-					"quantity": 2,
-					"delay": 3.5
-				},
+          "minion": "creep-1-blue",
+          "quantity": 4,
+          "delay": 1.25
+        },
         {
-					"minion": "creep-1-blue",
-					"quantity": 6,
-					"delay": 1.5
-				}
+          "minion": "creep-1-red",
+          "quantity": 9,
+          "delay": 1.45
+        },
+        {
+          "minion": "creep-1-green",
+          "quantity": 2,
+          "delay": 0.5
+        },
+        {
+          "minion": "creep-1-blue",
+          "quantity": 7,
+          "delay": 1.25
+        },
+        {
+          "minion": "creep-1-green",
+          "quantity": 2,
+          "delay": 0.5
+        },
+        {
+          "minion": "creep-1-red",
+          "quantity": 9,
+          "delay": 1.35
+        },
+        {
+          "minion": "creep-1-yellow",
+          "quantity": 2,
+          "delay": 0.5
+        },
+        {
+          "minion": "creep-1-blue",
+          "quantity": 5,
+          "delay": 0.75
+        },
+        {
+          "minion": "creep-1-yellow",
+          "quantity": 2,
+          "delay": 0.5
+        },
+        {
+          "minion": "creep-1-blue",
+          "quantity": 5,
+          "delay": 0.75
+        }
       ]
     },
     {
       "Wave": [
         {
-					"minion": "creep-1-green",
-					"quantity": 3,
-					"delay": 1.0
-				},
-        {
-					"minion": "creep-1-yellow",
-					"quantity": 2,
-					"delay": 1.0
-				},
-        {
-					"minion": "creep-1-green",
-					"quantity": 1,
-					"delay": 1.5
-				},
-        {
-					"minion": "creep-1-yellow",
-					"quantity": 1,
-					"delay": 2.5
-				},
+          "minion": "creep-1-green",
+          "quantity": 4,
+          "delay": 1.75
+        },
         {
           "minion": "creep-1-blue",
           "quantity": 8,
-          "delay": 1.0
+          "delay": 1.25
         },
         {
-					"minion": "creep-1-yellow",
-					"quantity": 1,
-					"delay": 3.5
-				},
+          "minion": "creep-1-yellow",
+          "quantity": 2,
+          "delay": 1.75
+        },
         {
-					"minion": "creep-1-blue",
-					"quantity": 6,
-					"delay": 1.5
-				}
+          "minion": "creep-1-red",
+          "quantity": 6,
+          "delay": 0.5
+        },
+        {
+          "minion": "creep-1-blue",
+          "quantity": 7,
+          "delay": 1.25
+        },
+        {
+          "minion": "creep-1-green",
+          "quantity": 2,
+          "delay": 0.5
+        },
+        {
+          "minion": "creep-1-red",
+          "quantity": 4,
+          "delay": 1.25
+        },
+        {
+          "minion": "creep-1-yellow",
+          "quantity": 2,
+          "delay": 0.5
+        },
+        {
+          "minion": "creep-1-blue",
+          "quantity": 8,
+          "delay": 0.75
+        },
+        {
+          "minion": "creep-1-yellow",
+          "quantity": 2,
+          "delay": 0.5
+        },
+        {
+          "minion": "creep-1-blue",
+          "quantity": 5,
+          "delay": 0.75
+        }
       ]
     }
 	]
