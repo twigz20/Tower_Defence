@@ -96,9 +96,8 @@ void CreepManager::cleanUpDeadCreeps()
 		{
 			(*creep)->removeAllChildrenWithCleanup(true);
 			(*creep)->removeFromParentAndCleanup(true);
-			creep = creepsInPlay.erase(creep);
-
 			game->getLevelManager()->decreaseCreepAmount();
+			creep = creepsInPlay.erase(creep);
 
 			if (creep == creepsInPlay.end())
 			{

@@ -327,9 +327,10 @@ void Turret::targetKilled()
 
 void Turret::lostSightOfEnemy()
 {
-	chosenCreep->gotLostSight(this);
-	if (chosenCreep)
+	if (chosenCreep) {
+		chosenCreep->gotLostSight(this);
 		chosenCreep = nullptr;
+	}
 
 	unschedule(schedule_selector(Turret::shootWeapon));
 	isShooting = false;

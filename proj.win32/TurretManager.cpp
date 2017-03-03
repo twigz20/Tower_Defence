@@ -187,6 +187,9 @@ void TurretManager::unselectTurret()
 
 void TurretManager::sellSelectedTurret()
 {
+	turrets[currentSelectedTurret]->lostSightOfEnemy();
+	turrets[currentSelectedTurret]->stopAllActions();
+	turrets[currentSelectedTurret]->unscheduleAllSelectors();
 	game->removeChildByTag(turrets[currentSelectedTurret]->getTag());
 	turrets.erase(turrets.begin() + currentSelectedTurret);
 }
