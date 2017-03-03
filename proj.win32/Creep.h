@@ -1,6 +1,7 @@
 #pragma once
 #include "cocos2d.h"
 #include "timer.h"
+#include "CreepInfo.h"
 
 class CreepInfo;
 class TowerDefence;
@@ -73,7 +74,7 @@ class Creep : public cocos2d::Node
 	cocos2d::Vector<ShortestPathStep*> _shortestPath;
 	/* Path Finding Algorithm - End */
 
-	CreepInfo *info;
+	CreepInfo info;
 	TowerDefence* game;
 	cocos2d::Sprite *sprite;
 	cocos2d::CustomCommand _customCommand;
@@ -88,9 +89,11 @@ class Creep : public cocos2d::Node
 	std::map<int, Turret*> attackedBy;
 
 public:
-	Creep(TowerDefence* game_, CreepInfo *creepInfo);
+	Creep(TowerDefence* game_, CreepInfo creepInfo);
+	Creep(const Creep& other);
 	~Creep();
 	
+	void initCreep();
 	void setStartDelay(const float& startDelay);
 	const float getStartDelay() const;
 
@@ -105,8 +108,8 @@ public:
 
 	CreepInfo& getCreepInfo();
 
-	void getAttacked(Turret *attacker);
-	void gotLostSight(Turret *attacker);
+	void getAttacked(Turret* attacker);
+	void gotLostSight(Turret* attacker);
 	void getRemoved();
 	void getDamaged(BulletInfo bulletInfo);
 	bool isDead();

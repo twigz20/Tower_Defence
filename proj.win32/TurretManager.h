@@ -20,18 +20,18 @@ public:
 	~TurretFactory();
 
 	bool turretExist(std::string& turretName);
-	Turret *getTurret(std::string& turretName, bool isStarterTurret = false);
+	std::shared_ptr<Turret> getTurret(std::string& turretName, bool isStarterTurret = false);
 };
 
 class TurretManager
 {
-	std::vector<Turret*> starterTurrets;
-	std::vector<Turret*> turrets;
-
 	TowerDefence *game;
-
 	TurretFactory turretFactory;
+	std::vector<std::shared_ptr<Turret>> starterTurrets;
+	std::vector<std::shared_ptr<Turret>> turrets;
+
 	int currentSelectedTurret;
+	int currentMouseOverTurret;
 
 	void loadStarterTurrets();
 	void showStarterTurrets();
@@ -42,8 +42,8 @@ public:
 	~TurretManager();
 
 	void addTurret(Turret *turret);
-	std::vector<Turret*> getStarterTurrets();
-	std::vector<Turret*> getPlacedTurrets();
+	std::vector<std::shared_ptr<Turret>> getStarterTurrets();
+	std::vector<std::shared_ptr<Turret>> getPlacedTurrets();
 
 	bool hasTurretAtCoord(cocos2d::Vec2 coord);
 	void showSelectedTurretRange();
@@ -52,8 +52,12 @@ public:
 	void hideAllTurretStats();
 	bool isEmpty();
 	bool isATurretSelected();
+	int getMouseOverTurret();
+	void setMouseOver(int index);
+	void unsetMouseOverTurret();
+	bool isMouseOverTurret();
 	void selectTurret(int index);
-	Turret* getSelectedTurret();
+	std::shared_ptr<Turret> getSelectedTurret();
 	void unselectTurret();
 };
 

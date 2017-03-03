@@ -22,7 +22,6 @@ Turret::Turret(TowerDefence* game_, TurretInfo turretInfo, bool isStarterTurret)
 	tsd(nullptr)
 {
 	if (init()) {
-		setLocalZOrder(-1);
 		setName(info.name);
 		setAnchorPoint(cocos2d::Vec2(0.5f, 0.5f));
 
@@ -61,9 +60,7 @@ Turret::Turret(const Turret & other) :
 
 Turret& Turret::operator=(const Turret& other) {
 	if (this != &other) {
-		setLocalZOrder(-1);
 		info = other.info;
-		tsd = other.tsd;
 		game = other.game;
 		range = other.range;
 		splashDamageRange = other.splashDamageRange;
@@ -77,8 +74,10 @@ Turret& Turret::operator=(const Turret& other) {
 		addRangeIndicator();
 		setPosition(other.sprite->getPosition());
 		addChild(sprite, 0);
-		if (tsd)
-			tsd->setupDisplay(getPosition());
+		tsd = new TurretStatsDisplay(game, info, getPosition());
+		tsd->hide();
+		game->addChild(tsd, 0);
+		hideTurretStats();
 
 		if (!starterTurret)
 			scheduleUpdate();
@@ -100,9 +99,7 @@ Turret::Turret(Turret && other) :
 
 Turret& Turret::operator=(Turret&& other) {
 	if (this != &other) {
-		setLocalZOrder(-1);
 		info = other.info;
-		tsd = other.tsd;
 		game = other.game;
 		range = other.range;
 		splashDamageRange = other.splashDamageRange;
@@ -116,8 +113,9 @@ Turret& Turret::operator=(Turret&& other) {
 		addRangeIndicator();
 		setPosition(other.sprite->getPosition());
 		addChild(sprite, 0);
-		if (tsd)
-			tsd->setupDisplay(getPosition());
+		tsd = new TurretStatsDisplay(game,info,getPosition());
+		game->addChild(tsd, 0);
+		hideTurretStats();
 
 		if (!starterTurret)
 			scheduleUpdate();
@@ -134,8 +132,6 @@ Turret::~Turret()
 {
 	if (rangeIndicator)
 		delete rangeIndicator;
-	if (chosenCreep)
-		delete chosenCreep;
 	if (splashDamageRange)
 		delete splashDamageRange;
 }
@@ -155,7 +151,7 @@ void Turret::addRangeIndicator()
 		cocos2d::Color4F::GREEN
 	);
 	range->setTag(TURRET_RANGE_INDICATOR);
-	sprite->addChild(range, -1);
+	sprite->addChild(range, 2);
 	hideRange();
 
 	rangeIndicator = new CGCircle(
@@ -240,7 +236,7 @@ void Turret::attackEnemy()
 		this->schedule(schedule_selector(Turret::shootWeapon), info.cooldown, 0, 0);
 }
 
-void Turret::chosenEnemyForAttack(Creep *enemy)
+void Turret::chosenEnemyForAttack(std::shared_ptr<Creep> enemy)
 {
 	chosenCreep = nullptr;
 	chosenCreep = enemy;
@@ -278,13 +274,13 @@ void Turret::damageEnemy()
 
 void Turret::checkForSplashDamage()
 {
-	std::vector<Creep*> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
-	for (Creep * creep : creepsInPlay)
+	std::vector<std::shared_ptr<Creep>> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
+	for (int i = 0; i < creepsInPlay.size(); i++)
 	{
-		if (creep && !creep->isDead()) {
-			if (game->checkCollision(rangeIndicator, creep->getBoundingBox()))
+		if (creepsInPlay[i] && !creepsInPlay[i]->isDead()) {
+			if (game->checkCollision(rangeIndicator, creepsInPlay[i]->getBoundingBox()))
 			{
-				chosenEnemyForAttack(creep);
+				chosenEnemyForAttack(creepsInPlay[i]);
 				return;
 			}
 		}
@@ -293,13 +289,13 @@ void Turret::checkForSplashDamage()
 
 void Turret::getNextTarget()
 {
-	std::vector<Creep*> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
-	for (Creep * creep : creepsInPlay)
+	std::vector<std::shared_ptr<Creep>> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
+	for (int i = 0; i < creepsInPlay.size(); i++)
 	{
-		if (!creep->isDead()) {
-			if (game->checkCollision(rangeIndicator, creep->getBoundingBox()))
+		if (!creepsInPlay[i]->isDead()) {
+			if (game->checkCollision(rangeIndicator, creepsInPlay[i]->getBoundingBox()))
 			{
-				chosenEnemyForAttack(creep);
+				chosenEnemyForAttack(creepsInPlay[i]);
 				break;
 			}
 		}

@@ -9,8 +9,8 @@ class CreepManager;
 class LevelManager : public cocos2d::Object
 {
 	TowerDefence* game;
-	WaveManager *waveManager;
-	CreepManager *creepManager;
+	std::unique_ptr<WaveManager> waveManager;
+	std::shared_ptr<CreepManager> creepManager;
 
 	cocos2d::TMXTiledMap *tileMap;
 	cocos2d::TMXLayer *bgLayer, *objectLayer;
@@ -55,7 +55,7 @@ public:
 	void setViewPointCenter(cocos2d::Vec2 position);
 
 	cocos2d::TMXTiledMap *getMap();
-	CreepManager *getCreepManager();
+	std::shared_ptr<CreepManager> getCreepManager();
 
 	int getGold();
 	int getHealth();

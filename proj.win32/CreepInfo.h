@@ -17,6 +17,7 @@ struct SpeedAura
 
 struct CreepInfo
 {
+	CreepInfo() {}
 	CreepInfo(std::string & creepName);
 	bool hasSpeedAura() const;
 	bool hasHealAura() const;

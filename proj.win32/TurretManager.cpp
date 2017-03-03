@@ -4,12 +4,14 @@
 #include "TurretInfo.h"
 
 #include <sstream>
+#include <algorithm>
 
 using namespace rapidjson;
 
 TurretManager::TurretManager(TowerDefence * game_) :
 	game(game_),
 	currentSelectedTurret(-1),
+	currentMouseOverTurret(-1),
 	turretFactory(game),
 	turretTag(0)
 {
@@ -19,25 +21,15 @@ TurretManager::TurretManager(TowerDefence * game_) :
 
 TurretManager::~TurretManager()
 {
-	if (game)
-		delete game;
-
-	for (int i = 0; i < turrets.size(); i++) {
-		delete turrets[i];
-	}
 	turrets.clear();
-
-	for (int i = 0; i < starterTurrets.size(); i++) {
-		delete starterTurrets[i];
-	}
 	starterTurrets.clear();
 }
 
 void TurretManager::addTurret(Turret *turret_)
 {
-	turrets.push_back(new Turret(std::move(*turret_)));
+	turrets.push_back(std::make_shared<Turret>(std::move(*turret_)));
 	turrets.back()->setTag(turretTag++);
-	game->addChild(turrets.back(), 0);
+	game->addChild(turrets.back().get(), 0);
 }
 
 TurretFactory::TurretFactory(TowerDefence *game_) :
@@ -48,8 +40,6 @@ TurretFactory::TurretFactory(TowerDefence *game_) :
 
 TurretFactory::~TurretFactory()
 {
-	if (game)
-		delete game;
 }
 
 bool TurretFactory::turretExist(std::string & turretName)
@@ -57,9 +47,9 @@ bool TurretFactory::turretExist(std::string & turretName)
 	return turretInfoDoc.HasMember(turretName.c_str());
 }
 
-Turret * TurretFactory::getTurret(std::string & turretName, bool isStarterTurret)
+std::shared_ptr<Turret> TurretFactory::getTurret(std::string & turretName, bool isStarterTurret)
 {
-	return new Turret(game, TurretInfo(turretName), isStarterTurret);
+	return std::make_shared<Turret>(Turret(game, TurretInfo(turretName), isStarterTurret));
 }
 
 void TurretManager::loadStarterTurrets()
@@ -92,28 +82,30 @@ void TurretManager::showStarterTurrets()
 	int turretY = originalTurretY;
 
 	int counter = 1;
-	for (Turret *turret : starterTurrets) {
-		turret->setPosition(cocos2d::Vec2(turretX + xOffset, turretY + yOffset));
-		game->addChild(turret, 0);
+	std::for_each(starterTurrets.begin(), starterTurrets.end(), 
+		[&](std::shared_ptr<Turret> turret) {
+			turret->setPosition(cocos2d::Vec2(turretX + xOffset, turretY + yOffset));
+			game->addChild(turret.get(), 0);
 
-		if (counter == 1) {
-			turretX += visibleSize.width * 0.10;
-			counter++;
+			if (counter == 1) {
+				turretX += visibleSize.width * 0.10;
+				counter++;
+			}
+			else {
+				turretX = originalTurretX;
+				turretY -= visibleSize.height * 0.115;
+				counter = 1;
+			}
 		}
-		else {
-			turretX = originalTurretX;
-			turretY -= visibleSize.height * 0.115;
-			counter = 1;
-		}
-	}
+	);
 }
 
-std::vector<Turret*> TurretManager::getStarterTurrets()
+std::vector<std::shared_ptr<Turret>> TurretManager::getStarterTurrets()
 {
 	return starterTurrets;
 }
 
-std::vector<Turret*> TurretManager::getPlacedTurrets()
+std::vector<std::shared_ptr<Turret>>TurretManager::getPlacedTurrets()
 {
 	return turrets;
 }
@@ -140,12 +132,12 @@ void TurretManager::hideSelectedTurretRange()
 
 void TurretManager::hideAllTurretRanges()
 {
-	std::for_each(turrets.begin(), turrets.end(), [](Turret* t) { t->hideRange(); });
+	std::for_each(turrets.begin(), turrets.end(), [](std::shared_ptr<Turret>  t) { t->hideRange(); });
 }
 
 void TurretManager::hideAllTurretStats()
 {
-	std::for_each(turrets.begin(), turrets.end(), [](Turret* t) { t->hideTurretStats(); });
+	std::for_each(turrets.begin(), turrets.end(), [](std::shared_ptr<Turret> t) { t->hideTurretStats(); });
 }
 
 bool TurretManager::isEmpty()
@@ -158,12 +150,32 @@ bool TurretManager::isATurretSelected()
 	return currentSelectedTurret != -1;
 }
 
+int TurretManager::getMouseOverTurret()
+{
+	return currentMouseOverTurret;
+}
+
+void TurretManager::setMouseOver(int index)
+{
+	currentMouseOverTurret = index;
+}
+
+void TurretManager::unsetMouseOverTurret()
+{
+	currentMouseOverTurret = -1;
+}
+
+bool TurretManager::isMouseOverTurret()
+{
+	return currentMouseOverTurret == -1;
+}
+
 void TurretManager::selectTurret(int index)
 {
 	currentSelectedTurret = index;
 }
 
-Turret * TurretManager::getSelectedTurret()
+std::shared_ptr<Turret> TurretManager::getSelectedTurret()
 {
 	return turrets[currentSelectedTurret];
 }

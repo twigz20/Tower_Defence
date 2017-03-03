@@ -3,7 +3,7 @@
 #include "proj.win32\LevelManager.h"
 #include "proj.win32\TurretManager.h"
 #include <sstream>
-//#include <vld.h> 
+#include <vld.h> 
 
 USING_NS_CC;
 
@@ -27,8 +27,8 @@ Scene* TowerDefence::createScene()
 
 TowerDefence::~TowerDefence()
 {
-	if (levelManager)
-		delete levelManager;
+	//if (levelManager)
+		//delete levelManager;
 	if (turretManager)
 		delete turretManager;
 	if(selectedTurret)
@@ -79,6 +79,11 @@ bool TowerDefence::init()
 	eventListener->onTouchCancelled = CC_CALLBACK_2(TowerDefence::onTouchCancelled, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(eventListener, this);
 
+
+	auto _mouseListener = EventListenerMouse::create();
+	_mouseListener->onMouseMove = CC_CALLBACK_1(TowerDefence::onMouseMove, this);
+	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_mouseListener, this);
+
 	auto button = Button::create("Graphics/UI/Button.png");
 	button->setTitleText("Start Wave");
 	button->setTitleFontName("fonts/Marker Felt.ttf");
@@ -93,6 +98,29 @@ bool TowerDefence::init()
     return true;
 }
 
+template <typename T> std::string tostr(const T& t) { std::ostringstream os; os << t; return os.str(); }
+
+void TowerDefence::onMouseMove(cocos2d::Event *event)
+{
+	EventMouse* e = (EventMouse*)event;
+	cocos2d::Point touchLoc(cocos2d::Vec2(e->getCursorX(), e->getCursorY()));
+
+	for (int i = 0; i < turretManager->getPlacedTurrets().size(); i++) {
+		if (turretManager->getPlacedTurrets().at(i)->getBoundingBox().containsPoint(touchLoc))
+		{
+			turretManager->getPlacedTurrets().at(i)->showRange();
+			cocos2d::Vec2 turretStatsPosition = cocos2d::Vec2(
+				turretManager->getPlacedTurrets().at(i)->getPosition().x + levelManager->getMap()->getTileSize().width / 2,
+				turretManager->getPlacedTurrets().at(i)->getPosition().y - levelManager->getMap()->getTileSize().height / 2
+			);
+			turretManager->getPlacedTurrets().at(i)->showTurretStats(turretStatsPosition);
+		}
+		else {
+			turretManager->getPlacedTurrets().at(i)->hideRange();
+			turretManager->getPlacedTurrets().at(i)->hideTurretStats();
+		}
+	}
+}
 
 void TowerDefence::menuCloseCallback(Ref* pSender)
 {
@@ -106,14 +134,13 @@ void TowerDefence::menuCloseCallback(Ref* pSender)
     /*To navigate back to native iOS screen(if present) without quitting the application  ,do not use Director::getInstance()->end() and exit(0) as given above,instead trigger a custom event created in RootViewController.mm as below*/
     
     //EventCustom customEndEvent("game_scene_close_event");
-    //_eventDispatcher->dispatchEvent(&customEndEvent);
-       
+    //_eventDispatcher->dispatchEvent(&customEndEvent);   
 }
 
 bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_event)
 {
 	cocos2d::Point touchLoc = touch->getLocation();
-	std::vector<Turret*> starterTurrets = turretManager->getStarterTurrets();
+	std::vector<std::shared_ptr<Turret>> starterTurrets = turretManager->getStarterTurrets();
 	for (int i = 0; i < starterTurrets.size(); i++) {
 		if (starterTurrets[i]->getBoundingBox().containsPoint(touchLoc))
 		{
@@ -135,25 +162,9 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 	for (int i = 0; i < turretManager->getPlacedTurrets().size(); i++) {
 		if (turretManager->getPlacedTurrets().at(i)->getBoundingBox().containsPoint(touchLoc))
 		{
-			if (turretManager->isATurretSelected()) {
-				turretManager->hideSelectedTurretRange();
-				turretManager->getSelectedTurret()->removeChildByTag(TURRET_STATS_TAG);
-			}
-
-			turretManager->selectTurret(i);
-			turretManager->showSelectedTurretRange();
-			prevPos = turretManager->getSelectedTurret()->getPosition();
-
-			cocos2d::Vec2 turretStatsPosition = cocos2d::Vec2(
-				turretManager->getSelectedTurret()->getPosition().x + levelManager->getMap()->getTileSize().width / 2,
-				turretManager->getSelectedTurret()->getPosition().y - levelManager->getMap()->getTileSize().height / 2
-			);
-			turretManager->getSelectedTurret()->showTurretStats(turretStatsPosition);
 			return true;
 		}
 	}
-
-	turretManager->hideAllTurretStats();
 
 	return false;
 }
@@ -192,9 +203,6 @@ void TowerDefence::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_ev
 		delete selectedTurret;
 		selectedTurret = nullptr;
 	}
-
-	turretManager->hideAllTurretStats();
-	turretManager->hideAllTurretRanges();
 }
 
 void TowerDefence::onTouchCancelled(cocos2d::Touch * touch, cocos2d::Event * unused_event)

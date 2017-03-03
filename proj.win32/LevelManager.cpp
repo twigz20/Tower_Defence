@@ -11,13 +11,13 @@ using namespace cocos2d;
 
 void LevelManager::initCreepManager()
 {
-	creepManager = new CreepManager(game);
+	creepManager = std::make_shared<CreepManager>(game);
 	creepManager->setWayPoints(start, end);
 }
 
 void LevelManager::initWaveManager()
 {
-	waveManager = new WaveManager();
+	waveManager = std::make_unique<WaveManager>();
 }
 
 void LevelManager::populateCreepManager()
@@ -82,7 +82,6 @@ void LevelManager::loadMap(std::string fileName)
 {
 	auto str = cocos2d::String::createWithContentsOfFile(cocos2d::FileUtils::getInstance()->fullPathForFilename(fileName.c_str()).c_str());
 	tileMap = cocos2d::TMXTiledMap::createWithXML(str->getCString(), "");
-	tileMap->retain();
 	bgLayer = tileMap->layerNamed("Background");
 	game->addChild(tileMap, -1);
 }
@@ -153,7 +152,10 @@ LevelManager::LevelManager(TowerDefence* game_) :
 	levelFinished(false),
 	creepAmountForCurrentWave(0),
 	gold(0),
-	health(0)
+	health(0),
+	bgLayer(nullptr),
+	objectLayer(nullptr),
+	tileMap(nullptr)
 {
 	config();
 	setBackground();
@@ -170,12 +172,6 @@ LevelManager::LevelManager(TowerDefence* game_) :
 
 LevelManager::~LevelManager()
 {
-	if (game)
-		delete game;
-	if (waveManager)
-		delete waveManager;
-	if (creepManager)
-		delete creepManager;
 	if (tileMap)
 		delete tileMap;
 	if (bgLayer)
@@ -316,7 +312,7 @@ cocos2d::TMXTiledMap *LevelManager::getMap()
 	return tileMap;
 }
 
-CreepManager *LevelManager::getCreepManager()
+std::shared_ptr<CreepManager> LevelManager::getCreepManager()
 {
 	return creepManager;
 }

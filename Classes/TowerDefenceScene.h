@@ -22,6 +22,8 @@ class TowerDefence : public cocos2d::Layer
 	void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event) override;
 	void onTouchCancelled(cocos2d::Touch *touch, cocos2d::Event *unused_event) override;
 
+	void onMouseMove(cocos2d::Event * event);
+
 	void playGame();
 	void touchEvent(cocos2d::Ref *sender, cocos2d::ui::Widget::TouchEventType type);
 

@@ -14,7 +14,7 @@ class Turret : public cocos2d::Node
 	bool starterTurret;
 	
 	bool isShooting;
-	Creep *chosenCreep;
+	std::shared_ptr<Creep> chosenCreep;
 
 	TurretStatsDisplay *tsd;
 	bool displayRange;
@@ -48,7 +48,7 @@ public:
 	void getNextTarget();
 	void targetKilled();
 	void attackEnemy();
-	void chosenEnemyForAttack(Creep *enemy);
+	void chosenEnemyForAttack(std::shared_ptr<Creep> enemy);
 	void shootWeapon(float dt);
 	void removeBullet(cocos2d::Sprite *bullet);
 	void damageEnemy();

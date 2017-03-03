@@ -16,12 +16,12 @@ class CreepManager
 		CreepFactory(TowerDefence* game_);
 		~CreepFactory();
 
-		Creep *getCreep(std::string& creepName);
+		std::shared_ptr<Creep> getCreep(std::string& creepName);
 	};
 
-	CreepFactory *creepFactory;
-	std::queue<Creep*> creeps;
-	std::vector<Creep*> creepsInPlay;
+	CreepFactory creepFactory;
+	std::vector<std::shared_ptr<Creep>> creeps;
+	std::vector<std::shared_ptr<Creep>> creepsInPlay;
 
 	TowerDefence* game;
 
@@ -38,11 +38,11 @@ public:
 	void clearCreeps();
 	void setWayPoints(cocos2d::Vec2 start, cocos2d::Vec2 end);
 
-	std::vector<Creep*> getCreepsInPlay();
+	std::vector<std::shared_ptr<Creep>> getCreepsInPlay();
 	void addCreep(WaveProperties waveProperties);
 	void popCreep();
 	bool hasNextCreep();
-	Creep* getNextCreep();
+	std::shared_ptr<Creep> getNextCreep();
 	int getCreepAmountForWave();
 	void startCreepTimer();
 };

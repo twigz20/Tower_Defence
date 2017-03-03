@@ -1,33 +1,33 @@
 #include "CreepManager.h"
 #include "LevelManager.h"
 #include "CreepInfo.h"
+#include <algorithm>
 
 using namespace rapidjson;
 
 CreepManager::CreepManager(TowerDefence* game_) :
 	game(game_),
-	creepAmountForWave(0)
+	creepAmountForWave(0),
+	creepFactory(game_)
 {
-	creepFactory = new CreepFactory(game);
 }
 
 
 CreepManager::~CreepManager()
 {
-	std::queue<Creep*> empty;
-	std::swap(creeps, empty);
-
-	if(creepFactory)
-		delete creepFactory;
+	std::for_each(creeps.begin(), creeps.end(), [](std::shared_ptr<Creep> creep) {
+		creep->removeAllChildrenWithCleanup(true);
+		creep->removeFromParentAndCleanup(true);
+	});
 }
 
 void CreepManager::addCreep(WaveProperties waveProperties)
 {
 	for (int i = 0; i < waveProperties.creepQuantity; i++) {
-		creeps.push(std::move(creepFactory->getCreep(waveProperties.creepName)));
+		creeps.push_back(creepFactory.getCreep(waveProperties.creepName));
 		creeps.back()->setPosition(start);
 		creeps.back()->setStartDelay(waveProperties.delay);
-		game->addChild(creeps.back());
+		game->addChild(creeps.back().get());
 		creepAmountForWave++;
 	}
 }
@@ -35,10 +35,10 @@ void CreepManager::addCreep(WaveProperties waveProperties)
 void CreepManager::popCreep()
 {
 	creepsInPlay.push_back(creeps.front());
-	creeps.pop();
+	creeps.erase(creeps.begin());
 }
 
-Creep* CreepManager::getNextCreep()
+std::shared_ptr<Creep> CreepManager::getNextCreep()
 {
 	return creeps.front();
 }
@@ -56,13 +56,11 @@ CreepManager::CreepFactory::CreepFactory(TowerDefence* game_) :
 
 CreepManager::CreepFactory::~CreepFactory()
 {
-	if (game)
-		delete game;
 }
 
-Creep *CreepManager::CreepFactory::getCreep(std::string & creepName)
+std::shared_ptr<Creep> CreepManager::CreepFactory::getCreep(std::string & creepName)
 {
-	return new Creep(game, new CreepInfo(creepName));
+	return std::make_shared<Creep>(Creep(game, CreepInfo(creepName)));
 }
 
 void CreepManager::setWayPoints(cocos2d::Vec2 start, cocos2d::Vec2 end)
@@ -78,12 +76,14 @@ int CreepManager::getCreepAmountForWave()
 
 void CreepManager::clearManager()
 {
-	std::queue<Creep*> empty;
-	std::swap(creeps, empty);
+	std::for_each(creeps.begin(), creeps.end(), [](std::shared_ptr<Creep> creep) {
+		creep->removeAllChildrenWithCleanup(true);
+		creep->removeFromParentAndCleanup(true);
+	});
 	creepAmountForWave = 0;
 }
 
-std::vector<Creep*> CreepManager::getCreepsInPlay()
+std::vector<std::shared_ptr<Creep>> CreepManager::getCreepsInPlay()
 {
 	return creepsInPlay;
 }
@@ -96,7 +96,6 @@ void CreepManager::cleanUpDeadCreeps()
 		{
 			(*creep)->removeAllChildrenWithCleanup(true);
 			(*creep)->removeFromParentAndCleanup(true);
-			delete (*creep);
 			creep = creepsInPlay.erase(creep);
 
 			game->getLevelManager()->decreaseCreepAmount();

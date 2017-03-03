@@ -12,79 +12,91 @@
 
 using namespace cocos2d;
 
-Creep::Creep(TowerDefence* game_, CreepInfo *creepInfo) :
+Creep::Creep(TowerDefence* game_, CreepInfo creepInfo) :
 	startDelay(0.f),
 	currentHP(0),
 	dead(false),
-	missionComplete(false)
+	missionComplete(false),
+	info(creepInfo)
 {
 	if (init()) {
 		game = game_;
 
-		info = creepInfo;
-		currentHP = info->health;
+		currentHP = info.health;
 
-		sprite = Sprite::create(info->image);
-		addChild(sprite);
-
-		if (info->hasSpeedAura()) {
-			cocos2d::DrawNode *speedAuraRange = DrawNode::create();
-			speedAuraRange->drawDot(
-				cocos2d::Vec2(
-					sprite->getPosition().x + sprite->getContentSize().width / 2,
-					sprite->getPosition().y + sprite->getContentSize().height / 2
-				),
-				info->speedAura.area_,
-				cocos2d::Color4F(0, 1, 0, 0.5f));
-			sprite->addChild(speedAuraRange, -1);
-		}
-
-		if (info->hasHealAura()) {
-			cocos2d::DrawNode *healAuraRange = DrawNode::create();
-			healAuraRange->drawDot(
-				cocos2d::Vec2(
-					sprite->getPosition().x + sprite->getContentSize().width / 2,
-					sprite->getPosition().y + sprite->getContentSize().height / 2
-				),
-				info->healAura.area_,
-				cocos2d::Color4F(0, 0, 1, 0.5f));
-			sprite->addChild(healAuraRange, -1);
-			creepStatus.healAuraTimer.Start();
-			creepStatus.selfHealAuraTimer.Start();
-		}
-
-		Vector<SpriteFrame*> animFrames(6);
-		char str[100] = { 0 };
-		for (int i = 1; i <= 6; i++)
-		{
-			std::stringstream ss;
-			ss << "Graphics/creep/" << info->name << "/" << i << ".png";
-			auto frame = SpriteFrame::create(ss.str().c_str(), Rect(0, 00, 46, 46));
-			animFrames.pushBack(frame);
-			ss.clear();
-		}
-		Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.18f);
-		RepeatForever *animateMovement = RepeatForever::create(Animate::create(animation));
-		sprite->runAction(animateMovement);
-
-		scheduleUpdate();
+		initCreep();
 	}
+}
+
+Creep::Creep(const Creep & other)
+{
+	_spOpenSteps = other._spOpenSteps;
+	_spClosedSteps = other._spClosedSteps;
+	_shortestPath = other._shortestPath;
+
+	info = other.info;
+	game = other.game;
+	startDelay = other.startDelay;
+	currentHP = other.currentHP;
+	creepStatus = other.creepStatus;
+	dead = other.dead;
+	missionComplete = other.missionComplete;
+	attackedBy = other.attackedBy;
+	initCreep();
+	setPosition(other.sprite->getPosition());
 }
 
 Creep::~Creep()
 {
-	if (info)
-		delete info;
-	//if (game)
-	//	game = nullptr;
+	attackedBy.clear();
+}
 
-	auto itr = attackedBy.begin();
-	while (itr != attackedBy.end())
-	{
-		Turret* keyCopy = itr->second;
-		itr = attackedBy.erase(itr);
-		delete keyCopy;
+void Creep::initCreep()
+{
+	sprite = Sprite::create(info.image);
+	addChild(sprite);
+
+	if (info.hasSpeedAura()) {
+		cocos2d::DrawNode *speedAuraRange = DrawNode::create();
+		speedAuraRange->drawDot(
+			cocos2d::Vec2(
+				sprite->getPosition().x + sprite->getContentSize().width / 2,
+				sprite->getPosition().y + sprite->getContentSize().height / 2
+			),
+			info.speedAura.area_,
+			cocos2d::Color4F(0, 1, 0, 0.5f));
+		sprite->addChild(speedAuraRange, -1);
 	}
+
+	if (info.hasHealAura()) {
+		cocos2d::DrawNode *healAuraRange = DrawNode::create();
+		healAuraRange->drawDot(
+			cocos2d::Vec2(
+				sprite->getPosition().x + sprite->getContentSize().width / 2,
+				sprite->getPosition().y + sprite->getContentSize().height / 2
+			),
+			info.healAura.area_,
+			cocos2d::Color4F(0, 0, 1, 0.5f));
+		sprite->addChild(healAuraRange, -1);
+		creepStatus.healAuraTimer.Start();
+		creepStatus.selfHealAuraTimer.Start();
+	}
+
+	Vector<SpriteFrame*> animFrames(6);
+	char str[100] = { 0 };
+	for (int i = 1; i <= 6; i++)
+	{
+		std::stringstream ss;
+		ss << "Graphics/creep/" << info.name << "/" << i << ".png";
+		auto frame = SpriteFrame::create(ss.str().c_str(), Rect(0, 00, 46, 46));
+		animFrames.pushBack(frame);
+		ss.clear();
+	}
+	Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.18f);
+	RepeatForever *animateMovement = RepeatForever::create(Animate::create(animation));
+	sprite->runAction(animateMovement);
+
+	scheduleUpdate();
 }
 
 void Creep::setStartDelay(const float & startDelay)
@@ -114,7 +126,7 @@ cocos2d::Rect Creep::getBoundingBox() const
 
 CreepInfo & Creep::getCreepInfo()
 {
-	return *info;
+	return info;
 }
 
 void Creep::update(float deltaTime)
@@ -144,45 +156,45 @@ void Creep::update(float deltaTime)
 		}
 	}
 
-	if (info->hasSpeedAura()) {
+	if (info.hasSpeedAura()) {
 		CGCircle *speedRadius = new CGCircle(
-			info->speedAura.area_,
+			info.speedAura.area_,
 			getPosition()
 		);
-		std::vector<Creep*> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
-		for (Creep * creep : creepsInPlay)
+		std::vector<std::shared_ptr<Creep>> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
+		for (int i = 0; i < creepsInPlay.size(); i++)
 		{
-			if (creep != this && !creep->isDead()) {
-				if (game->checkCollision(speedRadius, creep->getBoundingBox()))
+			if (creepsInPlay[i].get() != this && !creepsInPlay[i]->isDead()) {
+				if (game->checkCollision(speedRadius, creepsInPlay[i]->getBoundingBox()))
 				{
-					creep->increaseSpeed(info->speedAura.percentage_);
+					creepsInPlay[i]->increaseSpeed(info.speedAura.percentage_);
 				}
 				else {
-					creep->creepStatus.inSpeedAuraRange = false;
+					creepsInPlay[i]->creepStatus.inSpeedAuraRange = false;
 				}
 			}
 		}
 		delete speedRadius;
 	}
 
-	if (info->hasHealAura()) {
+	if (info.hasHealAura()) {
 		if (creepStatus.selfHealAuraTimer.GetTicks() >= 1000) {
-			getHealed(info->healAura.healPerSecond_);
+			getHealed(info.healAura.healPerSecond_);
 			creepStatus.selfHealAuraTimer.Reset();
 		}
 		CGCircle *healRadius = new CGCircle(
-			info->healAura.area_,
+			info.healAura.area_,
 			getPosition()
 		);
-		std::vector<Creep*> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
-		for (Creep * creep : creepsInPlay)
+		std::vector<std::shared_ptr<Creep>> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
+		for (int i = 0; i < creepsInPlay.size(); i++)
 		{
-			if (creep != this && !creep->isDead()) {
-				if (game->checkCollision(healRadius, creep->getBoundingBox()))
+			if (creepsInPlay[i].get() != this && !creepsInPlay[i]->isDead()) {
+				if (game->checkCollision(healRadius, creepsInPlay[i]->getBoundingBox()))
 				{
-					creep->setInHealAuraRange();
+					creepsInPlay[i]->setInHealAuraRange();
 					if (creepStatus.healAuraTimer.GetTicks() >= 1000) {
-						creep->getHealed(info->healAura.healPerSecond_);
+						creepsInPlay[i]->getHealed(info.healAura.healPerSecond_);
 						creepStatus.healAuraTimer.Reset();
 					}
 				}
@@ -202,19 +214,19 @@ void Creep::getRemoved()
 {
 	currentHP = 0;
 	dead = true;
-	game->getLevelManager()->increaseGold(info->gold);
+	game->getLevelManager()->increaseGold(info.gold);
 
 	for (auto it = attackedBy.begin(); it != attackedBy.end(); it++) {
 		(*it).second->targetKilled();
 	}
 }
 
-void Creep::getAttacked(Turret * attacker)
+void Creep::getAttacked(Turret* attacker)
 {
 	attackedBy[attacker->getTag()] = attacker;
 }
 
-void Creep::gotLostSight(Turret * attacker)
+void Creep::gotLostSight(Turret* attacker)
 {
 	std::map<int, Turret*>::iterator it;
 	it = attackedBy.find(attacker->getTag());
@@ -254,14 +266,14 @@ void Creep::getDamaged(BulletInfo bulletInfo)
 				bulletInfo.splashRange,
 				getPosition()
 			);
-			std::vector<Creep*> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
-			for (Creep * creep : creepsInPlay)
+			std::vector<std::shared_ptr<Creep>> creepsInPlay = game->getLevelManager()->getCreepManager()->getCreepsInPlay();
+			for (int i = 0; i < creepsInPlay.size(); i++)
 			{
-				if (creep != this && !creep->isDead()) {
-					if (game->checkCollision(damageRadius, creep->getBoundingBox()))
+				if (creepsInPlay[i].get() != this && !creepsInPlay[i]->isDead()) {
+					if (game->checkCollision(damageRadius, creepsInPlay[i]->getBoundingBox()))
 					{
-						creep->setInSplashRange();
-						creep->getDamaged(bulletInfo);
+						creepsInPlay[i]->setInSplashRange();
+						creepsInPlay[i]->getDamaged(bulletInfo);
 					}
 				}
 			}
@@ -302,8 +314,8 @@ void Creep::setInHealAuraRange()
 void Creep::getHealed(int hps)
 {
 	currentHP += hps;
-	if (currentHP > info->health)
-		currentHP = info->health;
+	if (currentHP > info.health)
+		currentHP = info.health;
 }
 
 void Creep::increaseSpeed(float spd)
@@ -556,7 +568,7 @@ void Creep::popStepAndAnimate()
 	}
 	sprite->runAction(rotation);
 
-	float movementSpeed = info->hasSpeedAura() ? info->speed - (info->speed * info->speedAura.percentage_) : info->speed;
+	float movementSpeed = info.hasSpeedAura() ? info.speed - (info.speed * info.speedAura.percentage_) : info.speed;
 	movementSpeed = creepStatus.isSlowed ? movementSpeed + (movementSpeed * creepStatus.slowPercentage) : movementSpeed;
 	
 	if(creepStatus.inSpeedAuraRange)
@@ -592,7 +604,7 @@ void Creep::onDraw(const cocos2d::kmMat4 & transform, uint32_t flags)
 
 	ccDrawSolidRect(ccp(sprite->getPosition().x + HEALTH_BAR_ORIGIN,
 	sprite->getPosition().y + 18),
-	ccp(sprite->getPosition().x + HEALTH_BAR_ORIGIN + (float)(currentHP * HEALTH_BAR_WIDTH) / info->health,
+	ccp(sprite->getPosition().x + HEALTH_BAR_ORIGIN + (float)(currentHP * HEALTH_BAR_WIDTH) / info.health,
 	sprite->getPosition().y + 16),
 	ccc4f(0, 1.0, 0, 1.0));
 }
