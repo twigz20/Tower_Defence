@@ -30,6 +30,10 @@ class TowerDefence : public cocos2d::Layer
 	Turret *selectedTurret;
 	int selectedTurretIndex;
 	cocos2d::Vec2 prevPos;
+
+	cocos2d::ui::Button *sell;
+	cocos2d::ui::Button *upgrade;
+	cocos2d::ui::Button *help;
 public:
     static cocos2d::Scene* createScene();
 	~TowerDefence();
@@ -38,6 +42,10 @@ public:
     
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
+
+	void sellCallback(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
+	void upgradeCallback(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
+	void helpCallback(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
     
     // implement the "static create()" method manually
     CREATE_FUNC(TowerDefence);

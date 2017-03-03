@@ -3,7 +3,9 @@
 #include "proj.win32\LevelManager.h"
 #include "proj.win32\TurretManager.h"
 #include <sstream>
+#include "proj.win32\Utils.h"
 #include <vld.h> 
+#define HELP_LABEL 500
 
 USING_NS_CC;
 
@@ -84,14 +86,31 @@ bool TowerDefence::init()
 	_mouseListener->onMouseMove = CC_CALLBACK_1(TowerDefence::onMouseMove, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_mouseListener, this);
 
-	auto button = Button::create("Graphics/UI/Button.png");
+	auto button = Button::create(START_FILE);
 	button->setTitleText("Start Wave");
 	button->setTitleFontName("fonts/Marker Felt.ttf");
 	button->setTitleFontSize(12.0f);
 	button->setPosition(cocos2d::Vec2(400 + levelManager->getMap()->getTileSize().width / 2, 400 + levelManager->getMap()->getTileSize().width / 2));
 	button->addTouchEventListener(CC_CALLBACK_2(TowerDefence::touchEvent, this));
-
 	addChild(button);
+
+	sell = Button::create(SELL_FILE);
+	sell->setVisible(false);
+	sell->setPosition(Vec2::ZERO);
+	sell->addTouchEventListener(CC_CALLBACK_2(TowerDefence::sellCallback, this));
+	addChild(sell);
+
+	upgrade = Button::create(UPGRADE_FILE);
+	upgrade->setVisible(false);
+	upgrade->setPosition(Vec2::ZERO);
+	upgrade->addTouchEventListener(CC_CALLBACK_2(TowerDefence::upgradeCallback, this));
+	addChild(upgrade);
+
+	help = Button::create(HELP_FILE);
+	help->setVisible(false);
+	help->setPosition(Vec2::ZERO);
+	help->addTouchEventListener(CC_CALLBACK_2(TowerDefence::helpCallback, this));
+	addChild(help);
 
 	this->scheduleUpdate();
 
@@ -137,8 +156,110 @@ void TowerDefence::menuCloseCallback(Ref* pSender)
     //_eventDispatcher->dispatchEvent(&customEndEvent);   
 }
 
+void TowerDefence::sellCallback(cocos2d::Ref * pSender, cocos2d::ui::Widget::TouchEventType type)
+{
+	switch (type)
+	{
+	case cocos2d::ui::Widget::TouchEventType::BEGAN:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::MOVED:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::ENDED:
+	{
+		levelManager->increaseGold(
+			turretManager->getSelectedTurret()->getTurretInfo().cost
+			- (turretManager->getSelectedTurret()->getTurretInfo().cost * 0.33)
+		);
+		turretManager->sellSelectedTurret();
+		turretManager->unselectTurret();
+	}
+		break;
+	case cocos2d::ui::Widget::TouchEventType::CANCELED:
+		break;
+	default:
+		break;
+	}
+
+	sell->setVisible(false);
+	upgrade->setVisible(false);
+	help->setVisible(false);
+}
+
+void TowerDefence::upgradeCallback(cocos2d::Ref * pSender, cocos2d::ui::Widget::TouchEventType type)
+{
+	switch (type)
+	{
+	case cocos2d::ui::Widget::TouchEventType::BEGAN:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::MOVED:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::ENDED:
+	{
+		if (levelManager->getGold() >=
+			(turretManager->getSelectedTurret()->getTurretInfo().cost - (turretManager->getSelectedTurret()->getTurretInfo().cost * 0.33)) 
+			&& turretManager->getSelectedTurret()->getTurretInfo().hasLevelUp())
+		{
+			levelManager->decreaseGold(
+				turretManager->getSelectedTurret()->getTurretInfo().cost
+				- (turretManager->getSelectedTurret()->getTurretInfo().cost * 0.33)
+			);
+
+			turretManager->getSelectedTurret()->upgrade();
+			turretManager->unselectTurret();
+		}
+	}
+		break;
+	case cocos2d::ui::Widget::TouchEventType::CANCELED:
+		break;
+	default:
+		break;
+	}
+
+	sell->setVisible(false);
+	upgrade->setVisible(false);
+	help->setVisible(false);
+}
+
+void TowerDefence::helpCallback(cocos2d::Ref * pSender, cocos2d::ui::Widget::TouchEventType type)
+{
+	switch (type)
+	{
+	case cocos2d::ui::Widget::TouchEventType::BEGAN:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::MOVED:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::ENDED:
+	{
+		auto helpLabel = Label::createWithSystemFont("No Information at this Moment.", "Arial", 30);
+		helpLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
+		helpLabel->setPosition(
+			Director::getInstance()->getVisibleSize().width * 0.15,
+			Director::getInstance()->getVisibleSize().height * 0.55
+		);
+		helpLabel->setColor(cocos2d::Color3B::GREEN);
+		helpLabel->enableBold();
+		helpLabel->setTag(HELP_LABEL);
+		addChild(helpLabel);
+	}
+		break;
+	case cocos2d::ui::Widget::TouchEventType::CANCELED:
+		break;
+	default:
+		break;
+	}
+
+	sell->setVisible(false);
+	upgrade->setVisible(false);
+	help->setVisible(false);
+}
+
 bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_event)
 {
+	removeChildByTag(HELP_LABEL);
+	sell->setVisible(false);
+	upgrade->setVisible(false);
+	help->setVisible(false);
+
 	cocos2d::Point touchLoc = touch->getLocation();
 	std::vector<std::shared_ptr<Turret>> starterTurrets = turretManager->getStarterTurrets();
 	for (int i = 0; i < starterTurrets.size(); i++) {
@@ -162,6 +283,22 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 	for (int i = 0; i < turretManager->getPlacedTurrets().size(); i++) {
 		if (turretManager->getPlacedTurrets().at(i)->getBoundingBox().containsPoint(touchLoc))
 		{
+			turretManager->selectTurret(i);
+			sell->setPosition(cocos2d::Vec2(
+				turretManager->getSelectedTurret()->getPosition().x - 40,
+				turretManager->getSelectedTurret()->getPosition().y - 40)
+			);
+			sell->setVisible(true);
+			upgrade->setPosition(cocos2d::Vec2(
+				turretManager->getSelectedTurret()->getPosition().x + 40,
+				turretManager->getSelectedTurret()->getPosition().y - 40)
+			);
+			upgrade->setVisible(true);
+			help->setPosition(cocos2d::Vec2(
+				turretManager->getSelectedTurret()->getPosition().x,
+				turretManager->getSelectedTurret()->getPosition().y + 40)
+			);
+			help->setVisible(true);
 			return true;
 		}
 	}

@@ -214,6 +214,20 @@ const cocos2d::Size & Turret::getContentSize() const
 	return sprite->getContentSize();
 }
 
+template <typename T> std::string tostr(const T& t) { std::ostringstream os; os << t; return os.str(); }
+
+void Turret::upgrade()
+{
+	info.levelUp();
+	tsd->setupDisplay(getPosition());
+
+	std::string upgradeImage = info.id;
+	upgradeImage.append("-");
+	upgradeImage.append(tostr((int)info.level_).c_str());
+	upgradeImage.append(".png");
+	sprite->setTexture("Graphics/tower-defense-turrets/" + upgradeImage);
+}
+
 void Turret::showTurretStats(cocos2d::Vec2 position)
 {
 	if (tsd) {

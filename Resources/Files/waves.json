@@ -5,13 +5,32 @@
       "Wave": [
         {
           "minion": "creep-1-blue",
-          "quantity": 5,
-          "delay": 2.5
+          "quantity": 3,
+          "delay": 3.0
         },
         {
           "minion": "creep-1-blue",
+          "quantity": 3,
+          "delay": 3.0
+        }
+      ]
+    },
+    {
+      "Wave": [
+        {
+          "minion": "creep-1-blue",
+          "quantity": 5,
+          "delay": 2.0
+        },
+        {
+					"minion": "creep-1-red",
+					"quantity": 1,
+					"delay": 2.0
+				},
+        {
+          "minion": "creep-1-blue",
           "quantity": 4,
-          "delay": 2.5
+          "delay": 2.0
         }
       ]
     },
@@ -20,22 +39,22 @@
         {
           "minion": "creep-1-blue",
           "quantity": 8,
-          "delay": 1.0
+          "delay": 0.35
         },
         {
 					"minion": "creep-1-red",
 					"quantity": 3,
-					"delay": 2.0
+					"delay": 1.25
 				},
         {
 					"minion": "creep-1-blue",
 					"quantity": 5,
-					"delay": 1.75
+					"delay": 1.5
 				},
         {
 					"minion": "creep-1-red",
 					"quantity": 6,
-					"delay": 1.5
+					"delay": 1.25
 				}
       ]
     },
@@ -44,17 +63,17 @@
         {
           "minion": "creep-1-red",
           "quantity": 12,
-          "delay": 1.75
+          "delay": 0.5
         },
         {
           "minion": "creep-1-blue",
           "quantity": 7,
-          "delay": 1.75
+          "delay": 1.0
         },
         {
           "minion": "creep-1-red",
           "quantity": 9,
-          "delay": 1.75
+          "delay": 1.0
         },
         {
           "minion": "creep-1-yellow",
@@ -73,7 +92,7 @@
         },
         {
           "minion": "creep-1-blue",
-          "quantity": 5,
+          "quantity": 20,
           "delay": 0.75
         }
       ]
@@ -93,11 +112,11 @@
         {
           "minion": "creep-1-red",
           "quantity": 9,
-          "delay": 1.45
+          "delay": 1.25
         },
         {
           "minion": "creep-1-green",
-          "quantity": 2,
+          "quantity": 5,
           "delay": 0.5
         },
         {
@@ -142,7 +161,7 @@
         {
           "minion": "creep-1-green",
           "quantity": 4,
-          "delay": 1.75
+          "delay": 1.15
         },
         {
           "minion": "creep-1-blue",
@@ -152,7 +171,7 @@
         {
           "minion": "creep-1-yellow",
           "quantity": 2,
-          "delay": 1.75
+          "delay": 1.25
         },
         {
           "minion": "creep-1-red",

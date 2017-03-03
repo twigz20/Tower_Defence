@@ -11,11 +11,11 @@ TurretInfo::TurretInfo(std::string & turretName)
 	level_ = TurretLevel::L1;
 
 	name = turretInfo["name"].GetString();
+	id = turretInfo["id"].GetString();
 	image = turretInfo["image"].GetString();
 	cooldown = turretInfo["cooldown"].GetFloat();
 	range = turretInfo["range"].GetInt();
 	cost = turretInfo["cost"].GetInt();
-	level = TurretLevel::L1;
 
 	if (turretInfo.HasMember("bullet_properties"))
 	{
@@ -80,20 +80,25 @@ TurretInfo::TurretInfo(std::string & turretName)
 
 void TurretInfo::levelUp()
 {
-	if (level < L3)
+	if (level_ < L3)
 	{
-		int nextLevel = (int)level + 1;
+		int nextLevel = (int)level_ + 1;
 		level_ = (TurretLevel)nextLevel;
 
-		bulletInfo.damageFrom *= 1.2;
-		bulletInfo.damageTo *= 1.2;
+		bulletInfo.damageFrom *= 1.65;
+		bulletInfo.damageTo *= 1.65;
 
-		cooldown = cooldown > 1.0 ? cooldown - 0.5 : cooldown;
-		range += 5;
+		cooldown = cooldown > 1.0 ? cooldown - 0.15 : cooldown;
+		range += 7;
 
 		std::stringstream ss;
-		ss << type << "-" << level;
-		image = "resource/tower-defense-turrets/turret-" + ss.str() + ".png";
+		ss << type << "-" << level_;
+		image = "Graphics/tower-defense-turrets/turret-" + ss.str() + ".png";
 	}
+}
+
+bool TurretInfo::hasLevelUp()
+{
+	return level_ < L3;
 }
 

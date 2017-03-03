@@ -30,7 +30,7 @@ void TurretStatsDisplay::setupDisplay(cocos2d::Vec2 position)
 	addChild(nameLabel);
 
 	std::stringstream ss;
-	ss << "Lvl " << info.level;
+	ss << "Lvl " << info.level_;
 	auto levelLabel = Label::createWithSystemFont(ss.str().c_str(), "Arial", 16);
 	levelLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 	levelLabel->setPosition(
@@ -244,29 +244,29 @@ int TurretStatsDisplay::calculateDisplayBarAmount(std::string type)
 			bars = 4;
 		else if (info.bulletInfo.damageFrom >= 20)
 			bars = 3;
-		else if (info.bulletInfo.damageFrom >= 15)
+		else if (info.bulletInfo.damageFrom >= 11)
 			bars = 2;
 		else
 			bars = 1;
 	}
 	else if(type == "RTE") {
-		if (info.cooldown >= 3.0)
+		if (info.cooldown >= 2.0)
 			bars = 1;
 		else if (info.cooldown >= 1.75)
 			bars = 2;
-		else if (info.cooldown >= 1.39)
+		else if (info.cooldown >= 1.30)
 			bars = 3;
-		else if (info.cooldown >= 1.35)
+		else if (info.cooldown >= 1.00)
 			bars = 4;
 		else
 			bars = 5;
 	}
 	else {
-		if (info.range >= 90)
+		if (info.range >= 110)
 			bars = 5;
-		else if (info.range >= 76)
+		else if (info.range >= 90)
 			bars = 4;
-		else if (info.range >= 67)
+		else if (info.range >= 75)
 			bars = 3;
 		else if (info.range >= 60)
 			bars = 2;

@@ -59,6 +59,7 @@ public:
 	void selectTurret(int index);
 	std::shared_ptr<Turret> getSelectedTurret();
 	void unselectTurret();
+	void sellSelectedTurret();
 };
 
 

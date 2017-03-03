@@ -184,3 +184,9 @@ void TurretManager::unselectTurret()
 {
 	currentSelectedTurret = -1;
 }
+
+void TurretManager::sellSelectedTurret()
+{
+	game->removeChildByTag(turrets[currentSelectedTurret]->getTag());
+	turrets.erase(turrets.begin() + currentSelectedTurret);
+}

@@ -38,6 +38,7 @@ public:
 	cocos2d::Rect getBoundingBox() const;
 	const cocos2d::Size & getContentSize() const;
 
+	void upgrade();
 	void showTurretStats(cocos2d::Vec2 position);
 	void hideTurretStats();
 	void setAsNormalTurret();

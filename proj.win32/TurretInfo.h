@@ -46,14 +46,15 @@ struct TurretInfo
 {
 	TurretInfo(std::string & turretName);
 	void levelUp();
+	bool hasLevelUp();
 
 	TurretType type;
 	TurretLevel level_;
 	BulletInfo bulletInfo;
 
 	std::string name;
+	std::string id;
 	std::string image;
-	int level;
 
 	int damage;
 	double cooldown;
