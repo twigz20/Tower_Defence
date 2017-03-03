@@ -77,6 +77,18 @@ int CreepManager::getCreepAmountForWave()
 void CreepManager::clearManager()
 {
 	std::for_each(creeps.begin(), creeps.end(), [](std::shared_ptr<Creep> creep) {
+		creep->stopAllActions();
+		creep->unscheduleAllSelectors();
+		creep->unscheduleUpdate();
+		creep->unscheduleAllCallbacks();
+		creep->removeAllChildrenWithCleanup(true);
+		creep->removeFromParentAndCleanup(true);
+	});
+	std::for_each(creepsInPlay.begin(), creepsInPlay.end(), [](std::shared_ptr<Creep> creep) {
+		creep->stopAllActions();
+		creep->unscheduleAllSelectors();
+		creep->unscheduleUpdate();
+		creep->unscheduleAllCallbacks();
 		creep->removeAllChildrenWithCleanup(true);
 		creep->removeFromParentAndCleanup(true);
 	});

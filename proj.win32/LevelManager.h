@@ -43,6 +43,7 @@ public:
 	void update(float deltaTime);
 	void startLevel();
 	void endLevel();
+	void reset();
 	void decreaseCreepAmount();
 
 	bool isValidTileCoord(cocos2d::Point tileCoord);

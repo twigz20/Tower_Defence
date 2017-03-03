@@ -25,10 +25,47 @@ TurretManager::~TurretManager()
 	starterTurrets.clear();
 }
 
+void TurretManager::reset()
+{
+	std::for_each(turrets.begin(), turrets.end(), [](std::shared_ptr<Turret> turret) {
+		turret->setActive(false);
+		turret->lostSightOfEnemy();
+		turret->stopAllActions();
+		turret->unscheduleAllSelectors();
+		turret->unscheduleUpdate();
+		turret->unscheduleAllCallbacks();
+		turret->removeAllChildrenWithCleanup(true);
+		turret->removeFromParentAndCleanup(true);
+	});
+	turrets.clear();
+}
+
+void TurretManager::update(float deltaTime)
+{
+	for (auto turret = turrets.begin(); turret != turrets.end(); turret++)
+	{
+		if ((*turret)->isActive())
+			(*turret)->update(deltaTime); 
+		/*if ((*turret)->isDead() || (*turret)->isMissionCompleted())
+		{
+			(*turret)->removeAllChildrenWithCleanup(true);
+			(*turret)->removeFromParentAndCleanup(true);
+			game->getLevelManager()->decreaseCreepAmount();
+			turret = turrets.erase(creep);
+
+			if (turret == turrets.end())
+			{
+				break;
+			}
+		}*/
+	}
+}
+
 void TurretManager::addTurret(Turret *turret_)
 {
 	turrets.push_back(std::make_shared<Turret>(std::move(*turret_)));
 	turrets.back()->setTag(turretTag++);
+	turrets.back()->setActive(true);
 	game->addChild(turrets.back().get(), 0);
 }
 

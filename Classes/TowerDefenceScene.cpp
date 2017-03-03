@@ -98,20 +98,30 @@ bool TowerDefence::init()
 	sell->setVisible(false);
 	sell->setPosition(Vec2::ZERO);
 	sell->addTouchEventListener(CC_CALLBACK_2(TowerDefence::sellCallback, this));
+	sell->setScale(0.325);
 	addChild(sell);
 
 	upgrade = Button::create(UPGRADE_FILE);
 	upgrade->setVisible(false);
 	upgrade->setPosition(Vec2::ZERO);
 	upgrade->addTouchEventListener(CC_CALLBACK_2(TowerDefence::upgradeCallback, this));
+	upgrade->setScale(0.325);
 	addChild(upgrade);
 
 	help = Button::create(HELP_FILE);
 	help->setVisible(false);
 	help->setPosition(Vec2::ZERO);
 	help->addTouchEventListener(CC_CALLBACK_2(TowerDefence::helpCallback, this));
+	help->setScale(0.325);
 	addChild(help);
 
+	// add a "close" icon to exit the progress. it's an autorelease object
+	auto repeatItem = Button::create("Graphics/UI/Repeat.png");
+	repeatItem->setPosition(Vec2(origin.x + visibleSize.width - (repeatItem->getContentSize().width*0.325) / 2,
+		origin.y + (repeatItem->getContentSize().height*0.325) / 2 + closeItem->getContentSize().height));
+	repeatItem->addTouchEventListener(CC_CALLBACK_2(TowerDefence::repeatCallback, this));
+	repeatItem->setScale(0.325);
+	addChild(repeatItem);
 	this->scheduleUpdate();
 
     return true;
@@ -253,6 +263,27 @@ void TowerDefence::helpCallback(cocos2d::Ref * pSender, cocos2d::ui::Widget::Tou
 	help->setVisible(false);
 }
 
+void TowerDefence::repeatCallback(cocos2d::Ref * pSender, cocos2d::ui::Widget::TouchEventType type)
+{
+	switch (type)
+	{
+	case cocos2d::ui::Widget::TouchEventType::BEGAN:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::MOVED:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::ENDED:
+	{
+		turretManager->reset();
+		levelManager->reset();
+	}
+	break;
+	case cocos2d::ui::Widget::TouchEventType::CANCELED:
+		break;
+	default:
+		break;
+	}
+}
+
 bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_event)
 {
 	removeChildByTag(HELP_LABEL);
@@ -372,6 +403,7 @@ void TowerDefence::touchEvent(cocos2d::Ref * sender, cocos2d::ui::Widget::TouchE
 void TowerDefence::update(float delta)
 {
 	levelManager->update(delta);
+	turretManager->update(delta);
 }
 
 LevelManager * TowerDefence::getLevelManager()

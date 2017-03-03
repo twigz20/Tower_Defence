@@ -41,6 +41,8 @@ public:
 	TurretManager(TowerDefence* game_);
 	~TurretManager();
 
+	void reset();
+	void update(float deltaTime);
 	void addTurret(Turret *turret);
 	std::vector<std::shared_ptr<Turret>> getStarterTurrets();
 	std::vector<std::shared_ptr<Turret>> getPlacedTurrets();

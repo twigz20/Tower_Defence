@@ -6,6 +6,7 @@
 #include "CGCircle.h"
 #include "TurretStatsDisplay.h"
 #define TURRET_RANGE_INDICATOR 301
+#define BULLET_TAG 303
 
 
 using namespace cocos2d;
@@ -19,7 +20,8 @@ Turret::Turret(TowerDefence* game_, TurretInfo turretInfo, bool isStarterTurret)
 	starterTurret(isStarterTurret),
 	splashDamageRange(nullptr),
 	isShooting(false),
-	tsd(nullptr)
+	tsd(nullptr),
+	active(false)
 {
 	if (init()) {
 		setName(info.name);
@@ -39,9 +41,6 @@ Turret::Turret(TowerDefence* game_, TurretInfo turretInfo, bool isStarterTurret)
 		hideTurretStats();
 
 		addRangeIndicator();
-
-		if(!isStarterTurret)
-			scheduleUpdate();
 	}
 }
 
@@ -78,9 +77,6 @@ Turret& Turret::operator=(const Turret& other) {
 		tsd->hide();
 		game->addChild(tsd, 0);
 		hideTurretStats();
-
-		if (!starterTurret)
-			scheduleUpdate();
 	}
 	return *this;
 }
@@ -116,9 +112,6 @@ Turret& Turret::operator=(Turret&& other) {
 		tsd = new TurretStatsDisplay(game,info,getPosition());
 		game->addChild(tsd, 0);
 		hideTurretStats();
-
-		if (!starterTurret)
-			scheduleUpdate();
 
 		other.game = nullptr;
 		other.range = nullptr;
@@ -160,15 +153,27 @@ void Turret::addRangeIndicator()
 	);
 }
 
+bool Turret::isActive()
+{
+	return active;
+}
+
+void Turret::setActive(bool active_)
+{
+	active = active_;
+}
+
 void Turret::update(float deltaTime)
 {
-	if (chosenCreep && !chosenCreep->isDead()) {
-		rotateToTarget();
-		if (!game->checkCollision(rangeIndicator, chosenCreep->getBoundingBox()))
-			lostSightOfEnemy();
-	}
-	else {
-		getNextTarget();
+	if (!starterTurret && isActive()) {
+		if (chosenCreep && !chosenCreep->isDead()) {
+			rotateToTarget();
+			if (!game->checkCollision(rangeIndicator, chosenCreep->getBoundingBox()))
+				lostSightOfEnemy();
+		}
+		else {
+			getNextTarget();
+		}
 	}
 }
 
@@ -261,6 +266,7 @@ void Turret::chosenEnemyForAttack(std::shared_ptr<Creep> enemy)
 void Turret::shootWeapon(float dt)
 {
 	Sprite * bullet = Sprite::create(info.bulletInfo.image);
+	bullet->setTag(BULLET_TAG);
 	game->addChild(bullet);
 	bullet->setPosition(sprite->getPosition());
 
@@ -283,7 +289,8 @@ void Turret::damageEnemy()
 	if(chosenCreep)
 		chosenCreep->getDamaged(info.bulletInfo);
 
-	checkForSplashDamage();
+	if(info.bulletInfo.hasSplashDamage)
+		checkForSplashDamage();
 }
 
 void Turret::checkForSplashDamage()

@@ -19,5 +19,7 @@ public:
 	Wave getNextWave();
 	void popWave();
 	bool hasNextWave();
+
+	void reloadWaves();
 };
 

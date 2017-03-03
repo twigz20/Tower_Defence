@@ -23,6 +23,7 @@ class Turret : public cocos2d::Node
 	void addRangeIndicator();
 	CGCircle *splashDamageRange;
 	void checkForSplashDamage();
+	bool active;
 
 public:
 	Turret(TowerDefence* game_, TurretInfo turretInfo, bool isStarterTurret = false);
@@ -32,6 +33,8 @@ public:
 	Turret& operator=(Turret&& other);
 	~Turret();
 
+	bool isActive();
+	void setActive(bool active_);
 	void update(float deltaTime);
 	void setPosition(const cocos2d::Vec2 &position);
 	const cocos2d::Vec2& getPosition() const;

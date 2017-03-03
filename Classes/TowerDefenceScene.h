@@ -46,6 +46,7 @@ public:
 	void sellCallback(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
 	void upgradeCallback(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
 	void helpCallback(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
+	void repeatCallback(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
     
     // implement the "static create()" method manually
     CREATE_FUNC(TowerDefence);

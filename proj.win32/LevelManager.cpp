@@ -6,6 +6,7 @@
 
 #define GOLD_LABEL 20
 #define HEALTH_LABEL 21
+#define BULLET_TAG 302
 
 using namespace cocos2d;
 
@@ -209,6 +210,28 @@ void LevelManager::startLevel()
 void LevelManager::endLevel()
 {
 	levelFinished = true;
+}
+
+void LevelManager::reset()
+{
+	levelStarted = false;
+	levelFinished = true;
+	game->removeChildByTag(BULLET_TAG);
+	creepManager->clearManager();
+	creepManager->clearCreeps();
+	creepManager->cleanUpDeadCreeps();
+	creepManager = nullptr;
+	waveManager = nullptr;
+	health = 20; gold = 75;
+	std::stringstream g;
+	g << "Gold: " << gold;
+	goldLabel->setString(g.str());
+	std::stringstream h;
+	h << "HP: " << health;
+	healthLabel->setString(h.str());
+	initCreepManager();
+	initWaveManager();
+	populateCreepManager();
 }
 
 void LevelManager::decreaseCreepAmount()
