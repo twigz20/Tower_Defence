@@ -150,12 +150,14 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\TowerDefenceScene.cpp" />
+    <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="CGCircle.cpp" />
     <ClCompile Include="CreepInfo.cpp" />
     <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Creep.cpp" />
     <ClCompile Include="CreepManager.cpp" />
+    <ClCompile Include="Observee.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="Turret.cpp" />
     <ClCompile Include="TurretInfo.cpp" />
@@ -167,10 +169,14 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\TowerDefenceScene.h" />
+    <ClInclude Include="BaseObject.h" />
     <ClInclude Include="CGCircle.h" />
     <ClInclude Include="CreepInfo.h" />
+    <ClInclude Include="Events.h" />
     <ClInclude Include="LevelManager.h" />
     <ClInclude Include="CreepManager.h" />
+    <ClInclude Include="Observee.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="Turret.h" />
     <ClInclude Include="TurretInfo.h" />

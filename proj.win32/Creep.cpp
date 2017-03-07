@@ -13,17 +13,11 @@
 using namespace cocos2d;
 
 Creep::Creep(TowerDefence* game_, CreepInfo creepInfo) :
-	startDelay(0.f),
-	currentHP(0),
-	dead(false),
-	missionComplete(false),
+	game(game_),
 	info(creepInfo)
 {
 	if (init()) {
-		game = game_;
-
-		currentHP = info.health;
-
+		creepStatus.currentHP = info.health;
 		initCreep();
 	}
 }
@@ -36,11 +30,7 @@ Creep::Creep(const Creep & other)
 
 	info = other.info;
 	game = other.game;
-	startDelay = other.startDelay;
-	currentHP = other.currentHP;
 	creepStatus = other.creepStatus;
-	dead = other.dead;
-	missionComplete = other.missionComplete;
 	attackedBy = other.attackedBy;
 	initCreep();
 	setPosition(other.sprite->getPosition());
@@ -99,36 +89,6 @@ void Creep::initCreep()
 	scheduleUpdate();
 }
 
-void Creep::setStartDelay(const float & startDelay)
-{
-	this->startDelay = startDelay;
-}
-
-const float Creep::getStartDelay() const
-{
-	return startDelay;
-}
-
-void Creep::setPosition(const cocos2d::Vec2 & position)
-{
-	sprite->setPosition(position);
-}
-
-const cocos2d::Vec2 & Creep::getPosition() const
-{
-	return sprite->getPosition();
-}
-
-cocos2d::Rect Creep::getBoundingBox() const
-{
-	return sprite->getBoundingBox();
-}
-
-CreepInfo & Creep::getCreepInfo()
-{
-	return info;
-}
-
 void Creep::update(float deltaTime)
 {
 	if (creepStatus.isSlowed) {
@@ -146,7 +106,7 @@ void Creep::update(float deltaTime)
 	}
 	if (creepStatus.isBleeding) {
 		if (creepStatus.bleedDpsTimer.GetTicks() >= 1000) {
-			currentHP -= creepStatus.bleedDamage;
+			creepStatus.currentHP -= creepStatus.bleedDamage;
 			creepStatus.bleedDpsTimer.Reset();
 		}
 		if (creepStatus.bleedTimer.GetTicks() >= creepStatus.bleedDuration * 1000) {
@@ -205,15 +165,15 @@ void Creep::update(float deltaTime)
 
 
 	if (creepStatus.isBleeding) {
-		if(currentHP <= 0)
+		if(creepStatus.currentHP <= 0)
 			getRemoved();
 	}
 }
 
 void Creep::getRemoved()
 {
-	currentHP = 0;
-	dead = true;
+	creepStatus.currentHP = 0;
+	creepStatus.dead = true;
 	game->getLevelManager()->increaseGold(info.gold);
 
 	for (auto it = attackedBy.begin(); it != attackedBy.end(); it++) {
@@ -237,7 +197,7 @@ void Creep::gotLostSight(Turret* attacker)
 void Creep::getDamaged(BulletInfo bulletInfo)
 {
 	if (!isDead()) {
-		currentHP -= bulletInfo.damageFrom;
+		creepStatus.currentHP -= bulletInfo.damageFrom;
 
 		if (bulletInfo.hasSlow) {
 			creepStatus.slowDuration = bulletInfo.slowDuration;
@@ -281,19 +241,19 @@ void Creep::getDamaged(BulletInfo bulletInfo)
 			creepStatus.inSplashRange = false;
 		}
 
-		if (currentHP <= 0)
+		if (creepStatus.currentHP <= 0)
 			getRemoved();
 	}
 }
 
 bool Creep::isDead()
 {
-	return dead;
+	return creepStatus.dead;
 }
 
 bool Creep::isMissionCompleted()
 {
-	return missionComplete;
+	return creepStatus.missionComplete;
 }
 
 void Creep::setInSplashRange()
@@ -313,9 +273,9 @@ void Creep::setInHealAuraRange()
 
 void Creep::getHealed(int hps)
 {
-	currentHP += hps;
-	if (currentHP > info.health)
-		currentHP = info.health;
+	creepStatus.currentHP += hps;
+	if (creepStatus.currentHP > info.health)
+		creepStatus.currentHP = info.health;
 }
 
 void Creep::increaseSpeed(float spd)
@@ -523,7 +483,7 @@ void Creep::popStepAndAnimate()
 
 	if (game->getLevelManager()->isExitAtTilecoord(currentPosition))
 	{
-		missionComplete = true;
+		creepStatus.missionComplete = true;
 		game->getLevelManager()->decreaseHealth();
 		return;
 	}
@@ -604,7 +564,7 @@ void Creep::onDraw(const cocos2d::kmMat4 & transform, uint32_t flags)
 
 	ccDrawSolidRect(ccp(sprite->getPosition().x + HEALTH_BAR_ORIGIN,
 	sprite->getPosition().y + 18),
-	ccp(sprite->getPosition().x + HEALTH_BAR_ORIGIN + (float)(currentHP * HEALTH_BAR_WIDTH) / info.health,
+	ccp(sprite->getPosition().x + HEALTH_BAR_ORIGIN + (float)(creepStatus.currentHP * HEALTH_BAR_WIDTH) / info.health,
 	sprite->getPosition().y + 16),
 	ccc4f(0, 1.0, 0, 1.0));
 }

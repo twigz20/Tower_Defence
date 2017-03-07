@@ -75,6 +75,12 @@
     <ClCompile Include="Wave.cpp">
       <Filter>win32\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="BaseObject.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="Observee.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -124,6 +130,18 @@
     </ClInclude>
     <ClInclude Include="Wave.h">
       <Filter>win32\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseObject.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="Events.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="Observee.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>win32</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

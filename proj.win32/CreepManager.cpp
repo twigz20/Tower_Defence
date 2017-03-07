@@ -26,7 +26,7 @@ void CreepManager::addCreep(WaveProperties waveProperties)
 	for (int i = 0; i < waveProperties.creepQuantity; i++) {
 		creeps.push_back(creepFactory.getCreep(waveProperties.creepName));
 		creeps.back()->setPosition(start);
-		creeps.back()->setStartDelay(waveProperties.delay);
+		creeps.back()->getCreepStatus().startDelay = waveProperties.delay;
 		game->addChild(creeps.back().get());
 		creepAmountForWave++;
 	}
@@ -129,7 +129,7 @@ void CreepManager::update(float deltaTime)
 	if (hasNextCreep())
 	{
 		float time = timer.GetTicks();
-		float startDelay = getNextCreep()->getStartDelay() * 1000;
+		float startDelay = getNextCreep()->getCreepStatus().startDelay * 1000;
 		if (time >= startDelay) {
 			getNextCreep()->moveToward(end);
 			popCreep();

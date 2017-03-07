@@ -2,14 +2,14 @@
   "creep-1-blue": {
     "name": "creep-1-blue",
     "source": "Graphics/creep/creep-1-blue/1.png",
-    "health": 85,
+    "health": 95,
     "speed": 1.0,
     "gold": 5
   },
    "creep-1-red": {
     "name": "creep-1-red",
     "source": "Graphics/creep/creep-1-red/1.png",
-    "health": 140,
+    "health": 150,
     "speed": 1.0,
     "bleedResistance": 1,
     "gold": 10
@@ -17,11 +17,11 @@
   "creep-1-yellow": {
     "name": "creep-1-yellow",
     "source": "Graphics/creep/creep-1-yellow/1.png",
-    "health": 165,
-    "speed": 1.75,
+    "health": 185,
+    "speed": 1.65,
     "speed_aura": {
-      "area": 33,
-      "percentage": 0.40
+      "area": 38,
+      "percentage": 0.48
     },
     "stunResistance": 1,
     "gold": 25
@@ -29,11 +29,11 @@
   "creep-1-green": {
     "name": "creep-1-green",
     "source": "Graphics/creep/creep-1-green/1.png",
-    "health": 150,
+    "health": 165,
     "speed": 1.75,
     "heal_aura": {
       "area": 38,
-      "hps": 6
+      "hps": 8
     },
     "gold": 50
   }

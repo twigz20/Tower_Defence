@@ -173,16 +173,6 @@ LevelManager::LevelManager(TowerDefence* game_) :
 
 LevelManager::~LevelManager()
 {
-	if (tileMap)
-		delete tileMap;
-	if (bgLayer)
-		delete bgLayer;
-	if (objectLayer)
-		delete objectLayer;
-	if (goldLabel)
-		delete goldLabel;
-	if (healthLabel)
-		delete healthLabel;
 }
 
 void LevelManager::update(float deltaTime)

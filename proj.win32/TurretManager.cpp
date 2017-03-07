@@ -38,13 +38,28 @@ void TurretManager::reset()
 		turret->removeFromParentAndCleanup(true);
 	});
 	turrets.clear();
+
+	std::for_each(starterTurrets.begin(), starterTurrets.end(), [](std::shared_ptr<Turret> turret) {
+		turret->setActive(false);
+		turret->lostSightOfEnemy();
+		turret->stopAllActions();
+		turret->unscheduleAllSelectors();
+		turret->unscheduleUpdate();
+		turret->unscheduleAllCallbacks();
+		turret->removeAllChildrenWithCleanup(true);
+		turret->removeFromParentAndCleanup(true);
+	});
+	starterTurrets.clear();
+
+	loadStarterTurrets();
+	showStarterTurrets();
 }
 
 void TurretManager::update(float deltaTime)
 {
 	for (auto turret = turrets.begin(); turret != turrets.end(); turret++)
 	{
-		if ((*turret)->isActive())
+		if ((*turret)->getActive())
 			(*turret)->update(deltaTime); 
 		/*if ((*turret)->isDead() || (*turret)->isMissionCompleted())
 		{

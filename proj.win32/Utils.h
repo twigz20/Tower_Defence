@@ -33,6 +33,8 @@ static std::string getFileContent(const std::string& path)
 	return content;
 }
 
+template <typename T> std::string tostr(const T& t) { std::ostringstream os; os << t; return os.str(); }
+
 static cocos2d::Node* cloneNode(const cocos2d::Node *source)
 {
 	cocos2d::Node* clone = cocos2d::Node::create();

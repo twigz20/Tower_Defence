@@ -1,19 +1,20 @@
-#pragma once
-#include "cocos2d.h"
-#include "timer.h"
-#include "CreepInfo.h"
+#ifndef _MYSPRITE_HPP_
+#define _MYSPRITE_HPP_
 
-class CreepInfo;
-class TowerDefence;
-class Turret;
-class BulletInfo;
+#include "cocos2d.h"
+#include "Observee.h"
+#include "BaseObject.h"
+#include "CreepInfo.h"
+#include "TurretInfo.h"
+#include "timer.h"
 
 struct Status {
 	Status() :
 		isSlowed(false), isStunned(false), isBleeding(false),
 		stunDuration(0), slowDuration(0), bleedDuration(0),
 		bleedDamage(0), slowPercentage(0), speedIncreasePercentage(0),
-		inSplashRange(false), inSpeedAuraRange(false), inHealAuraRange(false)
+		inSplashRange(false), inSpeedAuraRange(false), inHealAuraRange(false),
+		startDelay(0.f), currentHP(0), dead(false), missionComplete(false)
 	{}
 
 	bool isSlowed;
@@ -38,9 +39,19 @@ struct Status {
 	SimpleTimer bleedDpsTimer;
 	SimpleTimer selfHealAuraTimer;
 	SimpleTimer healAuraTimer;
+
+	float startDelay;
+	int currentHP;
+
+	bool dead;
+	bool missionComplete;
 };
 
-class Creep : public cocos2d::Node
+class TowerDefence;
+class TowerDefence;
+class Turret;
+class BulletInfo;
+class Creep : public BaseObject
 {
 	/* Path Finding Algorithm - Start */
 	class ShortestPathStep : public cocos2d::Object
@@ -74,51 +85,41 @@ class Creep : public cocos2d::Node
 	cocos2d::Vector<ShortestPathStep*> _shortestPath;
 	/* Path Finding Algorithm - End */
 
-	CreepInfo info;
-	TowerDefence* game;
-	cocos2d::Sprite *sprite;
 	cocos2d::CustomCommand _customCommand;
-
-	float startDelay;
-	int currentHP;
-	Status creepStatus;
-
-	bool dead;
-	bool missionComplete;
-
-	std::map<int, Turret*> attackedBy;
 
 public:
 	Creep(TowerDefence* game_, CreepInfo creepInfo);
 	Creep(const Creep& other);
 	~Creep();
-	
+
 	void initCreep();
-	void setStartDelay(const float& startDelay);
-	const float getStartDelay() const;
-
 	void update(float deltaTime);
-	void moveToward(cocos2d::Point target);
-
 	virtual void draw(cocos2d::Renderer* renderer, const cocos2d::Mat4& transform, uint32_t flags);
 	virtual void onDraw(const cocos2d::kmMat4 &transform, uint32_t flags);
-	void setPosition(const cocos2d::Vec2 &position);
-	const cocos2d::Vec2& getPosition() const;
-	cocos2d::Rect getBoundingBox() const;
 
-	CreepInfo& getCreepInfo();
+	void moveToward(cocos2d::Point target);
+	bool isMissionCompleted();
+	bool isDead();
 
 	void getAttacked(Turret* attacker);
 	void gotLostSight(Turret* attacker);
 	void getRemoved();
 	void getDamaged(BulletInfo bulletInfo);
-	bool isDead();
-	bool isMissionCompleted();
-
 	void setInSplashRange();
 	void setInSpeedAuraRange();
 	void setInHealAuraRange();
 	void getHealed(int hps);
 	void increaseSpeed(float spd);
+
+	Status& getCreepStatus() { return creepStatus; }
+	void setCreepStatus(Status val) { creepStatus = val; }
+	CreepInfo& getCreepInfo() { return info; }
+	void setInfo(CreepInfo val) { info = val; }
+private:
+	CreepInfo info;
+	TowerDefence* game;
+	Status creepStatus;
+	std::map<int, Turret*> attackedBy;
 };
 
+#endif // _MYSPRITE_HPP_

@@ -1,30 +1,14 @@
 #pragma once
 #include "cocos2d.h"
+#include "Observer.h"
 #include "TurretInfo.h"
 
 class TowerDefence;
 class Creep;
-class CGCircle;
 class TurretStatsDisplay;
-class Turret : public cocos2d::Node
+class CGCircle;
+class Turret : public BaseObject
 {
-	TowerDefence* game;
-	TurretInfo info;
-	cocos2d::Sprite *sprite;
-	bool starterTurret;
-	
-	bool isShooting;
-	std::shared_ptr<Creep> chosenCreep;
-
-	TurretStatsDisplay *tsd;
-	bool displayRange;
-	cocos2d::DrawNode *range;
-	CGCircle *rangeIndicator;
-	void addRangeIndicator();
-	CGCircle *splashDamageRange;
-	void checkForSplashDamage();
-	bool active;
-
 public:
 	Turret(TowerDefence* game_, TurretInfo turretInfo, bool isStarterTurret = false);
 	Turret(const Turret& other);
@@ -33,21 +17,16 @@ public:
 	Turret& operator=(Turret&& other);
 	~Turret();
 
-	bool isActive();
-	void setActive(bool active_);
-	void update(float deltaTime);
 	void setPosition(const cocos2d::Vec2 &position);
-	const cocos2d::Vec2& getPosition() const;
-	cocos2d::Rect getBoundingBox() const;
-	const cocos2d::Size & getContentSize() const;
 
+	void update(float deltaTime);
 	void upgrade();
 	void showTurretStats(cocos2d::Vec2 position);
 	void hideTurretStats();
 	void setAsNormalTurret();
-	TurretInfo& getTurretInfo();
 	void showRange();
 	void hideRange();
+	TurretInfo& getTurretInfo();
 
 	void getNextTarget();
 	void targetKilled();
@@ -58,5 +37,30 @@ public:
 	void damageEnemy();
 	void lostSightOfEnemy();
 	void rotateToTarget();
+
+	bool collidesWithCreep(cocos2d::Rect creepRect);
+
+	bool getStarterTurret() const { return starterTurret; }
+	void setStarterTurret(bool val) { starterTurret = val; }
+	bool getIsShooting() const { return isShooting; }
+	void setIsShooting(bool val) { isShooting = val; }
+	bool getActive() const { return active; }
+	void setActive(bool val) { active = val; }
+private:
+	TowerDefence* game;
+	TurretInfo info;
+
+	TurretStatsDisplay *tsd;
+	bool displayRange;
+	cocos2d::DrawNode *range;
+	void addRangeIndicator();
+	CGCircle *splashDamageRange;
+	void checkForSplashDamage();
+
+	std::shared_ptr<Creep> target;
+
+	bool starterTurret;
+	bool isShooting;
+	bool active;
 };
 

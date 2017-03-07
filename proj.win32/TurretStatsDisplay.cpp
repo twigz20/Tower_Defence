@@ -61,6 +61,7 @@ void TurretStatsDisplay::setupDisplay(cocos2d::Vec2 position)
 		);
 		stunLabel->setColor(cocos2d::Color3B::YELLOW);
 		addChild(stunLabel);
+		delete[] buffer;
 	}
 
 	if (info.bulletInfo.hasSlow) {
@@ -82,6 +83,7 @@ void TurretStatsDisplay::setupDisplay(cocos2d::Vec2 position)
 		);
 		slowLabel->setColor(cocos2d::Color3B(30,144,255));
 		addChild(slowLabel);
+		delete[] buffer;
 	}
 
 	if (info.bulletInfo.hasBleed) {
@@ -103,6 +105,7 @@ void TurretStatsDisplay::setupDisplay(cocos2d::Vec2 position)
 		);
 		bleedLabel->setColor(cocos2d::Color3B::RED);
 		addChild(bleedLabel);
+		delete[] buffer;
 	}
 
 	if (info.bulletInfo.hasSplashDamage) {
@@ -124,6 +127,7 @@ void TurretStatsDisplay::setupDisplay(cocos2d::Vec2 position)
 		);
 		splashLabel->setColor(cocos2d::Color3B::ORANGE);
 		addChild(splashLabel);
+		delete[] buffer;
 	}
 
 	setupDamageDisplay();
@@ -140,6 +144,7 @@ void TurretStatsDisplay::setupDisplay(cocos2d::Vec2 position)
 	);
 	costLabel->setColor(cocos2d::Color3B::GRAY);
 	addChild(costLabel);
+	cost.str(std::string());
 }
 
 void TurretStatsDisplay::clearStats()
@@ -289,11 +294,10 @@ void TurretStatsDisplay::hideCost()
 
 TurretStatsDisplay::TurretStatsDisplay(TowerDefence* game_, TurretInfo &turretInfo, cocos2d::Vec2 position) :
 	info(turretInfo),
-	game(nullptr),
+	game(game_),
 	sprite(nullptr)
 {
 	if (init()) {
-		game = game_;
 		info = turretInfo;
 		setupDisplay(position);
 	}

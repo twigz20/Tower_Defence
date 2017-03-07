@@ -9,6 +9,7 @@
 
 USING_NS_CC;
 
+using namespace CocosDenshion;
 using namespace cocos2d;
 using namespace ui;
 
@@ -29,8 +30,8 @@ Scene* TowerDefence::createScene()
 
 TowerDefence::~TowerDefence()
 {
-	//if (levelManager)
-		//delete levelManager;
+	if (levelManager)
+		delete levelManager;
 	if (turretManager)
 		delete turretManager;
 	if(selectedTurret)
@@ -122,12 +123,11 @@ bool TowerDefence::init()
 	repeatItem->addTouchEventListener(CC_CALLBACK_2(TowerDefence::repeatCallback, this));
 	repeatItem->setScale(0.325);
 	addChild(repeatItem);
+
 	this->scheduleUpdate();
 
     return true;
 }
-
-template <typename T> std::string tostr(const T& t) { std::ostringstream os; os << t; return os.str(); }
 
 void TowerDefence::onMouseMove(cocos2d::Event *event)
 {
