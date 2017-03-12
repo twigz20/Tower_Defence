@@ -59,6 +59,6 @@
  </layer>
  <objectgroup name="Way Points">
   <object id="1" name="End Point" x="385" y="432" width="46" height="46"/>
-  <object id="2" name="Start Point" x="1" y="-92" width="46" height="46"/>
+  <object id="2" name="Start Point" x="1" y="-184" width="46" height="46"/>
  </objectgroup>
 </map>

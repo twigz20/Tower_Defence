@@ -334,8 +334,8 @@ void Creep::moveToward(cocos2d::Point target)
 			/*CCLOG("PATH FOUND :");
 			do
 			{
-			CCLOG("%s", tmpStep->getDescription().c_str());
-			tmpStep = tmpStep->getParent(); // Retrogression
+				CCLOG("%s", tmpStep->getDescription().c_str());
+				tmpStep = tmpStep->getParent(); // Retrogression
 			} while (tmpStep); // Until no one step*/
 
 			_spOpenSteps.clear();

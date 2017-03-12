@@ -2,7 +2,7 @@
 #define WINDOW_HEIGHT 10 * 48
 #define WINDOW_WIDTH 15 * 48
 #define BACKGROUND_FILE "Graphics/tower-defense/tower-defense-background-stars.png"
-#define INITIAL_MAP_FILE "Files/Tile-Maps/Level-1/Map.tmx"
+#define INITIAL_MAP_FILE "Files/Tile-Maps/Level-1/Map1.tmx"
 #define WAVES_FILE "Files/waves.json"
 #define CREEP_FILE "Files/creep.json"
 #define TURRET_FILE "Files/turrets.json"

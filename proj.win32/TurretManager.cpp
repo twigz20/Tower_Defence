@@ -16,7 +16,6 @@ TurretManager::TurretManager(TowerDefence * game_) :
 	turretTag(0)
 {
 	loadStarterTurrets();
-	showStarterTurrets();
 }
 
 TurretManager::~TurretManager()
@@ -39,20 +38,7 @@ void TurretManager::reset()
 	});
 	turrets.clear();
 
-	std::for_each(starterTurrets.begin(), starterTurrets.end(), [](std::shared_ptr<Turret> turret) {
-		turret->setActive(false);
-		turret->lostSightOfEnemy();
-		turret->stopAllActions();
-		turret->unscheduleAllSelectors();
-		turret->unscheduleUpdate();
-		turret->unscheduleAllCallbacks();
-		turret->removeAllChildrenWithCleanup(true);
-		turret->removeFromParentAndCleanup(true);
-	});
-	starterTurrets.clear();
-
 	loadStarterTurrets();
-	showStarterTurrets();
 }
 
 void TurretManager::update(float deltaTime)

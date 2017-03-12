@@ -4,7 +4,7 @@
 		"gold": 75,
 		"Music": {
 			"source": "Sounds/Undaunted.wav",
-			"play": true
+			"play": false
 		}
 	}
 }

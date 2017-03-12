@@ -17,6 +17,9 @@ class TowerDefence : public cocos2d::Layer
 	LevelManager *levelManager;
 	TurretManager *turretManager;
 
+	cocos2d::MenuItemImage *playItem;
+	cocos2d::MenuItemImage *resetItem;
+
 	bool onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_event) override;
 	void onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *unused_event) override;
 	void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event) override;
@@ -34,6 +37,12 @@ class TowerDefence : public cocos2d::Layer
 	cocos2d::ui::Button *sell;
 	cocos2d::ui::Button *upgrade;
 	cocos2d::ui::Button *help;
+
+	void setUpUi();
+
+	std::vector<cocos2d::Sprite*> starterTurretStands;
+	std::vector<std::shared_ptr<Turret>> starterTurrets;
+	void setStarterTurrets();
 public:
     static cocos2d::Scene* createScene();
 	~TowerDefence();
@@ -42,6 +51,8 @@ public:
     
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
+	void menuPlayCallback(cocos2d::Ref* pSender);
+	void menuResetCallback(cocos2d::Ref* pSender);
 
 	void sellCallback(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
 	void upgradeCallback(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
@@ -55,7 +66,7 @@ public:
 	bool checkCollision(CGCircle *rangeIndicator, cocos2d::Rect rect);
 	LevelManager *getLevelManager();
 
-	
+	void enablePlayButton();
 };
 
 #endif // __HELLOWORLD_SCENE_H__

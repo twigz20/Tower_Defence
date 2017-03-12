@@ -64,7 +64,7 @@ Turret& Turret::operator=(const Turret& other) {
 		starterTurret = other.starterTurret;
 		isShooting = other.isShooting;
 		sprite = Sprite::createWithTexture(other.sprite->getTexture());
-		sprite->setScale(other.sprite->getScaleX(), other.sprite->getScaleY());
+		sprite->setScale(other.sprite->getScale());
 		sprite->setRotation(other.sprite->getRotation());
 		sprite->setContentSize(other.sprite->getContentSize());
 		addRangeIndicator();

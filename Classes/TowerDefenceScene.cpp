@@ -1,10 +1,12 @@
 #include "TowerDefenceScene.h"
 #include "SimpleAudioEngine.h"
 #include "proj.win32\LevelManager.h"
+#include "proj.win32\Turret.h"
 #include "proj.win32\TurretManager.h"
 #include <sstream>
 #include "proj.win32\Utils.h"
-#include <vld.h> 
+#include "proj.win32\GuiElement.h"
+//#include <vld.h> 
 #define HELP_LABEL 500
 
 USING_NS_CC;
@@ -12,6 +14,75 @@ USING_NS_CC;
 using namespace CocosDenshion;
 using namespace cocos2d;
 using namespace ui;
+
+void TowerDefence::setUpUi()
+{
+
+}
+
+void TowerDefence::setStarterTurrets()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	starterTurrets = turretManager->getStarterTurrets();
+
+	int xOffset = getLevelManager()->getMap()->getTileSize().width / 2;
+	int yOffset = getLevelManager()->getMap()->getTileSize().height / 2;
+	int originalTurretX = visibleSize.width * 0.77;
+	int originalTurretY = visibleSize.height * 0.83;
+	int turretX = originalTurretX;
+	int turretY = originalTurretY;
+	int counter = 1;
+
+	float turretStandXInitialPositionPercentage = 0.18;
+	float turretStandNextPositionIncrementer = 0.09;
+	float turretStandYPosition = 10;
+
+	float turretStandScale = 0.25f;
+	cocos2d::Vec2 turretAnchorPoint(0, 0);
+	float turretScale = 4.f;
+	float turretPositionXPercentage = 0.6;
+	float turretPositionYPercentage = 0.8;
+
+	auto leftTurretStandHook = Sprite::create("Graphics/UI/Window/Window_14.png");
+	leftTurretStandHook->setAnchorPoint(Vec2(0, 0));
+	leftTurretStandHook->setScale(0.25f);
+	leftTurretStandHook->setPosition(visibleSize.width * 0.15, -25);
+	addChild(leftTurretStandHook, -1);
+
+	std::for_each(starterTurrets.begin(), starterTurrets.end(),
+		[&](std::shared_ptr<Turret> turret) {
+
+		auto TurretStand = Sprite::create("Graphics/UI/Elements 1/Elements_99.png");
+		TurretStand->setAnchorPoint(turretAnchorPoint);
+		TurretStand->setScale(turretStandScale);
+		cocos2d::Vec2 turretStandPosition(visibleSize.width * turretStandXInitialPositionPercentage, turretStandYPosition);
+		TurretStand->setPosition(turretStandPosition);
+		addChild(TurretStand);
+
+		turret->setAnchorPoint(cocos2d::Vec2(0.5, 0.5));
+		turret->setScale(turretScale);
+		turret->setPosition(
+			cocos2d::Vec2(
+			((TurretStand->getContentSize().width * turretStandScale) * turretPositionXPercentage) - (turret->getContentSize().width) / 6,
+				((TurretStand->getContentSize().height * turretStandScale) * turretPositionYPercentage) - (turret->getContentSize().height) / 2
+			)
+		);
+
+		starterTurretStands.push_back(std::move(TurretStand));
+		starterTurretStands.back()->addChild(turret.get(), 1);
+		starterTurretStands.back()->setName(turret->getTurretInfo().name);
+
+		turretStandXInitialPositionPercentage += turretStandNextPositionIncrementer;
+	}
+	);
+
+	auto rightTurretStandHook = Sprite::create("Graphics/UI/Window/Window_15.png");
+	rightTurretStandHook->setAnchorPoint(Vec2(0, 0));
+	rightTurretStandHook->setScale(0.25f);
+	rightTurretStandHook->setPosition(visibleSize.width * 0.735, -25);
+	addChild(rightTurretStandHook, -1);
+}
 
 Scene* TowerDefence::createScene()
 {
@@ -57,23 +128,74 @@ bool TowerDefence::init()
 
     // add a "close" icon to exit the progress. it's an autorelease object
     auto closeItem = MenuItemImage::create(
-                                           "Graphics/UI/CloseNormal.png",
-                                           "Graphics/UI/CloseSelected.png",
+		"Graphics/UI/Buttons/Button_78.png",
+		"Graphics/UI/Buttons/Button_80.png",
+		"Graphics/UI/Buttons/Button_81.png",
                                            CC_CALLBACK_1(TowerDefence::menuCloseCallback, this));
     
-    closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
-                                origin.y + closeItem->getContentSize().height/2));
+    closeItem->setPosition(Vec2(origin.x + visibleSize.width - (closeItem->getContentSize().width * 0.30) /2 ,
+                                origin.y + (closeItem->getContentSize().height * 0.30) /2));
+
+	closeItem->setScale(0.30);
+
+	resetItem = MenuItemImage::create(
+		"Graphics/UI/Buttons/Button_90.png",
+		"Graphics/UI/Buttons/Button_92.png",
+		"Graphics/UI/Buttons/Button_93.png",
+		CC_CALLBACK_1(TowerDefence::menuResetCallback, this));
+
+	resetItem->setPosition(Vec2(origin.x + visibleSize.width - (resetItem->getContentSize().width * 0.30) / 2,
+		closeItem->getPosition().y + (resetItem->getContentSize().height * 0.30) + 5));
+
+	resetItem->setScale(0.30);
+
+	playItem = MenuItemImage::create(
+		"Graphics/UI/Buttons/Button_14.png",
+		"Graphics/UI/Buttons/Button_16.png",
+		"Graphics/UI/Buttons/Button_17.png",
+		CC_CALLBACK_1(TowerDefence::menuPlayCallback, this));
+
+	playItem->setPosition(Vec2(origin.x + visibleSize.width - (playItem->getContentSize().width * 0.30 ) / 2,
+		resetItem->getPosition().y + (playItem->getContentSize().height * 0.30) + 5));
+
+	playItem->setScale(0.30);	
 
     // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem, NULL);
+    auto menu = Menu::create(closeItem, resetItem, playItem, NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
     /////////////////////////////
     // 3. add your codes below...
 
+	GuiElement *healthContainer = new GuiElement("Graphics/UI/Elements 1/Elements_58_Right.png", 0.30f);
+	healthContainer->setPosition(cocos2d::Vec2(visibleSize.width * 0.99 - (healthContainer->getContentSize().width * 0.30f), visibleSize.height * 0.92));
+	addChild(healthContainer);
+
+	auto goldContainer = Sprite::create("Graphics/UI/Elements 1/Elements_Empty_Container_Right.png");
+	goldContainer->setAnchorPoint(Vec2(0, 0));
+	goldContainer->setScale(0.30f);
+	goldContainer->setPosition(visibleSize.width * 0.99 - (goldContainer->getContentSize().width * 0.30f), visibleSize.height * 0.84);
+	addChild(goldContainer);
+
+	auto healthSymbol = Sprite::create("Graphics/UI/Elements 1/Elements_02.png");
+	healthSymbol->setAnchorPoint(Vec2(0, 0));
+	healthSymbol->setScale(0.6f);
+	healthSymbol->setPositionX(healthContainer->getContentSize().width * 0.955 - (healthSymbol->getContentSize().width * 0.60f));
+	healthSymbol->setPositionY(healthContainer->getContentSize().height * 0.225);
+	healthContainer->attachElement(healthSymbol);
+
+	auto goldSymbol = Sprite::create("Graphics/UI/Elements 1/Elements_09.png");
+	goldSymbol->setAnchorPoint(Vec2(0, 0));
+	goldSymbol->setScale(0.5f);
+	goldSymbol->setPositionX(goldContainer->getContentSize().width * 0.910 - (goldSymbol->getContentSize().width * 0.50f));
+	goldSymbol->setPositionY(goldContainer->getContentSize().height * 0.225);
+	goldContainer->addChild(goldSymbol);
+
 	levelManager = new LevelManager(this);
 	turretManager = new TurretManager(this);
+
+	setStarterTurrets();
 	
 	auto eventListener = EventListenerTouchOneByOne::create();
 	eventListener->onTouchBegan = CC_CALLBACK_2(TowerDefence::onTouchBegan, this);
@@ -86,14 +208,6 @@ bool TowerDefence::init()
 	auto _mouseListener = EventListenerMouse::create();
 	_mouseListener->onMouseMove = CC_CALLBACK_1(TowerDefence::onMouseMove, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_mouseListener, this);
-
-	auto button = Button::create(START_FILE);
-	button->setTitleText("Start Wave");
-	button->setTitleFontName("fonts/Marker Felt.ttf");
-	button->setTitleFontSize(12.0f);
-	button->setPosition(cocos2d::Vec2(400 + levelManager->getMap()->getTileSize().width / 2, 400 + levelManager->getMap()->getTileSize().width / 2));
-	button->addTouchEventListener(CC_CALLBACK_2(TowerDefence::touchEvent, this));
-	addChild(button);
 
 	sell = Button::create(SELL_FILE);
 	sell->setVisible(false);
@@ -115,14 +229,6 @@ bool TowerDefence::init()
 	help->addTouchEventListener(CC_CALLBACK_2(TowerDefence::helpCallback, this));
 	help->setScale(0.325);
 	addChild(help);
-
-	// add a "close" icon to exit the progress. it's an autorelease object
-	auto repeatItem = Button::create("Graphics/UI/Repeat.png");
-	repeatItem->setPosition(Vec2(origin.x + visibleSize.width - (repeatItem->getContentSize().width*0.325) / 2,
-		origin.y + (repeatItem->getContentSize().height*0.325) / 2 + closeItem->getContentSize().height));
-	repeatItem->addTouchEventListener(CC_CALLBACK_2(TowerDefence::repeatCallback, this));
-	repeatItem->setScale(0.325);
-	addChild(repeatItem);
 
 	this->scheduleUpdate();
 
@@ -149,6 +255,15 @@ void TowerDefence::onMouseMove(cocos2d::Event *event)
 			turretManager->getPlacedTurrets().at(i)->hideTurretStats();
 		}
 	}
+
+	for (int i = 0; i < starterTurretStands.size(); i++) {
+		if (starterTurretStands[i]->getBoundingBox().containsPoint(touchLoc)) {
+			starterTurretStands[i]->setTexture("Graphics/UI/Elements 1/Elements_100.png");
+		}
+		else {
+			starterTurretStands[i]->setTexture("Graphics/UI/Elements 1/Elements_99.png");
+		}
+	}
 }
 
 void TowerDefence::menuCloseCallback(Ref* pSender)
@@ -164,6 +279,17 @@ void TowerDefence::menuCloseCallback(Ref* pSender)
     
     //EventCustom customEndEvent("game_scene_close_event");
     //_eventDispatcher->dispatchEvent(&customEndEvent);   
+}
+
+void TowerDefence::menuPlayCallback(cocos2d::Ref * pSender)
+{
+	playGame();
+}
+
+void TowerDefence::menuResetCallback(cocos2d::Ref * pSender)
+{
+	turretManager->reset();
+	levelManager->reset();
 }
 
 void TowerDefence::sellCallback(cocos2d::Ref * pSender, cocos2d::ui::Widget::TouchEventType type)
@@ -292,12 +418,17 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 	help->setVisible(false);
 
 	cocos2d::Point touchLoc = touch->getLocation();
-	std::vector<std::shared_ptr<Turret>> starterTurrets = turretManager->getStarterTurrets();
 	for (int i = 0; i < starterTurrets.size(); i++) {
-		if (starterTurrets[i]->getBoundingBox().containsPoint(touchLoc))
+		if (starterTurretStands[i]->getBoundingBox().containsPoint(touchLoc))
 		{
 			prevPos = starterTurrets[i]->getPosition();
 			selectedTurret = new Turret(*starterTurrets[i]);
+			selectedTurret->setPosition(
+				cocos2d::Vec2(
+					starterTurretStands[i]->getPosition().x + selectedTurret->getPosition().x,
+					starterTurretStands[i]->getPosition().y + selectedTurret->getPosition().y
+				)
+			);
 			selectedTurret->setAsNormalTurret();
 			selectedTurret->showRange();
 
@@ -339,8 +470,16 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 
 void TowerDefence::onTouchMoved(cocos2d::Touch * touch, cocos2d::Event * unused_event)
 {
-	if (selectedTurret)
+	if (selectedTurret) {
 		selectedTurret->setPosition(selectedTurret->getPosition() + touch->getDelta());
+		cocos2d::Vec2 tileCoordForTowerPosition = levelManager->tileCoordForPosition(selectedTurret->getPosition());
+		if (levelManager->isWallAtTileCoord(tileCoordForTowerPosition)) {
+			//selectedTurret->setRangeColor(cocos2d::Color4F(0, 1, 0, 0.25));
+		}
+		else {
+			//selectedTurret->setRangeColor(cocos2d::Color4F(1, 0, 0, 0.25));
+		}
+	}
 }
 
 void TowerDefence::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event)
@@ -404,11 +543,20 @@ void TowerDefence::update(float delta)
 {
 	levelManager->update(delta);
 	turretManager->update(delta);
+
+	for (int i = 0; i < starterTurretStands.size(); i++) {	
+		if (starterTurrets[i]->getTurretInfo().cost > levelManager->getGold())
+			starterTurretStands[i]->setTexture("Graphics/UI/Elements 1/Elements_90.png");
+	}
 }
 
 LevelManager * TowerDefence::getLevelManager()
 {
 	return levelManager;
+}
+
+void TowerDefence::enablePlayButton()
+{
 }
 
 bool TowerDefence::checkCollision(CGCircle *rangeIndicator, cocos2d::Rect rect)
