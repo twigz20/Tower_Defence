@@ -11,55 +11,57 @@ void TurretStatsDisplay::setupDisplay(cocos2d::Vec2 position)
 	if (getChildrenCount() > 0)
 		removeAllChildrenWithCleanup(true);
 
+	float spriteScale = 0.25f;
 	sprite = Sprite::create("Graphics/UI/Windows 2/Window2_04.png");
 	sprite->setAnchorPoint(cocos2d::Vec2(0, 0.5f));
-	sprite->setScale(0.25f);
+	sprite->setScale(spriteScale);
 	sprite->setTag(DISPLAY_TAG);
 	addChild(sprite);
 	setPosition(position);
 
-	auto nameLabel = Label::createWithSystemFont(info.name, "Arial", 16);
-	nameLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
+	auto nameLabel = Label::createWithTTF(info.name, "fonts/carbon phyber.ttf", 60);
+	nameLabel->setAnchorPoint(cocos2d::Vec2(0.5f, 0));
 	nameLabel->setPosition(
-		sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.07),
-		sprite->getPosition().y + ((sprite->getContentSize().height * 2.0) * 0.84)
+		sprite->getContentSize().width / 2,
+		sprite->getContentSize().height * 0.885
 	);
 	nameLabel->setColor(cocos2d::Color3B::GREEN);
 	nameLabel->enableBold();
-	addChild(nameLabel);
+	sprite->addChild(nameLabel);
 
 	std::stringstream ss;
-	ss << "Lvl " << info.level_;
-	auto levelLabel = Label::createWithSystemFont(ss.str().c_str(), "Arial", 16);
-	levelLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
+	ss << "Level " << info.level_; 
+	auto levelLabel = Label::createWithTTF(ss.str().c_str(), "fonts/carbon phyber.ttf", 60);
+	levelLabel->setAnchorPoint(cocos2d::Vec2(0.5f, 0));
 	levelLabel->setPosition(
-		sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.65),
-		sprite->getPosition().y + ((sprite->getContentSize().height * 2.0) * 0.84)
+		sprite->getContentSize().width / 2,
+		sprite->getContentSize().height * 0.745
 	);
 	levelLabel->setColor(cocos2d::Color3B::GRAY);
 	levelLabel->enableBold();
-	addChild(levelLabel);
+	sprite->addChild(levelLabel);
 	ss.str(std::string());
 
 	if (info.bulletInfo.hasStun) {
 		Sprite *stunSprite = Sprite::create("Graphics/stun.png");
 		stunSprite->setAnchorPoint(cocos2d::Vec2(0, 0));
 		stunSprite->setPosition(
-			sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.07),
-			sprite->getPosition().y + ((sprite->getContentSize().height * 2.0) * 0.76)
+			sprite->getContentSize().width * 0.22,
+			sprite->getContentSize().height * 0.65
 		);
-		addChild(stunSprite);
+		stunSprite->setScale(4.f);
+		sprite->addChild(stunSprite);
 
 		char * buffer = new char[100];
 		sprintf(buffer, "STUN:   %.1fs   %.f%%", info.bulletInfo.stunDuration, info.bulletInfo.stunChance * 100);
-		auto stunLabel = Label::createWithSystemFont(buffer, "Arial", 12);
+		auto stunLabel = Label::createWithTTF(buffer, "fonts/carbon bl.ttf", 55);
 		stunLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 		stunLabel->setPosition(
-			sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.15),
-			sprite->getPosition().y + ((sprite->getContentSize().height * 2.0) * 0.74)
+			sprite->getContentSize().width * 0.28,
+			sprite->getContentSize().height * 0.645
 		);
 		stunLabel->setColor(cocos2d::Color3B::YELLOW);
-		addChild(stunLabel);
+		sprite->addChild(stunLabel);
 		delete[] buffer;
 	}
 
@@ -67,21 +69,22 @@ void TurretStatsDisplay::setupDisplay(cocos2d::Vec2 position)
 		Sprite *slowSprite = Sprite::create("Graphics/slow.png");
 		slowSprite->setAnchorPoint(cocos2d::Vec2(0, 0));
 		slowSprite->setPosition(
-			sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.07),
-			sprite->getPosition().y + ((sprite->getContentSize().height * 2.0) * 0.67)
+			sprite->getContentSize().width * 0.22,
+			sprite->getContentSize().height * 0.55
 		);
-		addChild(slowSprite);
+		slowSprite->setScale(4.f);
+		sprite->addChild(slowSprite);
 
 		char * buffer = new char[100];
 		sprintf(buffer, "SLOW:   %.1fs   %.f%%", info.bulletInfo.slowDuration, info.bulletInfo.slowPercentage * 100);
-		auto slowLabel = Label::createWithSystemFont(buffer, "Arial", 12);
+		auto slowLabel = Label::createWithTTF(buffer, "fonts/carbon bl.ttf", 55);
 		slowLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 		slowLabel->setPosition(
-			sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.15),
-			sprite->getPosition().y + ((sprite->getContentSize().height * 2.0) * 0.65)
+			sprite->getContentSize().width * 0.28,
+			sprite->getContentSize().height * 0.545
 		);
 		slowLabel->setColor(cocos2d::Color3B(30,144,255));
-		addChild(slowLabel);
+		sprite->addChild(slowLabel);
 		delete[] buffer;
 	}
 
@@ -89,21 +92,22 @@ void TurretStatsDisplay::setupDisplay(cocos2d::Vec2 position)
 		Sprite *bleedSprite = Sprite::create("Graphics/bleed.png");
 		bleedSprite->setAnchorPoint(cocos2d::Vec2(0, 0));
 		bleedSprite->setPosition(
-			sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.07),
-			sprite->getPosition().y + ((sprite->getContentSize().height * 2.0) * 0.58)
+			sprite->getContentSize().width * 0.22,
+			sprite->getContentSize().height * 0.45
 		);
-		addChild(bleedSprite);
+		bleedSprite->setScale(4.f);
+		sprite->addChild(bleedSprite);
 
 		char * buffer = new char[100];
 		sprintf(buffer, "BLEED:  %.1fs   %.f DPS", info.bulletInfo.bleedDuration, info.bulletInfo.bleedDps);
-		auto bleedLabel = Label::createWithSystemFont(buffer, "Arial", 12);
+		auto bleedLabel = Label::createWithTTF(buffer, "fonts/carbon bl.ttf", 55);
 		bleedLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 		bleedLabel->setPosition(
-			sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.15),
-			sprite->getPosition().y + ((sprite->getContentSize().height * 2.0) * 0.56)
+			sprite->getContentSize().width * 0.28,
+			sprite->getContentSize().height * 0.445
 		);
 		bleedLabel->setColor(cocos2d::Color3B::RED);
-		addChild(bleedLabel);
+		sprite->addChild(bleedLabel);
 		delete[] buffer;
 	}
 
@@ -111,21 +115,22 @@ void TurretStatsDisplay::setupDisplay(cocos2d::Vec2 position)
 		Sprite *splashSprite = Sprite::create("Graphics/area.png");
 		splashSprite->setAnchorPoint(cocos2d::Vec2(0, 0));
 		splashSprite->setPosition(
-			sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.07),
-			sprite->getPosition().y + ((sprite->getContentSize().height * 2.0) * 0.76)
+			sprite->getContentSize().width * 0.22,
+			sprite->getContentSize().height * 0.65
 		);
-		addChild(splashSprite);
+		splashSprite->setScale(4.f);
+		sprite->addChild(splashSprite);
 
 		char * buffer = new char[100];
 		sprintf(buffer, "SPLASH:  %.f  %.f DMG", info.bulletInfo.splashRange, info.bulletInfo.damageFrom);
-		auto splashLabel = Label::createWithSystemFont(buffer, "Arial", 12);
+		auto splashLabel = Label::createWithTTF(buffer, "fonts/carbon bl.ttf", 52);
 		splashLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 		splashLabel->setPosition(
-			sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.15),
-			sprite->getPosition().y + ((sprite->getContentSize().height * 2.0) * 0.74)
+			sprite->getContentSize().width * 0.28,
+			sprite->getContentSize().height * 0.645
 		);
 		splashLabel->setColor(cocos2d::Color3B::ORANGE);
-		addChild(splashLabel);
+		sprite->addChild(splashLabel);
 		delete[] buffer;
 	}
 
@@ -133,16 +138,25 @@ void TurretStatsDisplay::setupDisplay(cocos2d::Vec2 position)
 	setupFireRateDisplay();
 	setupRangeDisplay();
 
+	auto costContainer = Sprite::create("Graphics/UI/Window/Window_03.png");
+	costContainer->setAnchorPoint(Vec2(0.5, 0.5));
+	costContainer->setScale(1.5f);
+	costContainer->setPosition(
+		sprite->getContentSize().width / 2,
+		0
+	);
+	sprite->addChild(costContainer);
+
 	std::stringstream cost;
 	cost << "Cost: " << info.cost;
-	costLabel = Label::createWithSystemFont(cost.str(), "Arial", 16);
-	costLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
+	costLabel = Label::createWithTTF(cost.str(), "fonts/carbon phyber.ttf", 40);
+	costLabel->setAnchorPoint(cocos2d::Vec2(0.5, 0.5));
 	costLabel->setPosition(
-		sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.07),
-		sprite->getPosition().y - ((sprite->getContentSize().width * 2.0) * 0.20)
+		costContainer->getContentSize().width / 2,
+		costContainer->getContentSize().height * 0.55
 	);
-	costLabel->setColor(cocos2d::Color3B::GRAY);
-	addChild(costLabel);
+	costLabel->setColor(cocos2d::Color3B::GREEN);
+	costContainer->addChild(costLabel);
 	cost.str(std::string());
 }
 
@@ -154,87 +168,87 @@ void TurretStatsDisplay::clearStats()
 void TurretStatsDisplay::setupDamageDisplay()
 {
 	std::string damageTxt = "DAM";
-	auto damageLabel = Label::createWithSystemFont(damageTxt.c_str(), "Arial", 16);
+	auto damageLabel = Label::createWithTTF(damageTxt.c_str(), "fonts/carbon bl.ttf", 60);
 	damageLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 	damageLabel->setPosition(
-		sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.07),
-		sprite->getPosition().y + ((sprite->getContentSize().height * 2.0) * 0.35)
+		sprite->getContentSize().width * 0.225,
+		sprite->getContentSize().height * 0.35
 	);
 	damageLabel->setColor(cocos2d::Color3B::GRAY);
-	addChild(damageLabel);
+	sprite->addChild(damageLabel);
 
 	int bars = calculateDisplayBarAmount(damageTxt);
-	float percentagePosition = 0.48;
+	float percentagePosition = 0.45;
 
 	for (int i = 0; i < bars; i++) {
 		Sprite *current = Sprite::create(TURRET_STAT_CURRENT);
-		current->setScaleX(1.75);
-		current->setScaleY(2.5);
+		current->setScaleX(8);
+		current->setScaleY(8);
 		current->setAnchorPoint(cocos2d::Vec2(0, 0));
 		current->setPosition(
-			sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * percentagePosition),
+			sprite->getContentSize().width * percentagePosition,
 			damageLabel->getPositionY()
 		);
-		addChild(current);
-		percentagePosition += 0.09;
+		sprite->addChild(current);
+		percentagePosition += 0.065;
 	}
 }
 
 void TurretStatsDisplay::setupFireRateDisplay()
 {
 	std::string fireRateTxt = "RTE";
-	auto fireRateLabel = Label::createWithSystemFont(fireRateTxt.c_str(), "Arial", 16);
+	auto fireRateLabel = Label::createWithTTF(fireRateTxt.c_str(), "fonts/carbon bl.ttf", 60);
 	fireRateLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 	fireRateLabel->setPosition(
-		sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.07),
-		sprite->getPosition().y + ((sprite->getContentSize().height * 2.0) * 0.20)
+		sprite->getContentSize().width * 0.225,
+		sprite->getContentSize().height * 0.25
 	);
 	fireRateLabel->setColor(cocos2d::Color3B::GRAY);
-	addChild(fireRateLabel);
+	sprite->addChild(fireRateLabel);
 
 	int bars = calculateDisplayBarAmount(fireRateTxt);
-	float percentagePosition = 0.48;
+	float percentagePosition = 0.45;
 
 	for (int i = 0; i < bars; i++) {
 		Sprite *current = Sprite::create(TURRET_STAT_CURRENT);
-		current->setScaleX(1.75);
-		current->setScaleY(2.5);
+		current->setScaleX(8);
+		current->setScaleY(8);
 		current->setAnchorPoint(cocos2d::Vec2(0, 0));
 		current->setPosition(
-			sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * percentagePosition),
+			sprite->getContentSize().width * percentagePosition,
 			fireRateLabel->getPositionY()
 		);
-		addChild(current);
-		percentagePosition += 0.09;
+		sprite->addChild(current);
+		percentagePosition += 0.065;
 	}
 }
 
 void TurretStatsDisplay::setupRangeDisplay()
 {
 	std::string rangeTxt = "RNG";
-	auto rangeLabel = Label::createWithSystemFont(rangeTxt.c_str(), "Arial", 16);
+	auto rangeLabel = Label::createWithTTF(rangeTxt.c_str(), "fonts/carbon bl.ttf", 60);
 	rangeLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
 	rangeLabel->setPosition(
-		sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * 0.07),
-		sprite->getPosition().y + ((sprite->getContentSize().height * 2.0) * 0.05)
+		sprite->getContentSize().width * 0.225,
+		sprite->getContentSize().height * 0.15
 	);
 	rangeLabel->setColor(cocos2d::Color3B::GRAY);
-	addChild(rangeLabel);
+	sprite->addChild(rangeLabel);
 
 	int bars = calculateDisplayBarAmount(rangeTxt);
-	float percentagePosition = 0.48;
+	float percentagePosition = 0.45;
 
 	for (int i = 0; i < bars; i++) {
 		Sprite *current = Sprite::create(TURRET_STAT_CURRENT);
-		current->setScaleX(1.75);
-		current->setScaleY(2.5);
+		current->setScaleX(8);
+		current->setScaleY(8);
 		current->setAnchorPoint(cocos2d::Vec2(0, 0));
 		current->setPosition(
-			sprite->getPosition().x + ((sprite->getContentSize().width * 2.0) * percentagePosition),
+			sprite->getContentSize().width * percentagePosition,
 			rangeLabel->getPositionY()
 		);
-		addChild(current);
-		percentagePosition += 0.09;
+		sprite->addChild(current);
+		percentagePosition += 0.065;
 	}
 }
 
