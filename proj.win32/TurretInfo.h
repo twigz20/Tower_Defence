@@ -23,7 +23,19 @@ enum TurretLevel
 
 struct BulletInfo
 {
-	BulletInfo() {}
+	BulletInfo() :
+		hasSlow(false),
+		hasBleed(false),
+		hasSplashDamage(false),
+		hasStun(false)
+	{}
+
+	~BulletInfo() {
+		hasSlow = false;
+		hasBleed = false;
+		hasSplashDamage = false;
+		hasStun = false;
+	}
 
 	TurretType type;
 	std::string image;

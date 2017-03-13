@@ -15,9 +15,9 @@
 #define TURRET_SPRITE_TAG 300
 #define TURRET_SPRITE_RANGE_TAG 301
 #define START_FILE "Graphics/UI/Start.png"
-#define SELL_FILE "Graphics/UI/Sell.png"
-#define UPGRADE_FILE "Graphics/UI/Upgrade.png"
-#define HELP_FILE "Graphics/UI/Help.png"
+#define SELL_FILE "Graphics/UI/Buttons/Button_58.png"
+#define UPGRADE_FILE "Graphics/UI/Buttons/Button_86.png"
+#define HELP_FILE "Graphics/UI/Buttons/Button_106.png"
 
 
 #include <string>

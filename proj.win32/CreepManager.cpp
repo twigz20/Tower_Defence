@@ -83,6 +83,7 @@ void CreepManager::clearManager()
 		creep->unscheduleAllCallbacks();
 		creep->removeAllChildrenWithCleanup(true);
 		creep->removeFromParentAndCleanup(true);
+		creep = nullptr;
 	});
 	std::for_each(creepsInPlay.begin(), creepsInPlay.end(), [](std::shared_ptr<Creep> creep) {
 		creep->stopAllActions();
@@ -91,6 +92,7 @@ void CreepManager::clearManager()
 		creep->unscheduleAllCallbacks();
 		creep->removeAllChildrenWithCleanup(true);
 		creep->removeFromParentAndCleanup(true);
+		creep = nullptr;
 	});
 	creepAmountForWave = 0;
 }
@@ -109,6 +111,7 @@ void CreepManager::cleanUpDeadCreeps()
 			(*creep)->removeAllChildrenWithCleanup(true);
 			(*creep)->removeFromParentAndCleanup(true);
 			game->getLevelManager()->decreaseCreepAmount();
+			(*creep) = nullptr;
 			creep = creepsInPlay.erase(creep);
 
 			if (creep == creepsInPlay.end())

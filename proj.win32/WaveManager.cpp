@@ -11,7 +11,7 @@ WaveManager::WaveManager()
 
 	const Value& wavesValue = document["Waves"];
 	assert(wavesValue.IsArray());
-
+	maxWavesForLevel = wavesValue.Size();
 	for (SizeType i = 0; i < wavesValue.Size(); i++) { // Uses SizeType instead of size_t
 		const Value& wavesInfo = wavesValue[i]["Wave"];
 		assert(wavesInfo.IsArray());
@@ -72,4 +72,9 @@ void WaveManager::reloadWaves()
 		}
 		waves.push(w);
 	}
+}
+
+int WaveManager::getMaxWavesForLeveL()
+{
+	return maxWavesForLevel;
 }

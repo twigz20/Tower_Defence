@@ -12,6 +12,7 @@ class WaveManager
 {
 	rapidjson::Document document;
 	std::queue<Wave> waves;
+	int maxWavesForLevel;
 public:
 	WaveManager();
 	~WaveManager();
@@ -21,5 +22,6 @@ public:
 	bool hasNextWave();
 
 	void reloadWaves();
+	int getMaxWavesForLeveL();
 };
 

@@ -35,6 +35,7 @@ class TowerDefence : public cocos2d::Layer
 	cocos2d::Sprite *healthBar;
 
 	cocos2d::Sprite *statsContainer;
+	cocos2d::Label * waveLabel;
 
 	void config();
 	void playGame();
@@ -80,6 +81,8 @@ public:
 	void decreaseHealth();
 	void increaseGold(int gold);
 	void decreaseGold(int gold);
+
+	void setWaveNumber(int waveNumber);
 };
 
 #endif // __HELLOWORLD_SCENE_H__

@@ -28,11 +28,11 @@ void TurretManager::reset()
 {
 	std::for_each(turrets.begin(), turrets.end(), [](std::shared_ptr<Turret> turret) {
 		turret->setActive(false);
-		turret->lostSightOfEnemy();
 		turret->stopAllActions();
 		turret->unscheduleAllSelectors();
 		turret->unscheduleUpdate();
 		turret->unscheduleAllCallbacks();
+		turret->lostSightOfEnemy();
 		turret->removeAllChildrenWithCleanup(true);
 		turret->removeFromParentAndCleanup(true);
 	});

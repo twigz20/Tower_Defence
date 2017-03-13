@@ -12,6 +12,7 @@
 #define MOUSE_OVER 502
 #define GOLD_LABEL 20
 #define HEALTH_LABEL 21
+#define WAVE_LABEL 22
 
 USING_NS_CC;
 
@@ -121,6 +122,19 @@ void TowerDefence::setUpUi()
 	waveContainer->setPositionY(visibleSize.height * 0.75);
 	addChild(waveContainer);
 
+	std::stringstream wave;
+	wave << "Wave: " << levelManager->getWaveNumber() << " / " << levelManager->getMaxWavesForLevel();
+	waveLabel = Label::createWithTTF(wave.str(), "fonts/carbon phyber.ttf", 85);
+	waveLabel->setAnchorPoint(cocos2d::Vec2(0.5f, 0.5f));
+	waveLabel->setPositionX(
+		waveContainer->getContentSize().width / 2
+	);
+	waveLabel->setPositionY(
+		waveContainer->getContentSize().height * 0.75
+	);
+	waveLabel->setTag(WAVE_LABEL);
+	waveContainer->addChild(waveLabel);
+
 	auto waveContainer2 = Sprite::create("Graphics/UI/Window/Window_11.png");
 	waveContainer2->setAnchorPoint(Vec2(0, 0.5f));
 	waveContainer2->setScale(0.25f);
@@ -128,21 +142,21 @@ void TowerDefence::setUpUi()
 	waveContainer2->setPositionY(visibleSize.height * 0.45);
 	addChild(waveContainer2);
 
-	sell = Button::create(SELL_FILE);
+	sell = Button::create(SELL_FILE, "Graphics/UI/Buttons/Button_60.png", "Graphics/UI/Buttons/Button_61.png");
 	sell->setVisible(false);
 	sell->setPosition(Vec2::ZERO);
 	sell->addTouchEventListener(CC_CALLBACK_2(TowerDefence::sellCallback, this));
 	sell->setScale(0.325);
 	addChild(sell);
 
-	upgrade = Button::create(UPGRADE_FILE);
+	upgrade = Button::create(UPGRADE_FILE, "Graphics/UI/Buttons/Button_32.png", "Graphics/UI/Buttons/Button_33.png");
 	upgrade->setVisible(false);
 	upgrade->setPosition(Vec2::ZERO);
 	upgrade->addTouchEventListener(CC_CALLBACK_2(TowerDefence::upgradeCallback, this));
 	upgrade->setScale(0.325);
 	addChild(upgrade);
 
-	help = Button::create(HELP_FILE);
+	help = Button::create(HELP_FILE, "Graphics/UI/Buttons/Button_28.png", "Graphics/UI/Buttons/Button_29.png");
 	help->setVisible(false);
 	help->setPosition(Vec2::ZERO);
 	help->addTouchEventListener(CC_CALLBACK_2(TowerDefence::helpCallback, this));
@@ -242,7 +256,10 @@ bool TowerDefence::init()
         return false;
     }
 
-	levelManager = new LevelManager(this);
+	levelManager = new LevelManager();
+	addChild(levelManager);
+	levelManager->initiate();
+
 	turretManager = new TurretManager(this);
 
 	config();
@@ -290,9 +307,16 @@ void TowerDefence::onMouseMove(cocos2d::Event *event)
 		if (starterTurretStands[i]->getBoundingBox().containsPoint(touchLoc)) {
 			starterTurretStands[i]->setTexture("Graphics/UI/Elements 1/Elements_100.png");
 			starterTurretStands[i]->setTag(MOUSE_OVER);
+
+			auto visibleSize = Director::getInstance()->getVisibleSize();
+			cocos2d::Vec2 turretStatsPosition = cocos2d::Vec2(
+				visibleSize.width * 0.78,
+				visibleSize.height * 0.55);
+			starterTurrets[i]->showTurretStats(turretStatsPosition);
 		}
 		else {
 			starterTurretStands[i]->setTag(MOUSE_NOT_OVER);
+			starterTurrets[i]->hideTurretStats();
 		}
 	}
 }
@@ -324,8 +348,8 @@ void TowerDefence::menuResetCallback(cocos2d::Ref * pSender)
 	std::stringstream goldTxt;
 	goldTxt << this->gold;
 	goldLabel->setString(goldTxt.str());
-	turretManager->reset();
 	levelManager->reset();
+	turretManager->reset();
 }
 
 void TowerDefence::sellCallback(cocos2d::Ref * pSender, cocos2d::ui::Widget::TouchEventType type)
@@ -377,6 +401,9 @@ void TowerDefence::upgradeCallback(cocos2d::Ref * pSender, cocos2d::ui::Widget::
 			);
 
 			turretManager->getSelectedTurret()->upgrade();
+			if (!turretManager->getSelectedTurret()->getTurretInfo().hasLevelUp()) {
+				upgrade->setEnabled(false);
+			}
 			turretManager->unselectTurret();
 		}
 	}
@@ -402,11 +429,11 @@ void TowerDefence::helpCallback(cocos2d::Ref * pSender, cocos2d::ui::Widget::Tou
 		break;
 	case cocos2d::ui::Widget::TouchEventType::ENDED:
 	{
-		auto helpLabel = Label::createWithSystemFont("No Information at this Moment.", "Arial", 30);
-		helpLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
+		auto helpLabel = Label::createWithTTF("No Information at this Moment.", "fonts/carbon phyber.ttf", 30);
+		helpLabel->setAnchorPoint(cocos2d::Vec2(0.5, 0.5));
 		helpLabel->setPosition(
-			Director::getInstance()->getVisibleSize().width * 0.15,
-			Director::getInstance()->getVisibleSize().height * 0.55
+			Director::getInstance()->getVisibleSize().width / 2,
+			Director::getInstance()->getVisibleSize().height / 2
 		);
 		helpLabel->setColor(cocos2d::Color3B::GREEN);
 		helpLabel->enableBold();
@@ -435,8 +462,8 @@ void TowerDefence::repeatCallback(cocos2d::Ref * pSender, cocos2d::ui::Widget::T
 		break;
 	case cocos2d::ui::Widget::TouchEventType::ENDED:
 	{
-		turretManager->reset();
 		levelManager->reset();
+		turretManager->reset();
 	}
 	break;
 	case cocos2d::ui::Widget::TouchEventType::CANCELED:
@@ -469,12 +496,12 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 			selectedTurret->setAsNormalTurret();
 			selectedTurret->setRangeColor(cocos2d::Color4F(1, 0, 0, 0.25));
 			selectedTurret->showRange();
+			selectedTurret->setTag(SELECTED_TURRET);
 			auto visibleSize = Director::getInstance()->getVisibleSize();
 			cocos2d::Vec2 turretStatsPosition = cocos2d::Vec2(
 				visibleSize.width * 0.78,
-			visibleSize.height * 0.55);
+				visibleSize.height * 0.55);
 			selectedTurret->showTurretStats(turretStatsPosition);
-			selectedTurret->setTag(SELECTED_TURRET);
 			addChild(selectedTurret, 1);
 			return true;
 		}
@@ -564,7 +591,7 @@ void TowerDefence::config()
 	if (configInfoDoc.HasMember("config"))
 	{
 		const rapidjson::Value& configInfo = configInfoDoc["config"];
-		healthDecrementer = 1 / configInfo["health"].GetInt();
+		healthDecrementer = 1 / configInfo["health"].GetFloat();
 		health = 1;
 		gold = configInfo["gold"].GetInt();
 
@@ -651,6 +678,13 @@ void TowerDefence::decreaseGold(int gold)
 	std::stringstream goldTxt;
 	goldTxt << this->gold;
 	goldLabel->setString(goldTxt.str());
+}
+
+void TowerDefence::setWaveNumber(int waveNumber)
+{
+	std::stringstream waveTxt;
+	waveTxt << "Wave: " << waveNumber << " / " << levelManager->getMaxWavesForLevel();
+	waveLabel->setString(waveTxt.str());
 }
 
 bool TowerDefence::checkCollision(CGCircle *rangeIndicator, cocos2d::Rect rect)

@@ -18,13 +18,13 @@ void LevelManager::initCreepManager()
 
 void LevelManager::initWaveManager()
 {
-	waveManager = std::make_unique<WaveManager>();
+	maxWavesForLevel = waveManager.getMaxWavesForLeveL();
 }
 
 void LevelManager::populateCreepManager()
 {
-	if (waveManager->hasNextWave()) {
-		currentWave.setWave(waveManager->getNextWave());
+	if (waveManager.hasNextWave()) {
+		currentWave.setWave(waveManager.getNextWave());
 
 		creepManager->clearManager();
 		while (currentWave.hasNextWaveSection()) {
@@ -32,7 +32,7 @@ void LevelManager::populateCreepManager()
 			currentWave.popWave();
 		}
 		creepAmountForCurrentWave = creepManager->getCreepAmountForWave();
-		waveManager->popWave();
+		waveManager.popWave();
 	}
 	levelFinished = false;
 }
@@ -102,24 +102,20 @@ void LevelManager::setupUi()
 	
 }
 
-LevelManager::LevelManager(TowerDefence* game_) :
-	game(game_),
+LevelManager::LevelManager() :
+	game(nullptr),
 	levelStarted(false),
 	levelFinished(false),
 	creepAmountForCurrentWave(0),
 	bgLayer(nullptr),
 	objectLayer(nullptr),
-	tileMap(nullptr)
+	tileMap(nullptr),
+	waveNumber(1),
+	maxWavesForLevel(0)
 {
-	config();
-	setBackground();
-	loadMap(INITIAL_MAP_FILE);
-	loadStartPoint();
-	loadEndPoint();
-
-	initCreepManager();
-	initWaveManager();
-	populateCreepManager();
+	if (init()) {
+		
+	}
 }
 
 
@@ -137,6 +133,7 @@ void LevelManager::update(float deltaTime)
 			levelFinished = true;
 			creepManager->clearCreeps();
 			populateCreepManager();
+			game->setWaveNumber(++waveNumber);
 		}
 	}
 }
@@ -158,12 +155,14 @@ void LevelManager::reset()
 {
 	levelStarted = false;
 	levelFinished = true;
+	waveNumber = 1;
+	game->setWaveNumber(waveNumber);
 	game->removeChildByTag(BULLET_TAG);
 	creepManager->clearManager();
 	creepManager->clearCreeps();
 	creepManager->cleanUpDeadCreeps();
 	creepManager = nullptr;
-	waveManager = nullptr;
+	waveManager.reloadWaves();
 	initCreepManager();
 	initWaveManager();
 	populateCreepManager();
@@ -172,6 +171,30 @@ void LevelManager::reset()
 void LevelManager::decreaseCreepAmount()
 {
 	creepAmountForCurrentWave--;
+}
+
+int LevelManager::getWaveNumber()
+{
+	return waveNumber;
+}
+
+int LevelManager::getMaxWavesForLevel()
+{
+	return maxWavesForLevel;
+}
+
+void LevelManager::initiate()
+{
+	game = (TowerDefence*)getParent();
+	config();
+	setBackground();
+	loadMap(INITIAL_MAP_FILE);
+	loadStartPoint();
+	loadEndPoint();
+
+	initCreepManager();
+	initWaveManager();
+	populateCreepManager();
 }
 
 bool LevelManager::isValidTileCoord(cocos2d::Point tileCoord)

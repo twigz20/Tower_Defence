@@ -1,15 +1,15 @@
 #pragma once
 #include "Utils.h"
-#include "proj.win32\timer.h"
-#include "Wave.h"
+#include "timer.h"
+#include "WaveManager.h"
 
 class TowerDefence;
 class WaveManager;
 class CreepManager;
-class LevelManager : public cocos2d::Object
+class LevelManager : public cocos2d::Node
 {
 	TowerDefence* game;
-	std::unique_ptr<WaveManager> waveManager;
+	WaveManager waveManager;
 	std::shared_ptr<CreepManager> creepManager;
 
 	cocos2d::TMXTiledMap *tileMap;
@@ -24,6 +24,8 @@ class LevelManager : public cocos2d::Object
 	bool levelStarted;
 	bool levelFinished;
 	Wave currentWave;
+	int waveNumber;
+	int maxWavesForLevel;
 	int creepAmountForCurrentWave;
 
 	void initWaveManager();
@@ -33,7 +35,7 @@ class LevelManager : public cocos2d::Object
 	void setupUi();
 
 public:
-	explicit LevelManager(TowerDefence* game_);
+	explicit LevelManager();
 	~LevelManager();
 
 	void update(float deltaTime);
@@ -41,6 +43,9 @@ public:
 	void endLevel();
 	void reset();
 	void decreaseCreepAmount();
+	int getWaveNumber();
+	int getMaxWavesForLevel();
+	void initiate();
 
 	bool isValidTileCoord(cocos2d::Point tileCoord);
 	bool isWallAtTileCoord(cocos2d::Point tileCoord);

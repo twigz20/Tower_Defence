@@ -33,13 +33,13 @@
     "image": "Graphics/tower-defense-turrets/turret-3-1.png",
 	"bullet_properties": {
       "bullet_image": "Graphics/bullets/fireball_1.png",
-	  "damage_from": 7,
+	  "damage_from": 4,
 	  "damage_to": 16,
       "speed": 0.225
     },
     "slow": {
-      "duration": 3.0,
-      "percentage": 0.4
+      "duration": 4.0,
+      "percentage": 0.6
     },
     "cooldown": 1.60,
     "range": 67,
@@ -58,8 +58,8 @@
     "cooldown": 1.75,
     "range": 55,
     "splash_range": 29,
-    "splash_damage": 6,
-    "cost": 70
+    "splash_damage": 7,
+    "cost": 75
   },
   "turret-5": {
     "name": "Wounder",
@@ -67,17 +67,17 @@
     "image": "Graphics/tower-defense-turrets/turret-5-1.png",
     "bullet_properties": {
       "bullet_image": "Graphics/bullets/star_1.png",
-	  "damage_from": 11,
+	  "damage_from": 12,
 	  "damage_to": 14,
       "speed": 0.225
     },
     "cooldown": 1.6,
-    "range": 60,
+    "range": 65,
     "bleed": {
-      "duration": 5.0,
-      "dps": 4
+      "duration": 5.5,
+      "dps": 6
     },
-    "cost": 80
+    "cost": 85
   },
   "turret-6": {
     "name": "Basher",
@@ -92,10 +92,10 @@
     "cooldown": 1.75,
     "range": 65,
     "stun": {
-      "duration": 1.0,
-      "chance": 0.5
+      "duration": 1.25,
+      "chance": 0.55
     },
-    "cost": 90
+    "cost": 95
   },
   "turret-7": {
     "name": "Destroyer",
@@ -110,17 +110,17 @@
     "cooldown": 2.225,
     "range": 55,
     "stun": {
-      "duration": 1.5,
-      "chance": 0.35
+      "duration": 1.25,
+      "chance": 0.4
     },
     "bleed": {
-      "duration": 5.0,
-      "dps": 3
+      "duration": 3.0,
+      "dps": 7
     },
     "slow": {
       "duration": 3.0,
-      "percentage": 0.25
+      "percentage": 0.35
     },
-    "cost": 100
+    "cost": 120
   }
 }
