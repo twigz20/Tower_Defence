@@ -120,13 +120,15 @@ Turret::~Turret()
 {
 	if (splashDamageRange)
 		delete splashDamageRange;
+	if(target)
+		target = nullptr;
 }
 
-void Turret::addRangeIndicator()
+void Turret::addRangeIndicator(cocos2d::Color4F color)
 {
 	range = cocos2d::DrawNode::create();
 	range->setAnchorPoint(cocos2d::Vec2(0.5f, 0.5f));
-	range->drawDot(getPosition(), info.range, cocos2d::Color4F(0,1,0,0.25));
+	range->drawDot(getPosition(), info.range, cocos2d::Color4F(color));
 	range->setTag(TURRET_RANGE_INDICATOR);
 	addChild(range, -1);
 	hideRange();
@@ -149,6 +151,12 @@ void Turret::update(float deltaTime)
 void Turret::setAsNormalTurret()
 {
 	starterTurret = false;
+}
+
+void Turret::setRangeColor(cocos2d::Color4F color)
+{
+	removeChildByTag(TURRET_RANGE_INDICATOR);
+	addRangeIndicator(color);
 }
 
 TurretInfo& Turret::getTurretInfo()

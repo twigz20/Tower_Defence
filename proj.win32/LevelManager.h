@@ -30,10 +30,6 @@ class LevelManager : public cocos2d::Object
 	void initCreepManager();
 	void populateCreepManager();
 
-	int gold;
-	cocos2d::Label * goldLabel;
-	int health;
-	cocos2d::Label * healthLabel;
 	void setupUi();
 
 public:
@@ -57,11 +53,5 @@ public:
 
 	cocos2d::TMXTiledMap *getMap();
 	std::shared_ptr<CreepManager> getCreepManager();
-
-	int getGold();
-	int getHealth();
-	void increaseGold(int gold);
-	void decreaseGold(int gold);
-	void decreaseHealth();
 };
 

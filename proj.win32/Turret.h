@@ -9,6 +9,7 @@ class TurretStatsDisplay;
 class CGCircle;
 class Turret : public BaseObject
 {
+	cocos2d::CustomCommand _customCommand;
 public:
 	Turret(TowerDefence* game_, TurretInfo turretInfo, bool isStarterTurret = false);
 	Turret(const Turret& other);
@@ -24,6 +25,7 @@ public:
 	void showTurretStats(cocos2d::Vec2 position);
 	void hideTurretStats();
 	void setAsNormalTurret();
+	void setRangeColor(cocos2d::Color4F color); 
 	void showRange();
 	void hideRange();
 	TurretInfo& getTurretInfo();
@@ -53,7 +55,7 @@ private:
 	TurretStatsDisplay *tsd;
 	bool displayRange;
 	cocos2d::DrawNode *range;
-	void addRangeIndicator();
+	void addRangeIndicator(cocos2d::Color4F color = cocos2d::Color4F(0, 1, 0, 0.25));
 	CGCircle *splashDamageRange;
 	void checkForSplashDamage();
 

@@ -8,6 +8,10 @@
 #include "proj.win32\GuiElement.h"
 //#include <vld.h> 
 #define HELP_LABEL 500
+#define MOUSE_NOT_OVER 501
+#define MOUSE_OVER 502
+#define GOLD_LABEL 20
+#define HEALTH_LABEL 21
 
 USING_NS_CC;
 
@@ -17,7 +21,133 @@ using namespace ui;
 
 void TowerDefence::setUpUi()
 {
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+	/////////////////////////////
+	// 2. add a menu item with "X" image, which is clicked to quit the program
+	//    you may modify it.
+
+	// add a "close" icon to exit the progress. it's an autorelease object
+	auto closeItem = MenuItemImage::create(
+		"Graphics/UI/Buttons/Button_78.png",
+		"Graphics/UI/Buttons/Button_80.png",
+		"Graphics/UI/Buttons/Button_81.png",
+		CC_CALLBACK_1(TowerDefence::menuCloseCallback, this));
+
+	closeItem->setPosition(Vec2(origin.x + visibleSize.width - (closeItem->getContentSize().width * 0.30) / 2,
+		origin.y + (closeItem->getContentSize().height * 0.30) / 2));
+
+	closeItem->setScale(0.30);
+
+	resetItem = MenuItemImage::create(
+		"Graphics/UI/Buttons/Button_90.png",
+		"Graphics/UI/Buttons/Button_92.png",
+		"Graphics/UI/Buttons/Button_93.png",
+		CC_CALLBACK_1(TowerDefence::menuResetCallback, this));
+
+	resetItem->setPosition(Vec2(origin.x + visibleSize.width - (resetItem->getContentSize().width * 0.30) / 2,
+		closeItem->getPosition().y + (resetItem->getContentSize().height * 0.30) + 5));
+
+	resetItem->setScale(0.30);
+
+	playItem = MenuItemImage::create(
+		"Graphics/UI/Buttons/Button_14.png",
+		"Graphics/UI/Buttons/Button_16.png",
+		"Graphics/UI/Buttons/Button_17.png",
+		CC_CALLBACK_1(TowerDefence::menuPlayCallback, this));
+
+	playItem->setPosition(Vec2(origin.x + visibleSize.width - (playItem->getContentSize().width * 0.30) / 2,
+		resetItem->getPosition().y + (playItem->getContentSize().height * 0.30) + 5));
+
+	playItem->setScale(0.30);
+
+	// create menu, it's an autorelease object
+	auto menu = Menu::create(closeItem, resetItem, playItem, NULL);
+	menu->setPosition(Vec2::ZERO);
+	this->addChild(menu, 1);
+
+	/////////////////////////////
+	// 3. add your codes below...
+
+	GuiElement *healthContainer = new GuiElement("Graphics/UI/Elements 1/Elements_58_Right.png", 0.30f);
+	healthContainer->setPosition(cocos2d::Vec2(visibleSize.width * 0.99 - (healthContainer->getContentSize().width * 0.30f), visibleSize.height * 0.92));
+	addChild(healthContainer);
+
+	auto healthSymbol = Sprite::create("Graphics/UI/Elements 1/Elements_02.png");
+	healthSymbol->setAnchorPoint(Vec2(0, 0));
+	healthSymbol->setScale(0.6f);
+	healthSymbol->setPositionX(healthContainer->getContentSize().width * 0.955 - (healthSymbol->getContentSize().width * 0.60f));
+	healthSymbol->setPositionY(healthContainer->getContentSize().height * 0.225);
+	healthContainer->attachElement(healthSymbol);
+
+	healthBar = Sprite::create("Graphics/UI/Elements 1/Elements_Life Bar.png");
+	healthBar->setScaleX(health);
+	healthBar->setAnchorPoint(Vec2(0, 0.5f));
+	healthBar->setPositionX(healthContainer->getContentSize().width * 0.085);
+	healthBar->setPositionY(healthContainer->getContentSize().height / 2);
+	healthContainer->attachElement(healthBar);
+
+	auto goldContainer = Sprite::create("Graphics/UI/Elements 1/Elements_Empty_Container_Right.png");
+	goldContainer->setAnchorPoint(Vec2(0, 0));
+	goldContainer->setScale(0.30f);
+	goldContainer->setPosition(visibleSize.width * 0.99 - (goldContainer->getContentSize().width * 0.30f), visibleSize.height * 0.84);
+	addChild(goldContainer);
+
+	auto goldSymbol = Sprite::create("Graphics/UI/Elements 1/Elements_09.png");
+	goldSymbol->setAnchorPoint(Vec2(0, 0));
+	goldSymbol->setScale(0.5f);
+	goldSymbol->setPositionX(goldContainer->getContentSize().width * 0.910 - (goldSymbol->getContentSize().width * 0.50f));
+	goldSymbol->setPositionY(goldContainer->getContentSize().height * 0.225);
+	goldContainer->addChild(goldSymbol);
+
+	std::stringstream g;
+	g << gold;
+	goldLabel = Label::createWithTTF(g.str(), "fonts/carbon bl.ttf", 50);
+	goldLabel->setAnchorPoint(cocos2d::Vec2(0.5f, 0.5f));
+	goldLabel->setPositionX(
+		goldContainer->getContentSize().width * 0.4
+	);
+	goldLabel->setPositionY(
+		goldContainer->getContentSize().height / 2
+	);
+	goldLabel->setTag(GOLD_LABEL);
+	goldContainer->addChild(goldLabel);
+
+	auto waveContainer = Sprite::create("Graphics/UI/Window/Window_11.png");
+	waveContainer->setAnchorPoint(Vec2(0, 0.5f));
+	waveContainer->setScale(0.25f);
+	waveContainer->setPositionX(visibleSize.width * 0.06);
+	waveContainer->setPositionY(visibleSize.height * 0.75);
+	addChild(waveContainer);
+
+	auto waveContainer2 = Sprite::create("Graphics/UI/Window/Window_11.png");
+	waveContainer2->setAnchorPoint(Vec2(0, 0.5f));
+	waveContainer2->setScale(0.25f);
+	waveContainer2->setPositionX(visibleSize.width * 0.06);
+	waveContainer2->setPositionY(visibleSize.height * 0.45);
+	addChild(waveContainer2);
+
+	sell = Button::create(SELL_FILE);
+	sell->setVisible(false);
+	sell->setPosition(Vec2::ZERO);
+	sell->addTouchEventListener(CC_CALLBACK_2(TowerDefence::sellCallback, this));
+	sell->setScale(0.325);
+	addChild(sell);
+
+	upgrade = Button::create(UPGRADE_FILE);
+	upgrade->setVisible(false);
+	upgrade->setPosition(Vec2::ZERO);
+	upgrade->addTouchEventListener(CC_CALLBACK_2(TowerDefence::upgradeCallback, this));
+	upgrade->setScale(0.325);
+	addChild(upgrade);
+
+	help = Button::create(HELP_FILE);
+	help->setVisible(false);
+	help->setPosition(Vec2::ZERO);
+	help->addTouchEventListener(CC_CALLBACK_2(TowerDefence::helpCallback, this));
+	help->setScale(0.325);
+	addChild(help);
 }
 
 void TowerDefence::setStarterTurrets()
@@ -26,15 +156,7 @@ void TowerDefence::setStarterTurrets()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	starterTurrets = turretManager->getStarterTurrets();
 
-	int xOffset = getLevelManager()->getMap()->getTileSize().width / 2;
-	int yOffset = getLevelManager()->getMap()->getTileSize().height / 2;
-	int originalTurretX = visibleSize.width * 0.77;
-	int originalTurretY = visibleSize.height * 0.83;
-	int turretX = originalTurretX;
-	int turretY = originalTurretY;
-	int counter = 1;
-
-	float turretStandXInitialPositionPercentage = 0.18;
+	float turretStandXInitialPositionPercentage = 0.20;
 	float turretStandNextPositionIncrementer = 0.09;
 	float turretStandYPosition = 10;
 
@@ -47,7 +169,7 @@ void TowerDefence::setStarterTurrets()
 	auto leftTurretStandHook = Sprite::create("Graphics/UI/Window/Window_14.png");
 	leftTurretStandHook->setAnchorPoint(Vec2(0, 0));
 	leftTurretStandHook->setScale(0.25f);
-	leftTurretStandHook->setPosition(visibleSize.width * 0.15, -25);
+	leftTurretStandHook->setPosition(visibleSize.width * 0.17, -25);
 	addChild(leftTurretStandHook, -1);
 
 	std::for_each(starterTurrets.begin(), starterTurrets.end(),
@@ -58,6 +180,7 @@ void TowerDefence::setStarterTurrets()
 		TurretStand->setScale(turretStandScale);
 		cocos2d::Vec2 turretStandPosition(visibleSize.width * turretStandXInitialPositionPercentage, turretStandYPosition);
 		TurretStand->setPosition(turretStandPosition);
+		TurretStand->setTag(MOUSE_NOT_OVER);
 		addChild(TurretStand);
 
 		turret->setAnchorPoint(cocos2d::Vec2(0.5, 0.5));
@@ -80,7 +203,7 @@ void TowerDefence::setStarterTurrets()
 	auto rightTurretStandHook = Sprite::create("Graphics/UI/Window/Window_15.png");
 	rightTurretStandHook->setAnchorPoint(Vec2(0, 0));
 	rightTurretStandHook->setScale(0.25f);
-	rightTurretStandHook->setPosition(visibleSize.width * 0.735, -25);
+	rightTurretStandHook->setPosition(visibleSize.width * 0.755, -25);
 	addChild(rightTurretStandHook, -1);
 }
 
@@ -118,83 +241,12 @@ bool TowerDefence::init()
     {
         return false;
     }
-    
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-    /////////////////////////////
-    // 2. add a menu item with "X" image, which is clicked to quit the program
-    //    you may modify it.
-
-    // add a "close" icon to exit the progress. it's an autorelease object
-    auto closeItem = MenuItemImage::create(
-		"Graphics/UI/Buttons/Button_78.png",
-		"Graphics/UI/Buttons/Button_80.png",
-		"Graphics/UI/Buttons/Button_81.png",
-                                           CC_CALLBACK_1(TowerDefence::menuCloseCallback, this));
-    
-    closeItem->setPosition(Vec2(origin.x + visibleSize.width - (closeItem->getContentSize().width * 0.30) /2 ,
-                                origin.y + (closeItem->getContentSize().height * 0.30) /2));
-
-	closeItem->setScale(0.30);
-
-	resetItem = MenuItemImage::create(
-		"Graphics/UI/Buttons/Button_90.png",
-		"Graphics/UI/Buttons/Button_92.png",
-		"Graphics/UI/Buttons/Button_93.png",
-		CC_CALLBACK_1(TowerDefence::menuResetCallback, this));
-
-	resetItem->setPosition(Vec2(origin.x + visibleSize.width - (resetItem->getContentSize().width * 0.30) / 2,
-		closeItem->getPosition().y + (resetItem->getContentSize().height * 0.30) + 5));
-
-	resetItem->setScale(0.30);
-
-	playItem = MenuItemImage::create(
-		"Graphics/UI/Buttons/Button_14.png",
-		"Graphics/UI/Buttons/Button_16.png",
-		"Graphics/UI/Buttons/Button_17.png",
-		CC_CALLBACK_1(TowerDefence::menuPlayCallback, this));
-
-	playItem->setPosition(Vec2(origin.x + visibleSize.width - (playItem->getContentSize().width * 0.30 ) / 2,
-		resetItem->getPosition().y + (playItem->getContentSize().height * 0.30) + 5));
-
-	playItem->setScale(0.30);	
-
-    // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem, resetItem, playItem, NULL);
-    menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 1);
-
-    /////////////////////////////
-    // 3. add your codes below...
-
-	GuiElement *healthContainer = new GuiElement("Graphics/UI/Elements 1/Elements_58_Right.png", 0.30f);
-	healthContainer->setPosition(cocos2d::Vec2(visibleSize.width * 0.99 - (healthContainer->getContentSize().width * 0.30f), visibleSize.height * 0.92));
-	addChild(healthContainer);
-
-	auto goldContainer = Sprite::create("Graphics/UI/Elements 1/Elements_Empty_Container_Right.png");
-	goldContainer->setAnchorPoint(Vec2(0, 0));
-	goldContainer->setScale(0.30f);
-	goldContainer->setPosition(visibleSize.width * 0.99 - (goldContainer->getContentSize().width * 0.30f), visibleSize.height * 0.84);
-	addChild(goldContainer);
-
-	auto healthSymbol = Sprite::create("Graphics/UI/Elements 1/Elements_02.png");
-	healthSymbol->setAnchorPoint(Vec2(0, 0));
-	healthSymbol->setScale(0.6f);
-	healthSymbol->setPositionX(healthContainer->getContentSize().width * 0.955 - (healthSymbol->getContentSize().width * 0.60f));
-	healthSymbol->setPositionY(healthContainer->getContentSize().height * 0.225);
-	healthContainer->attachElement(healthSymbol);
-
-	auto goldSymbol = Sprite::create("Graphics/UI/Elements 1/Elements_09.png");
-	goldSymbol->setAnchorPoint(Vec2(0, 0));
-	goldSymbol->setScale(0.5f);
-	goldSymbol->setPositionX(goldContainer->getContentSize().width * 0.910 - (goldSymbol->getContentSize().width * 0.50f));
-	goldSymbol->setPositionY(goldContainer->getContentSize().height * 0.225);
-	goldContainer->addChild(goldSymbol);
 
 	levelManager = new LevelManager(this);
 	turretManager = new TurretManager(this);
 
+	config();
+	setUpUi();
 	setStarterTurrets();
 	
 	auto eventListener = EventListenerTouchOneByOne::create();
@@ -204,31 +256,9 @@ bool TowerDefence::init()
 	eventListener->onTouchCancelled = CC_CALLBACK_2(TowerDefence::onTouchCancelled, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(eventListener, this);
 
-
 	auto _mouseListener = EventListenerMouse::create();
 	_mouseListener->onMouseMove = CC_CALLBACK_1(TowerDefence::onMouseMove, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_mouseListener, this);
-
-	sell = Button::create(SELL_FILE);
-	sell->setVisible(false);
-	sell->setPosition(Vec2::ZERO);
-	sell->addTouchEventListener(CC_CALLBACK_2(TowerDefence::sellCallback, this));
-	sell->setScale(0.325);
-	addChild(sell);
-
-	upgrade = Button::create(UPGRADE_FILE);
-	upgrade->setVisible(false);
-	upgrade->setPosition(Vec2::ZERO);
-	upgrade->addTouchEventListener(CC_CALLBACK_2(TowerDefence::upgradeCallback, this));
-	upgrade->setScale(0.325);
-	addChild(upgrade);
-
-	help = Button::create(HELP_FILE);
-	help->setVisible(false);
-	help->setPosition(Vec2::ZERO);
-	help->addTouchEventListener(CC_CALLBACK_2(TowerDefence::helpCallback, this));
-	help->setScale(0.325);
-	addChild(help);
 
 	this->scheduleUpdate();
 
@@ -259,9 +289,10 @@ void TowerDefence::onMouseMove(cocos2d::Event *event)
 	for (int i = 0; i < starterTurretStands.size(); i++) {
 		if (starterTurretStands[i]->getBoundingBox().containsPoint(touchLoc)) {
 			starterTurretStands[i]->setTexture("Graphics/UI/Elements 1/Elements_100.png");
+			starterTurretStands[i]->setTag(MOUSE_OVER);
 		}
 		else {
-			starterTurretStands[i]->setTexture("Graphics/UI/Elements 1/Elements_99.png");
+			starterTurretStands[i]->setTag(MOUSE_NOT_OVER);
 		}
 	}
 }
@@ -288,6 +319,11 @@ void TowerDefence::menuPlayCallback(cocos2d::Ref * pSender)
 
 void TowerDefence::menuResetCallback(cocos2d::Ref * pSender)
 {
+	config();
+	healthBar->setScaleX(health);
+	std::stringstream goldTxt;
+	goldTxt << this->gold;
+	goldLabel->setString(goldTxt.str());
 	turretManager->reset();
 	levelManager->reset();
 }
@@ -302,7 +338,7 @@ void TowerDefence::sellCallback(cocos2d::Ref * pSender, cocos2d::ui::Widget::Tou
 		break;
 	case cocos2d::ui::Widget::TouchEventType::ENDED:
 	{
-		levelManager->increaseGold(
+		increaseGold(
 			turretManager->getSelectedTurret()->getTurretInfo().cost
 			- (turretManager->getSelectedTurret()->getTurretInfo().cost * 0.33)
 		);
@@ -331,11 +367,11 @@ void TowerDefence::upgradeCallback(cocos2d::Ref * pSender, cocos2d::ui::Widget::
 		break;
 	case cocos2d::ui::Widget::TouchEventType::ENDED:
 	{
-		if (levelManager->getGold() >=
+		if (gold >=
 			(turretManager->getSelectedTurret()->getTurretInfo().cost - (turretManager->getSelectedTurret()->getTurretInfo().cost * 0.33)) 
 			&& turretManager->getSelectedTurret()->getTurretInfo().hasLevelUp())
 		{
-			levelManager->decreaseGold(
+			decreaseGold(
 				turretManager->getSelectedTurret()->getTurretInfo().cost
 				- (turretManager->getSelectedTurret()->getTurretInfo().cost * 0.33)
 			);
@@ -421,6 +457,7 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 	for (int i = 0; i < starterTurrets.size(); i++) {
 		if (starterTurretStands[i]->getBoundingBox().containsPoint(touchLoc))
 		{
+			starterTurretStands[i]->setTexture("Graphics/UI/Elements 1/Elements_101.png");
 			prevPos = starterTurrets[i]->getPosition();
 			selectedTurret = new Turret(*starterTurrets[i]);
 			selectedTurret->setPosition(
@@ -430,11 +467,12 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 				)
 			);
 			selectedTurret->setAsNormalTurret();
+			selectedTurret->setRangeColor(cocos2d::Color4F(1, 0, 0, 0.25));
 			selectedTurret->showRange();
-
+			auto visibleSize = Director::getInstance()->getVisibleSize();
 			cocos2d::Vec2 turretStatsPosition = cocos2d::Vec2(
-				Director::getInstance()->getVisibleSize().width * 0.77,
-				Director::getInstance()->getVisibleSize().height * 0.10);
+				visibleSize.width * 0.78,
+			visibleSize.height * 0.55);
 			selectedTurret->showTurretStats(turretStatsPosition);
 			selectedTurret->setTag(SELECTED_TURRET);
 			addChild(selectedTurret, 1);
@@ -474,10 +512,12 @@ void TowerDefence::onTouchMoved(cocos2d::Touch * touch, cocos2d::Event * unused_
 		selectedTurret->setPosition(selectedTurret->getPosition() + touch->getDelta());
 		cocos2d::Vec2 tileCoordForTowerPosition = levelManager->tileCoordForPosition(selectedTurret->getPosition());
 		if (levelManager->isWallAtTileCoord(tileCoordForTowerPosition)) {
-			//selectedTurret->setRangeColor(cocos2d::Color4F(0, 1, 0, 0.25));
+			selectedTurret->setRangeColor(cocos2d::Color4F(0, 1, 0, 0.25));
+			selectedTurret->showRange();
 		}
 		else {
-			//selectedTurret->setRangeColor(cocos2d::Color4F(1, 0, 0, 0.25));
+			selectedTurret->setRangeColor(cocos2d::Color4F(1, 0, 0, 0.25));
+			selectedTurret->showRange();
 		}
 	}
 }
@@ -486,7 +526,7 @@ void TowerDefence::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_ev
 {
 	if (selectedTurret) 
 	{
-		if (levelManager->getGold() >= selectedTurret->getTurretInfo().cost) 
+		if (gold >= selectedTurret->getTurretInfo().cost) 
 		{
 			selectedTurret->hideRange();
 			cocos2d::Vec2 tileCoordForTowerPosition = levelManager->tileCoordForPosition(selectedTurret->getPosition());
@@ -496,7 +536,7 @@ void TowerDefence::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_ev
 				cocos2d::Vec2 positionOfTileCoord = levelManager->positionForTileCoord(tileCoordForTowerPosition);
 				if (!turretManager->hasTurretAtCoord(positionOfTileCoord))
 				{
-					levelManager->decreaseGold(selectedTurret->getTurretInfo().cost);
+					decreaseGold(selectedTurret->getTurretInfo().cost);
 					selectedTurret->setPosition(positionOfTileCoord);
 					selectedTurret->hideTurretStats();
 					turretManager->addTurret(selectedTurret);
@@ -514,6 +554,33 @@ void TowerDefence::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_ev
 
 void TowerDefence::onTouchCancelled(cocos2d::Touch * touch, cocos2d::Event * unused_event)
 {
+}
+
+void TowerDefence::config()
+{
+	rapidjson::Document configInfoDoc;
+	configInfoDoc.Parse(getFileContent(CONFIG_FILE).c_str());
+
+	if (configInfoDoc.HasMember("config"))
+	{
+		const rapidjson::Value& configInfo = configInfoDoc["config"];
+		healthDecrementer = 1 / configInfo["health"].GetInt();
+		health = 1;
+		gold = configInfo["gold"].GetInt();
+
+		if (configInfo.HasMember("Music"))
+		{
+			if (configInfo["Music"]["play"].GetBool())
+				CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic(
+					configInfo["Music"]["source"].GetString(),
+					true
+				);
+		}
+	}
+	else {
+		health = 20;
+		gold = 75;
+	}
 }
 
 void TowerDefence::playGame()
@@ -544,9 +611,14 @@ void TowerDefence::update(float delta)
 	levelManager->update(delta);
 	turretManager->update(delta);
 
-	for (int i = 0; i < starterTurretStands.size(); i++) {	
-		if (starterTurrets[i]->getTurretInfo().cost > levelManager->getGold())
+	for (int i = 0; i < starterTurretStands.size(); i++) {
+		if (starterTurrets[i]->getTurretInfo().cost > gold)
 			starterTurretStands[i]->setTexture("Graphics/UI/Elements 1/Elements_90.png");
+		else {
+			if (starterTurretStands[i]->getTag() != MOUSE_OVER) {
+				starterTurretStands[i]->setTexture("Graphics/UI/Elements 1/Elements_99.png");
+			}
+		}
 	}
 }
 
@@ -557,6 +629,28 @@ LevelManager * TowerDefence::getLevelManager()
 
 void TowerDefence::enablePlayButton()
 {
+}
+
+void TowerDefence::decreaseHealth()
+{
+	health -= healthDecrementer;
+	healthBar->setScaleX(health);
+}
+
+void TowerDefence::increaseGold(int gold)
+{
+	this->gold += gold;
+	std::stringstream goldTxt;
+	goldTxt << this->gold;
+	goldLabel->setString(goldTxt.str());
+}
+
+void TowerDefence::decreaseGold(int gold)
+{
+	this->gold -= gold;
+	std::stringstream goldTxt;
+	goldTxt << this->gold;
+	goldLabel->setString(goldTxt.str());
 }
 
 bool TowerDefence::checkCollision(CGCircle *rangeIndicator, cocos2d::Rect rect)

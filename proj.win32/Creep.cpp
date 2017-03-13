@@ -174,7 +174,7 @@ void Creep::getRemoved()
 {
 	creepStatus.currentHP = 0;
 	creepStatus.dead = true;
-	game->getLevelManager()->increaseGold(info.gold);
+	game->increaseGold(info.gold);
 
 	for (auto it = attackedBy.begin(); it != attackedBy.end(); it++) {
 		(*it).second->targetKilled();
@@ -484,7 +484,7 @@ void Creep::popStepAndAnimate()
 	if (game->getLevelManager()->isExitAtTilecoord(currentPosition))
 	{
 		creepStatus.missionComplete = true;
-		game->getLevelManager()->decreaseHealth();
+		game->decreaseHealth();
 		return;
 	}
 

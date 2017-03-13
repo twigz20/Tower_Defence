@@ -55,28 +55,7 @@ void LevelManager::setBackground()
 
 void LevelManager::config()
 {
-	rapidjson::Document configInfoDoc;
-	configInfoDoc.Parse(getFileContent(CONFIG_FILE).c_str());
-
-	if (configInfoDoc.HasMember("config"))
-	{
-		const rapidjson::Value& configInfo = configInfoDoc["config"];
-		health = configInfo["health"].GetInt();
-		gold = configInfo["gold"].GetInt();
-
-		if (configInfo.HasMember("Music"))
-		{
-			if(configInfo["Music"]["play"].GetBool())
-				CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic(
-					configInfo["Music"]["source"].GetString(),
-					true
-				);
-		}
-	}
-	else {
-		health = 20;
-		gold = 75;
-	}
+	
 }
 
 void LevelManager::loadMap(std::string fileName)
@@ -120,31 +99,7 @@ bool LevelManager::hasProperty(std::string name, cocos2d::Vec2 tileCoord, cocos2
 
 void LevelManager::setupUi()
 {
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-
-	std::stringstream g;
-	g << "Gold: " << gold;
-	goldLabel = Label::createWithSystemFont(g.str(), "Arial", 18);
-	goldLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
-	goldLabel->setPosition(
-		visibleSize.width * 0.78,
-		visibleSize.height * 0.95
-	);
-	goldLabel->setColor(cocos2d::Color3B::GREEN);
-	goldLabel->setTag(GOLD_LABEL);
-	game->addChild(goldLabel);
-
-	std::stringstream hp;
-	hp << "HP: " << health;
-	healthLabel = Label::createWithSystemFont(hp.str(), "Arial", 18);
-	healthLabel->setAnchorPoint(cocos2d::Vec2(0, 0));
-	healthLabel->setPosition(
-		visibleSize.width * 0.90,
-		visibleSize.height * 0.95
-	);
-	healthLabel->setColor(cocos2d::Color3B::GREEN);
-	healthLabel->setTag(HEALTH_LABEL);
-	game->addChild(healthLabel);
+	
 }
 
 LevelManager::LevelManager(TowerDefence* game_) :
@@ -152,15 +107,12 @@ LevelManager::LevelManager(TowerDefence* game_) :
 	levelStarted(false),
 	levelFinished(false),
 	creepAmountForCurrentWave(0),
-	gold(0),
-	health(0),
 	bgLayer(nullptr),
 	objectLayer(nullptr),
 	tileMap(nullptr)
 {
 	config();
 	setBackground();
-	setupUi();
 	loadMap(INITIAL_MAP_FILE);
 	loadStartPoint();
 	loadEndPoint();
@@ -212,13 +164,6 @@ void LevelManager::reset()
 	creepManager->cleanUpDeadCreeps();
 	creepManager = nullptr;
 	waveManager = nullptr;
-	health = 20; gold = 75;
-	std::stringstream g;
-	g << "Gold: " << gold;
-	goldLabel->setString(g.str());
-	std::stringstream h;
-	h << "HP: " << health;
-	healthLabel->setString(h.str());
 	initCreepManager();
 	initWaveManager();
 	populateCreepManager();
@@ -328,37 +273,4 @@ cocos2d::TMXTiledMap *LevelManager::getMap()
 std::shared_ptr<CreepManager> LevelManager::getCreepManager()
 {
 	return creepManager;
-}
-
-int LevelManager::getGold()
-{
-	return gold;
-}
-
-int LevelManager::getHealth()
-{
-	return health;
-}
-
-void LevelManager::increaseGold(int gold)
-{
-	this->gold += gold;
-	std::stringstream g;
-	g << "Gold: " << this->gold;
-	goldLabel->setString(g.str());
-}
-
-void LevelManager::decreaseGold(int gold)
-{
-	this->gold -= gold;
-	std::stringstream g;
-	g << "Gold: " << this->gold;
-	goldLabel->setString(g.str());
-}
-
-void LevelManager::decreaseHealth()
-{
-	std::stringstream hp;
-	hp << "HP: " << --this->health;
-	healthLabel->setString(hp.str());
 }

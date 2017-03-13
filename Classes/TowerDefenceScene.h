@@ -27,6 +27,16 @@ class TowerDefence : public cocos2d::Layer
 
 	void onMouseMove(cocos2d::Event * event);
 
+	int gold;
+	cocos2d::Label * goldLabel;
+	float healthDecrementer;
+	float health;
+	cocos2d::Label * healthLabel;
+	cocos2d::Sprite *healthBar;
+
+	cocos2d::Sprite *statsContainer;
+
+	void config();
 	void playGame();
 	void touchEvent(cocos2d::Ref *sender, cocos2d::ui::Widget::TouchEventType type);
 
@@ -67,6 +77,9 @@ public:
 	LevelManager *getLevelManager();
 
 	void enablePlayButton();
+	void decreaseHealth();
+	void increaseGold(int gold);
+	void decreaseGold(int gold);
 };
 
 #endif // __HELLOWORLD_SCENE_H__

@@ -11,10 +11,9 @@ void TurretStatsDisplay::setupDisplay(cocos2d::Vec2 position)
 	if (getChildrenCount() > 0)
 		removeAllChildrenWithCleanup(true);
 
-	sprite = Sprite::create(TURRET_STATS_BACKGROUND);
-	sprite->setAnchorPoint(cocos2d::Vec2(0, 0));
-	sprite->setScaleX(2.0);
-	sprite->setScaleY(2.0);
+	sprite = Sprite::create("Graphics/UI/Windows 2/Window2_04.png");
+	sprite->setAnchorPoint(cocos2d::Vec2(0, 0.5f));
+	sprite->setScale(0.25f);
 	sprite->setTag(DISPLAY_TAG);
 	addChild(sprite);
 	setPosition(position);
