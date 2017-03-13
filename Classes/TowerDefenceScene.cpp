@@ -238,8 +238,8 @@ Scene* TowerDefence::createScene()
 
 TowerDefence::~TowerDefence()
 {
-	if (levelManager)
-		delete levelManager;
+	levelManager->removeFromParentAndCleanup(true);
+
 	if (turretManager)
 		delete turretManager;
 	if(selectedTurret)
