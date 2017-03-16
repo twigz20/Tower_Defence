@@ -1,7 +1,7 @@
 #pragma once
 #define WINDOW_HEIGHT 10 * 48
 #define WINDOW_WIDTH 15 * 48
-#define BACKGROUND_FILE "Graphics/tower-defense/tower-defense-background-stars.png"
+#define BACKGROUND_FILE "Graphics/UI/Elements 1/BG.png"
 #define INITIAL_MAP_FILE "Files/Tile-Maps/Level-1/Map1.tmx"
 #define WAVES_FILE "Files/waves.json"
 #define CREEP_FILE "Files/creep.json"
@@ -18,6 +18,9 @@
 #define SELL_FILE "Graphics/UI/Buttons/Button_58.png"
 #define UPGRADE_FILE "Graphics/UI/Buttons/Button_30.png"
 #define HELP_FILE "Graphics/UI/Buttons/Button_106.png"
+
+#define DISPLAY_TIME_SPLASH_SCENE 2
+#define TRANSITION_TIME 0.50
 
 
 #include <string>

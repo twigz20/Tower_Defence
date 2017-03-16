@@ -19,9 +19,12 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/Creep.cpp \
                    ../../Classes/CreepInfo.cpp \
                    ../../Classes/CreepManager.cpp \
+                   ../../Classes/GameOverScene.cpp \
                    ../../Classes/GuiElement.cpp \
                    ../../Classes/LevelManager.cpp \
+                   ../../Classes/MainMenuScene.cpp \
                    ../../Classes/Observee.cpp \
+                   ../../Classes/SplashScene.cpp \
                    ../../Classes/timer.cpp \
                    ../../Classes/Turret.cpp \
                    ../../Classes/TurretInfo.cpp \

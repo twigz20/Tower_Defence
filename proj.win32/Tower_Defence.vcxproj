@@ -156,10 +156,13 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Creep.cpp" />
     <ClCompile Include="..\Classes\CreepInfo.cpp" />
     <ClCompile Include="..\Classes\CreepManager.cpp" />
+    <ClCompile Include="..\Classes\GameOverScene.cpp" />
     <ClCompile Include="..\Classes\GuiElement.cpp" />
     <ClCompile Include="..\Classes\LevelManager.cpp" />
     <ClCompile Include="..\Classes\main.cpp" />
+    <ClCompile Include="..\Classes\MainMenuScene.cpp" />
     <ClCompile Include="..\Classes\Observee.cpp" />
+    <ClCompile Include="..\Classes\SplashScene.cpp" />
     <ClCompile Include="..\Classes\timer.cpp" />
     <ClCompile Include="..\Classes\TowerDefenceScene.cpp" />
     <ClCompile Include="..\Classes\Turret.cpp" />
@@ -177,9 +180,11 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\CreepInfo.h" />
     <ClInclude Include="..\Classes\CreepManager.h" />
     <ClInclude Include="..\Classes\Events.h" />
+    <ClInclude Include="..\Classes\GameOverScene.h" />
     <ClInclude Include="..\Classes\GuiElement.h" />
     <ClInclude Include="..\Classes\LevelManager.h" />
     <ClInclude Include="..\Classes\main.h" />
+    <ClInclude Include="..\Classes\MainMenuScene.h" />
     <ClInclude Include="..\Classes\Observee.h" />
     <ClInclude Include="..\Classes\Observer.h" />
     <ClInclude Include="..\Classes\picojson.h" />
@@ -219,6 +224,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\rapidjson\stringbuffer.h" />
     <ClInclude Include="..\Classes\rapidjson\writer.h" />
     <ClInclude Include="..\Classes\resource.h" />
+    <ClInclude Include="..\Classes\SplashScene.h" />
     <ClInclude Include="..\Classes\timer.h" />
     <ClInclude Include="..\Classes\TowerDefenceScene.h" />
     <ClInclude Include="..\Classes\Turret.h" />

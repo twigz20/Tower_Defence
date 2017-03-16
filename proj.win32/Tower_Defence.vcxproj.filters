@@ -49,6 +49,9 @@
     <ClCompile Include="..\Classes\Wave.cpp" />
     <ClCompile Include="..\Classes\WaveManager.cpp" />
     <ClCompile Include="..\Classes\CGCircle.cpp" />
+    <ClCompile Include="..\Classes\GameOverScene.cpp" />
+    <ClCompile Include="..\Classes\MainMenuScene.cpp" />
+    <ClCompile Include="..\Classes\SplashScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h">
@@ -185,6 +188,9 @@
     <ClInclude Include="..\Classes\picojson.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\GameOverScene.h" />
+    <ClInclude Include="..\Classes\MainMenuScene.h" />
+    <ClInclude Include="..\Classes\SplashScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">
