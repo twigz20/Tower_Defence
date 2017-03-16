@@ -215,6 +215,14 @@ void Turret::upgrade()
 	upgradeImage.append(tostr((int)info.level_).c_str());
 	upgradeImage.append(".png");
 	sprite->setTexture("Graphics/tower-defense-turrets/" + upgradeImage);
+
+	std::stringstream g;
+	g << (int)(info.cost * .66);
+	sellLabel->setString(g.str());
+
+	std::stringstream u;
+	u << (int)(info.cost * .78);
+	upgradeLabel->setString(u.str());
 }
 
 void Turret::showTurretStats(cocos2d::Vec2 position)
@@ -350,12 +358,52 @@ void Turret::createHelperButtons()
 	sellButton->setScale(0.325);
 	addChild(sellButton);
 
+	auto sellCostContainer = Sprite::create("Graphics/UI/Window/Window_04.png");
+	sellCostContainer->setScaleX(0.425);
+	sellCostContainer->setScaleY(0.925);
+	sellCostContainer->setPositionX(sellButton->getContentSize().width / 2);
+	sellCostContainer->setPositionY(sellButton->getPosition().y - 52.5);
+	sellButton->addChild(sellCostContainer);
+
+	std::stringstream g;
+	g << (int)(info.cost * .66);
+	sellLabel = Label::createWithTTF(g.str(), "fonts/carbon bl.ttf", 65);
+	sellLabel->setAdditionalKerning(1.25);
+	sellLabel->setAnchorPoint(cocos2d::Vec2(0.5f, 0.5f));
+	sellLabel->setPositionX(
+		sellCostContainer->getContentSize().width * 0.5
+	);
+	sellLabel->setPositionY(
+		sellCostContainer->getContentSize().height * 0.55
+	);
+	sellCostContainer->addChild(sellLabel);
+
 	upgradeButton = Button::create(UPGRADE_FILE, "Graphics/UI/Buttons/Button_32.png", "Graphics/UI/Buttons/Button_33.png");
 	upgradeButton->setVisible(false);
 	upgradeButton->setPosition(Vec2::ZERO);
 	upgradeButton->addTouchEventListener(CC_CALLBACK_2(Turret::upgradeCallback, this));
 	upgradeButton->setScale(0.325);
 	addChild(upgradeButton);
+
+	auto upgradeCostContainer = Sprite::create("Graphics/UI/Window/Window_04.png");
+	upgradeCostContainer->setScaleX(0.425);
+	upgradeCostContainer->setScaleY(0.925);
+	upgradeCostContainer->setPositionX(sellButton->getContentSize().width / 2);
+	upgradeCostContainer->setPositionY(sellButton->getPosition().y - 52.5);
+	upgradeButton->addChild(upgradeCostContainer);
+
+	std::stringstream u;
+	u << (int)(info.cost * .78);
+	upgradeLabel = Label::createWithTTF(u.str(), "fonts/carbon bl.ttf", 65);
+	upgradeLabel->setAdditionalKerning(1.25);
+	upgradeLabel->setAnchorPoint(cocos2d::Vec2(0.5f, 0.5f));
+	upgradeLabel->setPositionX(
+		upgradeCostContainer->getContentSize().width * 0.5
+	);
+	upgradeLabel->setPositionY(
+		upgradeCostContainer->getContentSize().height * 0.55
+	);
+	upgradeCostContainer->addChild(upgradeLabel);
 
 	helpButton = Button::create(HELP_FILE, "Graphics/UI/Buttons/Button_28.png", "Graphics/UI/Buttons/Button_29.png");
 	helpButton->setVisible(false);

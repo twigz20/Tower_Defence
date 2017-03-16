@@ -227,7 +227,7 @@ bool TowerDefence::init()
 
 	auto _mouseListener = EventListenerMouse::create();
 	_mouseListener->onMouseMove = CC_CALLBACK_1(TowerDefence::onMouseMove, this);
-	//this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_mouseListener, this);
+	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_mouseListener, this);
 
 	this->scheduleUpdate();
 
@@ -326,8 +326,8 @@ bool TowerDefence::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * unused_
 			selectedTurret = new Turret(this, TurretInfo(starterTurrets[i]->getTurretInfo().imageHeader), false);
 			selectedTurret->setPosition(
 				cocos2d::Vec2(
-					starterTurretStands[i]->getPosition().x + selectedTurret->getPosition().x,
-					starterTurretStands[i]->getPosition().y + selectedTurret->getPosition().y
+					starterTurretStands[i]->getPosition().x + selectedTurret->getPosition().x + selectedTurret->getContentSize().width / 2,
+					starterTurretStands[i]->getPosition().y + selectedTurret->getPosition().y + selectedTurret->getContentSize().height / 2
 				)
 			);
 			selectedTurret->setRangeColor(cocos2d::Color4F(1, 0, 0, 0.25));
@@ -486,6 +486,8 @@ void TowerDefence::increaseGold(int gold)
 void TowerDefence::decreaseGold(int gold)
 {
 	this->gold -= gold;
+	if (this->gold < 0)
+		this->gold = 0;
 	std::stringstream goldTxt;
 	goldTxt << this->gold;
 	goldLabel->setString(goldTxt.str());

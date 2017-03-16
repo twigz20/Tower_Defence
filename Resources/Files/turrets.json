@@ -19,7 +19,7 @@
     "image": "Graphics/tower-defense-turrets/turret-2-1.png",
 	"bullet_properties": {
       "bullet_image": "Graphics/bullets/fireball_1.png",
-	  "damage_from": 2.00,
+	  "damage_from": 2.75,
 	  "damage_to": 20,
       "speed": 0.225
     },

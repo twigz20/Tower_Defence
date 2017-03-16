@@ -111,6 +111,8 @@ void TurretInfo::levelUp()
 		cooldown = cooldown > 1.0 ? cooldown - 0.15 : cooldown;
 		range += 7;
 
+		cost += cost * 0.33;
+
 		std::stringstream ss;
 		ss << type << "-" << level_;
 		image = "Graphics/tower-defense-turrets/turret-" + ss.str() + ".png";

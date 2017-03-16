@@ -72,6 +72,9 @@ private:
 	bool active;
 	bool sold;
 
+	cocos2d::Label *sellLabel;
+	cocos2d::Label *upgradeLabel;
+
 	cocos2d::ui::Button *sellButton;
 	cocos2d::ui::Button *upgradeButton;
 	cocos2d::ui::Button *helpButton;
