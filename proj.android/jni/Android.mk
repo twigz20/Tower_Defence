@@ -13,9 +13,24 @@ LOCAL_MODULE_FILENAME := libMyGame
 
 LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/AppDelegate.cpp \
-                   ../../Classes/HelloWorldScene.cpp
+                   ../../Classes/TowerDefenceScene.cpp \
+                   ../../Classes/BaseObject.cpp \
+                   ../../Classes/CGCircle.cpp \
+                   ../../Classes/Creep.cpp \
+                   ../../Classes/CreepInfo.cpp \
+                   ../../Classes/CreepManager.cpp \
+                   ../../Classes/GuiElement.cpp \
+                   ../../Classes/LevelManager.cpp \
+                   ../../Classes/Observee.cpp \
+                   ../../Classes/timer.cpp \
+                   ../../Classes/Turret.cpp \
+                   ../../Classes/TurretInfo.cpp \
+                   ../../Classes/TurretManager.cpp \
+                   ../../Classes/TurretStatsDisplay.cpp \
+                   ../../Classes/Wave.cpp \
+                   ../../Classes/WaveManager.cpp
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes                   
 
 # _COCOS_HEADER_ANDROID_BEGIN
 # _COCOS_HEADER_ANDROID_END

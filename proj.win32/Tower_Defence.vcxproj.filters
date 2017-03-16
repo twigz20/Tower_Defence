@@ -10,141 +10,181 @@
     <Filter Include="src">
       <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
     </Filter>
-    <Filter Include="win32\Utilities">
-      <UniqueIdentifier>{73195922-7878-442e-bfa5-ae245d9e3083}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="win32\Managers">
-      <UniqueIdentifier>{6ad76926-0824-4263-999e-e83b7b43b40c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="win32\Sprites">
-      <UniqueIdentifier>{35b8ff38-9432-46e7-acd9-fb03bda99d20}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="win32\Sprite Information">
-      <UniqueIdentifier>{3cdba3e8-1c36-4a7f-8188-d951b8abd07a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="win32\Files">
       <UniqueIdentifier>{4a6470f3-5e73-4af6-ad30-fa03f63603df}</UniqueIdentifier>
     </Filter>
-    <Filter Include="win32\Helpers">
-      <UniqueIdentifier>{df1587ff-c4a9-4c5e-91ae-dd9b15ec022b}</UniqueIdentifier>
+    <Filter Include="rapid-json">
+      <UniqueIdentifier>{d9a21f90-655b-496d-bc3b-9489c458d46c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rapid-json\error">
+      <UniqueIdentifier>{cdc21bb5-a43c-4860-bec8-cd0988961233}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rapid-json\internal">
+      <UniqueIdentifier>{c566f8a5-697f-4d4e-bbc6-462281dc5a93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rapid-json\msinttypes">
+      <UniqueIdentifier>{f43fe60e-6efc-45a5-9950-5032a4517741}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\TowerDefenceScene.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="timer.cpp">
-      <Filter>win32\Utilities</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelManager.cpp">
-      <Filter>win32\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="TurretManager.cpp">
-      <Filter>win32\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="CreepManager.cpp">
-      <Filter>win32\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Creep.cpp">
-      <Filter>win32\Sprites</Filter>
-    </ClCompile>
-    <ClCompile Include="Turret.cpp">
-      <Filter>win32\Sprites</Filter>
-    </ClCompile>
-    <ClCompile Include="CreepInfo.cpp">
-      <Filter>win32\Sprite Information</Filter>
-    </ClCompile>
-    <ClCompile Include="TurretInfo.cpp">
-      <Filter>win32\Sprite Information</Filter>
-    </ClCompile>
-    <ClCompile Include="WaveManager.cpp">
-      <Filter>win32\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="CGCircle.cpp">
-      <Filter>win32\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="TurretStatsDisplay.cpp">
-      <Filter>win32\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="Wave.cpp">
-      <Filter>win32\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseObject.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
-    <ClCompile Include="Observee.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
-    <ClCompile Include="GuiElement.cpp" />
+    <ClCompile Include="..\Classes\BaseObject.cpp" />
+    <ClCompile Include="..\Classes\Creep.cpp" />
+    <ClCompile Include="..\Classes\CreepInfo.cpp" />
+    <ClCompile Include="..\Classes\CreepManager.cpp" />
+    <ClCompile Include="..\Classes\GuiElement.cpp" />
+    <ClCompile Include="..\Classes\LevelManager.cpp" />
+    <ClCompile Include="..\Classes\main.cpp" />
+    <ClCompile Include="..\Classes\Observee.cpp" />
+    <ClCompile Include="..\Classes\timer.cpp" />
+    <ClCompile Include="..\Classes\Turret.cpp" />
+    <ClCompile Include="..\Classes\TurretInfo.cpp" />
+    <ClCompile Include="..\Classes\TurretManager.cpp" />
+    <ClCompile Include="..\Classes\TurretStatsDisplay.cpp" />
+    <ClCompile Include="..\Classes\Wave.cpp" />
+    <ClCompile Include="..\Classes\WaveManager.cpp" />
+    <ClCompile Include="..\Classes\CGCircle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h">
-      <Filter>win32</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\AppDelegate.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\TowerDefenceScene.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>win32\Utilities</Filter>
+    <ClInclude Include="..\Classes\BaseObject.h" />
+    <ClInclude Include="..\Classes\Creep.h" />
+    <ClInclude Include="..\Classes\CreepInfo.h" />
+    <ClInclude Include="..\Classes\CreepManager.h" />
+    <ClInclude Include="..\Classes\Events.h" />
+    <ClInclude Include="..\Classes\GuiElement.h" />
+    <ClInclude Include="..\Classes\LevelManager.h" />
+    <ClInclude Include="..\Classes\main.h" />
+    <ClInclude Include="..\Classes\Observee.h" />
+    <ClInclude Include="..\Classes\Observer.h" />
+    <ClInclude Include="..\Classes\resource.h" />
+    <ClInclude Include="..\Classes\timer.h" />
+    <ClInclude Include="..\Classes\Turret.h" />
+    <ClInclude Include="..\Classes\TurretInfo.h" />
+    <ClInclude Include="..\Classes\TurretManager.h" />
+    <ClInclude Include="..\Classes\TurretStatsDisplay.h" />
+    <ClInclude Include="..\Classes\Utils.h" />
+    <ClInclude Include="..\Classes\Wave.h" />
+    <ClInclude Include="..\Classes\WaveManager.h" />
+    <ClInclude Include="..\Classes\CGCircle.h" />
+    <ClInclude Include="..\Classes\rapidjson\allocators.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="timer.h">
-      <Filter>win32\Utilities</Filter>
+    <ClInclude Include="..\Classes\rapidjson\document.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="LevelManager.h">
-      <Filter>win32\Managers</Filter>
+    <ClInclude Include="..\Classes\rapidjson\encodedstream.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="TurretManager.h">
-      <Filter>win32\Managers</Filter>
+    <ClInclude Include="..\Classes\rapidjson\encodings.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="CreepManager.h">
-      <Filter>win32\Managers</Filter>
+    <ClInclude Include="..\Classes\rapidjson\filereadstream.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="Creep.h">
-      <Filter>win32\Sprites</Filter>
+    <ClInclude Include="..\Classes\rapidjson\filewritestream.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="Turret.h">
-      <Filter>win32\Sprites</Filter>
+    <ClInclude Include="..\Classes\rapidjson\fwd.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="CreepInfo.h">
-      <Filter>win32\Sprite Information</Filter>
+    <ClInclude Include="..\Classes\rapidjson\istreamwrapper.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="TurretInfo.h">
-      <Filter>win32\Sprite Information</Filter>
+    <ClInclude Include="..\Classes\rapidjson\memorybuffer.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="WaveManager.h">
-      <Filter>win32\Managers</Filter>
+    <ClInclude Include="..\Classes\rapidjson\memorystream.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="CGCircle.h">
-      <Filter>win32\Helpers</Filter>
+    <ClInclude Include="..\Classes\rapidjson\ostreamwrapper.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="TurretStatsDisplay.h">
-      <Filter>win32\Helpers</Filter>
+    <ClInclude Include="..\Classes\rapidjson\pointer.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="Wave.h">
-      <Filter>win32\Helpers</Filter>
+    <ClInclude Include="..\Classes\rapidjson\prettywriter.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="BaseObject.h">
-      <Filter>win32</Filter>
+    <ClInclude Include="..\Classes\rapidjson\rapidjson.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="Events.h">
-      <Filter>win32</Filter>
+    <ClInclude Include="..\Classes\rapidjson\reader.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="Observee.h">
-      <Filter>win32</Filter>
+    <ClInclude Include="..\Classes\rapidjson\schema.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="Observer.h">
-      <Filter>win32</Filter>
+    <ClInclude Include="..\Classes\rapidjson\stream.h">
+      <Filter>rapid-json</Filter>
     </ClInclude>
-    <ClInclude Include="GuiElement.h" />
+    <ClInclude Include="..\Classes\rapidjson\stringbuffer.h">
+      <Filter>rapid-json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\writer.h">
+      <Filter>rapid-json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\msinttypes\inttypes.h">
+      <Filter>rapid-json\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\msinttypes\stdint.h">
+      <Filter>rapid-json\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\internal\biginteger.h">
+      <Filter>rapid-json\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\internal\diyfp.h">
+      <Filter>rapid-json\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\internal\dtoa.h">
+      <Filter>rapid-json\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\internal\ieee754.h">
+      <Filter>rapid-json\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\internal\itoa.h">
+      <Filter>rapid-json\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\internal\meta.h">
+      <Filter>rapid-json\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\internal\pow10.h">
+      <Filter>rapid-json\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\internal\regex.h">
+      <Filter>rapid-json\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\internal\stack.h">
+      <Filter>rapid-json\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\internal\strfunc.h">
+      <Filter>rapid-json\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\internal\strtod.h">
+      <Filter>rapid-json\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\internal\swap.h">
+      <Filter>rapid-json\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\error\en.h">
+      <Filter>rapid-json\error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\rapidjson\error\error.h">
+      <Filter>rapid-json\error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\picojson.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">
@@ -164,5 +204,6 @@
     <None Include="..\Resources\Files\config.json">
       <Filter>win32\Files</Filter>
     </None>
+    <None Include="..\Classes\build-cfg.json" />
   </ItemGroup>
 </Project>

@@ -32,8 +32,8 @@
     "health": 165,
     "speed": 1.75,
     "heal_aura": {
-      "area": 40,
-      "hps": 9
+      "area": 25,
+      "hps": 5
     },
     "gold": 8
   }

@@ -5,7 +5,7 @@
 #include "ui\CocosGUI.h"
 #include <memory>
 #include <vector>
-#include "proj.win32\CGCircle.h"
+#include "CGCircle.h"
 #define SELECTED_TURRET 10001
 
 class Creep;
@@ -16,14 +16,15 @@ class TowerDefence : public cocos2d::Layer
 {
 	LevelManager *levelManager;
 	TurretManager *turretManager;
-
+	cocos2d::TMXTiledMap *tileMap;
+	cocos2d::TMXLayer *bgLayer, *objectLayer;
 	cocos2d::MenuItemImage *playItem;
 	cocos2d::MenuItemImage *resetItem;
 
-	bool onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_event) override;
-	void onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *unused_event) override;
-	void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event) override;
-	void onTouchCancelled(cocos2d::Touch *touch, cocos2d::Event *unused_event) override;
+	bool onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_event);
+	void onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *unused_event);
+	void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event);
+	void onTouchCancelled(cocos2d::Touch *touch, cocos2d::Event *unused_event);
 
 	void onMouseMove(cocos2d::Event * event);
 
@@ -39,20 +40,15 @@ class TowerDefence : public cocos2d::Layer
 
 	void config();
 	void playGame();
-	void touchEvent(cocos2d::Ref *sender, cocos2d::ui::Widget::TouchEventType type);
 
 	Turret *selectedTurret;
 	int selectedTurretIndex;
 	cocos2d::Vec2 prevPos;
 
-	cocos2d::ui::Button *sell;
-	cocos2d::ui::Button *upgrade;
-	cocos2d::ui::Button *help;
-
 	void setUpUi();
 
 	std::vector<cocos2d::Sprite*> starterTurretStands;
-	std::vector<std::shared_ptr<Turret>> starterTurrets;
+	std::vector<Turret*> starterTurrets;
 	void setStarterTurrets();
 public:
     static cocos2d::Scene* createScene();
@@ -64,11 +60,6 @@ public:
     void menuCloseCallback(cocos2d::Ref* pSender);
 	void menuPlayCallback(cocos2d::Ref* pSender);
 	void menuResetCallback(cocos2d::Ref* pSender);
-
-	void sellCallback(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
-	void upgradeCallback(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
-	void helpCallback(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
-	void repeatCallback(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
     
     // implement the "static create()" method manually
     CREATE_FUNC(TowerDefence);
@@ -81,6 +72,9 @@ public:
 	void decreaseHealth();
 	void increaseGold(int gold);
 	void decreaseGold(int gold);
+
+	int getGold();
+	int getHealth();
 
 	void setWaveNumber(int waveNumber);
 };
